@@ -15,6 +15,7 @@ public class Repository {
 	private String description;
 	private ArrayList<Branch> branches;
 	private ArrayList<PullRequest> pullrequets;
+
 	
 	public Repository(int id, String name, Visibility visibility) {
 		this.id = id;

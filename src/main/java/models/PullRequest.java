@@ -25,7 +25,6 @@ public class PullRequest {
 		this.createdAt = createdAt;
 	}
 	public PullRequest(Branch sourceBranch, Branch targetBranch, PullRequestStatus status) {
-		super();
 		this.sourceBranch = sourceBranch;
 		this.targetBranch = targetBranch;
 		this.status = status;
