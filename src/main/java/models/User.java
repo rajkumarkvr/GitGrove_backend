@@ -1,6 +1,7 @@
 package models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class User {
 	private int id;
@@ -9,22 +10,27 @@ public class User {
 	private String password;
 	private String profile_url;
 	private LocalDateTime createdAt;
+	
+	private ArrayList<Repository> repositories;
+	
 	public User(int id, String username, String emailaddress, String password, String profile_url,
 			LocalDateTime createdAt) {
-		super();
+
 		this.id = id;
 		this.username = username;
 		this.emailaddress = emailaddress;
 		this.password = password;
 		this.profile_url = profile_url;
 		this.createdAt = createdAt;
+		this.repositories = new ArrayList<Repository>();
 	}
 	public User(String username, String emailaddress, String password, String profile_url) {
-		super();
+	
 		this.username = username;
 		this.emailaddress = emailaddress;
 		this.password = password;
 		this.profile_url = profile_url;
+		this.repositories = new ArrayList<Repository>();
 	}
 	public int getId() {
 		return id;
@@ -61,6 +67,12 @@ public class User {
 	}
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+	public ArrayList<Repository> getRepositories() {
+		return repositories;
+	}
+	public void setRepositories(ArrayList<Repository> repositories) {
+		this.repositories = repositories;
 	}
 	
 	
