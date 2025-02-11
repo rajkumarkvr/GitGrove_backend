@@ -10,10 +10,6 @@
 		<display-name>CreateRepoServlet</display-name>
 		<servlet-name>CreateRepoServlet</servlet-name>
 		<servlet-class>controller.CreateRepoServlet</servlet-class>
-		<init-param>
-			<param-name>userpass</param-name>
-			<param-value>Rajkumardev@371</param-value>
-		</init-param>
 	</servlet>
 	<servlet>
 		<description>
