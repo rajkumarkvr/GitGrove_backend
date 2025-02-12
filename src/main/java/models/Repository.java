@@ -37,14 +37,14 @@ public class Repository {
 		this.createdAt = createdAt;
 		this.stars_count = starsCount;
 	}
-	
+
 	public Repository(String name, Visibility visibility, String description) {
 		super();
 		this.name = name;
 		this.visibility = visibility;
 		this.description = description;
 	}
-	
+
 	public int getId() {
 		return id;
 	}

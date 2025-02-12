@@ -1,36 +1,37 @@
 package models.dao;
 
-import services.DBconnection;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 import models.User;
+import services.DBconnection;
 
 public class UserDAO {
-	
+
 	static UserDAO userDao = null;
-	
+
 	private UserDAO() {
-		
+
 	}
-	
+
 	public static UserDAO getInstance() {
-		if(userDao == null) 
+		if(userDao == null) {
 			userDao = new UserDAO();
+		}
 		return userDao;
 	}
-	
+
 	public User signUp(String userName, String emailId, String password , String profile_url) {
 		User user = null;
 		password = encrypt(password);
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into users(username,email,password_hash,profile_url) values(?,?,?,?)");
+			PreparedStatement stmt = connection.prepareStatement("insert into users(username,email,password_hash,profile_url) values(?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, userName);
 			stmt.setString(2, emailId);
 			stmt.setString(3, password);
@@ -47,10 +48,10 @@ public class UserDAO {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		return user;
 	}
-	
+
 	public User signIn(String usernameOrEmail , String password) {
 		User user = null;
 		try {
@@ -68,7 +69,7 @@ public class UserDAO {
 		}
 		return user;
 	}
-	
+
 	public User getUserByEmail(String email) {
 		User user = null;
 		try {
@@ -84,10 +85,10 @@ public class UserDAO {
 		}
 		return user;
 	}
-	
+
 	public User getUserByUserName(String username) {
 		User user = null;
-		
+
 		try {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("select * from users where username = ?");
@@ -99,10 +100,10 @@ public class UserDAO {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		return user;
 	}
-	
+
 	public User getUserById(int id) {
 		User user = null;
 		try {
@@ -118,7 +119,7 @@ public class UserDAO {
 		}
 		return user;
 	}
-	
+
 	public boolean updatePassword(String email, String password) {
 		password = encrypt(password);
 		try {
@@ -135,10 +136,10 @@ public class UserDAO {
 		}
 		return false;
 	}
-	
-	public String encrypt(String text) {	
-    	String salt = BCrypt.gensalt(12);   	
+
+	public String encrypt(String text) {
+    	String salt = BCrypt.gensalt(12);
     	return BCrypt.hashpw(text, salt);
     }
-	
+
 }

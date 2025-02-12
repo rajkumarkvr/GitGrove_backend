@@ -3,26 +3,26 @@ package models.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 import enums.Visibility;
 import models.Repository;
 import services.DBconnection;
 
 public class RepositoryDAO {
-	
+
 	static RepositoryDAO repositoryDAO = null;
-	
+
 	private RepositoryDAO() {
-		
+
 	}
-	
+
 	public static RepositoryDAO getInstance() {
-		if(repositoryDAO == null)
+		if(repositoryDAO == null) {
 			repositoryDAO = new RepositoryDAO();
+		}
 		return repositoryDAO;
 	}
-	
+
 	public boolean addRepository(String name, String description, String visibility, int owner_id){
 		try {
 			Connection connection = DBconnection.getConnection();
@@ -38,18 +38,18 @@ public class RepositoryDAO {
 		}
 		return false;
 	}
-	
+
 //	public ArrayList<Repository> repositoriesByOwnerId(int ownerId){
 //		ArrayList<Repository> repositorie = new ArrayList<Repository>();
 //		try {
 //			Connection connection = DBconnection.getConnection();
 //			PreparedStatement stmt = connection.prepareStatement("select * from repositories where owner_id ");
-//			
+//
 //		} catch (Exception e) {
 //			// TODO: handle exception
 //		}
 //	}
-	
+
 	public Repository getRepository(int id) {
 		Repository repository = null;
 		try {
@@ -65,5 +65,5 @@ public class RepositoryDAO {
 		}
 		return repository;
 	}
-	
+
 }

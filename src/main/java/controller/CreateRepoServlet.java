@@ -1,7 +1,6 @@
 package controller;
 
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
@@ -22,16 +21,16 @@ public class CreateRepoServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//    	
+//
 //    	resp.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 //    	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 //    	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//  
+//
     	JSONObject jsonData =	JSONHandler.parse(req.getReader());
-    	
-        String username = jsonData.getString("username"); 
+
+        String username = jsonData.getString("username");
         String repoName = jsonData.getString("repoName");
-//        String visibility = 
+//        String visibility =
 	System.out.println("hello");
 	System.out.println(username+" repo: "+repoName);
 	        if (username == null || username.trim().isEmpty() || repoName == null || repoName.trim().isEmpty()) {
@@ -75,6 +74,6 @@ public class CreateRepoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setStatus(HttpServletResponse.SC_OK);
     }
-    
+
 
 }

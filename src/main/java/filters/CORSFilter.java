@@ -31,14 +31,14 @@ public class CORSFilter implements Filter {
         System.out.println("request");
         String origin = req.getHeader("Origin");
         System.out.println(origin);
-       
+
         res.setContentType("application/json");
             res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-     
+
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        res.setHeader("Access-Control-Allow-Crdentials","true");;
-        
+        res.setHeader("Access-Control-Allow-Crdentials","true");
+
         if("OPTIONS".equalsIgnoreCase(req.getMethod()))
         {
         	res.setStatus(HttpServletResponse.SC_OK);
@@ -47,8 +47,8 @@ public class CORSFilter implements Filter {
         System.out.println("Welcome");
         chain.doFilter(request, response);
     }
-    
-    
+
+
     @Override
     public void destroy() {}
 }

@@ -13,7 +13,7 @@ public class JSONHandler {
 		String line;
 
 		while((line=reader.readLine())!=null) {
-	
+
 			sb.append(line);
 		}
 

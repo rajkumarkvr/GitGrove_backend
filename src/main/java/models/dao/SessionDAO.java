@@ -6,21 +6,22 @@ import java.sql.PreparedStatement;
 import services.DBconnection;
 
 public class SessionDAO {
-	
+
 	static SessionDAO sessionDAO = null;
-	
+
 	private SessionDAO() {
-		
+
 	}
-	
+
 	public static SessionDAO getInstance() {
-		if(sessionDAO == null)
+		if(sessionDAO == null) {
 			sessionDAO = new SessionDAO();
+		}
 		return sessionDAO;
 	}
-	
+
 	public boolean storeSession(int user_id, String jwtToken, String userAgent) {
-		
+
 		String browser = "Unknown";
         if (userAgent.contains("Chrome")) {
             browser = "Google Chrome";
@@ -47,8 +48,8 @@ public class SessionDAO {
         } else if (userAgent.contains("iPhone") || userAgent.contains("iPad")) {
             os = "iOS";
         }
-		
-        
+
+
 		try {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("insert into sessions(user_id,session_value,agent) values(?,?,?)");
@@ -60,12 +61,12 @@ public class SessionDAO {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean clearSession(String token) {
-		
+
 		try {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("delete from sessions where session_value = ?");
@@ -75,9 +76,9 @@ public class SessionDAO {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		return false;
-		
+
 	}
 
 }
