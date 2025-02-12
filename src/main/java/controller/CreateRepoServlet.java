@@ -1,6 +1,7 @@
 package controller;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jgit.api.Git;
+import org.json.JSONObject;
 
 import utils.PermissionManager;
 public class CreateRepoServlet extends HttpServlet {
@@ -24,8 +26,18 @@ public class CreateRepoServlet extends HttpServlet {
     	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   
-        String username = req.getParameter("username");
-        String repoName = req.getParameter("repoName");
+    	StringBuilder sb=new StringBuilder();
+		BufferedReader read=req.getReader();
+		String line;
+		while((line=read.readLine())!=null) {
+			sb.append(line);
+		}
+		
+		JSONObject jsonData=new JSONObject(sb.toString());
+    	
+        String username = jsonData.getString("username"); 
+        String repoName = jsonData.getString("repoName");
+//        String visibility = 
 	System.out.println("hello");
 	System.out.println(username+" repo: "+repoName);
 	        if (username == null || username.trim().isEmpty() || repoName == null || repoName.trim().isEmpty()) {

@@ -24,6 +24,7 @@ public class User {
 		this.createdAt = createdAt;
 		this.repositories = new ArrayList<>();
 	}
+	
 	public User(String username, String emailaddress, String password, String profile_url) {
 
 		this.username = username;
@@ -32,6 +33,7 @@ public class User {
 		this.profile_url = profile_url;
 		this.repositories = new ArrayList<>();
 	}
+	
 	public int getId() {
 		return id;
 	}

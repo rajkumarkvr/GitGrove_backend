@@ -31,15 +31,20 @@ public class Repository {
 		pullrequets = new ArrayList<>();
 	}
 
-
+	public Repository(int id, String name, Visibility visibility, String description, LocalDateTime createdAt, int starsCount) {
+		this(id,name,visibility);
+		this.description = description;
+		this.createdAt = createdAt;
+		this.stars_count = starsCount;
+	}
+	
 	public Repository(String name, Visibility visibility, String description) {
 		super();
 		this.name = name;
 		this.visibility = visibility;
 		this.description = description;
-
-		pullrequets = new ArrayList<>();
 	}
+	
 	public int getId() {
 		return id;
 	}

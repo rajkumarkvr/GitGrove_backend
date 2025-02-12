@@ -9,8 +9,8 @@ public class DBconnection {
 	private static String userName;
 	private static String password;
 
-
 	static Connection con = null;
+	
 	private DBconnection(){
 
 	}

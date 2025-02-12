@@ -6,17 +6,28 @@
 		</description>
 		<display-name>CORSFilter</display-name>
 		<filter-name>CORSFilter</filter-name>
-		<filter-class>services.CORSFilter</filter-class>
+		<filter-class>filters.CORSFilter</filter-class>
+	</filter>
+	<filter>
+		<description>
+		</description>
+		<display-name>IsRepositoryexits</display-name>
+		<filter-name>IsRepositoryexits</filter-name>
+		<filter-class>filters.IsRepositoryexits</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>CORSFilter</filter-name>
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>IsRepositoryexits</filter-name>
+		<url-pattern>/isrepoexists/*</url-pattern>
+	</filter-mapping>
 	<listener>
 		<listener-class>listeners.DBconnectionInit</listener-class>
 	</listener>
 	<servlet>
-		<description>
+		<description>s
 		</description>
 		<display-name>CreateRepoServlet</display-name>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -43,6 +54,41 @@
 		<servlet-name>FileExtractor</servlet-name>
 		<servlet-class>controller.FileExtractor</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UpdatePassword</display-name>
+		<servlet-name>UpdatePassword</servlet-name>
+		<servlet-class>controller.UpdatePassword</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>SignUp</display-name>
+		<servlet-name>SignUp</servlet-name>
+		<servlet-class>controller.Authentication.SignUp</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>SignIn</display-name>
+		<servlet-name>SignIn</servlet-name>
+		<servlet-class>controller.Authentication.SignIn</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ClearSession</display-name>
+		<servlet-name>ClearSession</servlet-name>
+		<servlet-class>controller.Authentication.ClearSession</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ExtendSession</display-name>
+		<servlet-name>ExtendSession</servlet-name>
+		<servlet-class>controller.Authentication.ExtendSession</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
 		<url-pattern>/CreateRepoServlet/*</url-pattern>
@@ -59,6 +105,26 @@
 		<servlet-name>FileExtractor</servlet-name>
 		<url-pattern>/FileExtractor/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UpdatePassword</servlet-name>
+		<url-pattern>/UpdatePassword</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SignUp</servlet-name>
+		<url-pattern>/auth/register</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SignIn</servlet-name>
+		<url-pattern>/auth/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ClearSession</servlet-name>
+		<url-pattern>/ClearSession</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExtendSession</servlet-name>
+		<url-pattern>/ExtendSession</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
@@ -69,7 +135,7 @@
 	</welcome-file-list>
 	<context-param>
 		<param-name>USER_PASSWORD</param-name>
-		<param-value>Rajkumardev@371</param-value>
+		<param-value></param-value>
 	</context-param>
 	<context-param>
 		<param-name>DB_URL</param-name>
@@ -81,6 +147,6 @@
 	</context-param>
 	<context-param>
 		<param-name>DB_PASSWORD</param-name>
-		<param-value>raj@777</param-value>
+		<param-value>kabil@26</param-value>
 	</context-param>
 </web-app>
