@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jgit.api.Git;
 import org.json.JSONObject;
 
+import utils.JSONHandler;
 import utils.PermissionManager;
 public class CreateRepoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -21,19 +22,12 @@ public class CreateRepoServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	
-    	resp.setHeader("Access-Control-Allow-Origin", "*");
-    	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  
-    	StringBuilder sb=new StringBuilder();
-		BufferedReader read=req.getReader();
-		String line;
-		while((line=read.readLine())!=null) {
-			sb.append(line);
-		}
-		
-		JSONObject jsonData=new JSONObject(sb.toString());
+//    	
+//    	resp.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+//    	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//    	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//  
+    	JSONObject jsonData =	JSONHandler.parse(req.getReader());
     	
         String username = jsonData.getString("username"); 
         String repoName = jsonData.getString("repoName");
@@ -81,5 +75,6 @@ public class CreateRepoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setStatus(HttpServletResponse.SC_OK);
     }
+    
 
 }
