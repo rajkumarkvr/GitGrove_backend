@@ -3,13 +3,12 @@ package services;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import com.mysql.cj.jdbc.Driver;
 public class DBconnection {
 
 	private static String connectionString;
 	private static String userName;
 	private static String password;
-	
+
 
 	static Connection con = null;
 	private DBconnection(){
@@ -21,15 +20,15 @@ public class DBconnection {
 			userName = username;
 			password = pass;
 		}
-		
-		
-		
+
+
+
 	public static  Connection getConnection() throws SQLException {
 		 try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			System.out.println("Driver not found");	
-			
+			System.out.println("Driver not found");
+
 		}
 
 		if(con==null) {

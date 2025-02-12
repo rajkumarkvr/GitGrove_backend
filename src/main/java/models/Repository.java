@@ -8,7 +8,7 @@ import enums.Visibility;
 public class Repository {
 	private int id;
 	private String name;
-	
+
 	private Visibility visibility;
 	private int stars_count;
 	private LocalDateTime createdAt;
@@ -16,29 +16,29 @@ public class Repository {
 	private ArrayList<Branch> branches;
 	private ArrayList<PullRequest> pullrequets;
 
-	
+
 	public Repository(int id, String name, Visibility visibility) {
 		this.id = id;
 		this.name = name;
 		this.visibility = visibility;
-		branches = new ArrayList<Branch>();
-		pullrequets = new ArrayList<PullRequest>();
+		branches = new ArrayList<>();
+		pullrequets = new ArrayList<>();
 	}
 	public Repository(String name, Visibility visibility) {
 		this.name = name;
 		this.visibility = visibility;
-		branches = new ArrayList<Branch>();
-		pullrequets = new ArrayList<PullRequest>();
+		branches = new ArrayList<>();
+		pullrequets = new ArrayList<>();
 	}
-	
-	
+
+
 	public Repository(String name, Visibility visibility, String description) {
 		super();
 		this.name = name;
 		this.visibility = visibility;
 		this.description = description;
-		
-		pullrequets = new ArrayList<PullRequest>();
+
+		pullrequets = new ArrayList<>();
 	}
 	public int getId() {
 		return id;
@@ -88,6 +88,6 @@ public class Repository {
 	public void setPullrequets(ArrayList<PullRequest> pullrequets) {
 		this.pullrequets = pullrequets;
 	}
-	
-	
+
+
 }

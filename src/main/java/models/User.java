@@ -10,9 +10,9 @@ public class User {
 	private String password;
 	private String profile_url;
 	private LocalDateTime createdAt;
-	
+
 	private ArrayList<Repository> repositories;
-	
+
 	public User(int id, String username, String emailaddress, String password, String profile_url,
 			LocalDateTime createdAt) {
 
@@ -22,15 +22,15 @@ public class User {
 		this.password = password;
 		this.profile_url = profile_url;
 		this.createdAt = createdAt;
-		this.repositories = new ArrayList<Repository>();
+		this.repositories = new ArrayList<>();
 	}
 	public User(String username, String emailaddress, String password, String profile_url) {
-	
+
 		this.username = username;
 		this.emailaddress = emailaddress;
 		this.password = password;
 		this.profile_url = profile_url;
-		this.repositories = new ArrayList<Repository>();
+		this.repositories = new ArrayList<>();
 	}
 	public int getId() {
 		return id;
@@ -74,9 +74,9 @@ public class User {
 	public void setRepositories(ArrayList<Repository> repositories) {
 		this.repositories = repositories;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

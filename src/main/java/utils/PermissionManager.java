@@ -12,7 +12,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 
 public class PermissionManager {
-	
+
 	private static String password;
 	public static void setPassword(String pass) {
 		password =pass;
@@ -21,10 +21,10 @@ public class PermissionManager {
 	      if (!repoDir.exists()) {
 	          throw new IOException("Directory does not exist: " + repoDir.getAbsolutePath());
 	      }
-	   
+
 	      // Construct and execute the chown commandString password = "your-sudo-password"; // Replace with actual sudo password
 	      ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c",
-	              "echo " + password + " | sudo -S chown -R " + userGroup + " " + repoDir.getAbsolutePath());;
+	              "echo " + password + " | sudo -S chown -R " + userGroup + " " + repoDir.getAbsolutePath());
 	      processBuilder.inheritIO(); // To see the output in the console
 
 	      Process process = processBuilder.start();

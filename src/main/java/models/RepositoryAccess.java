@@ -26,5 +26,5 @@ public class RepositoryAccess {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
+
 }

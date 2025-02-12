@@ -1,25 +1,33 @@
 package controller;
 
 
-import org.eclipse.jgit.api.Git;
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+
+import org.eclipse.jgit.api.Git;
 
 import utils.PermissionManager;
 public class CreateRepoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 //    private static final String REPO_PATH = "/home/raj-zstk371/Documents/Rajkumar/FeedbackSystem/src/main/webapp/all-repos";
   private static final String REPO_PATH = "/opt/repo";
-  
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	
+    	resp.setHeader("Access-Control-Allow-Origin", "*");
+    	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  
         String username = req.getParameter("username");
         String repoName = req.getParameter("repoName");
 	System.out.println("hello");
+	System.out.println(username+" repo: "+repoName);
 	        if (username == null || username.trim().isEmpty() || repoName == null || repoName.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and repository name are required.");
             return;
@@ -34,7 +42,7 @@ public class CreateRepoServlet extends HttpServlet {
 
         // Define repo path
         File repoDir = new File(userFolder, repoName + ".git");
-        
+
 
        if (repoDir.exists()) {
             resp.sendError(HttpServletResponse.SC_CONFLICT, "Repository already exists.");
@@ -44,7 +52,7 @@ public class CreateRepoServlet extends HttpServlet {
         try {
             // Initialize a bare repository
             Git.init().setBare(true).setDirectory(repoDir).call();
-        
+
            PermissionManager.setRecursivePermissions(repoDir.toPath(), "rwxrwxrwx");
            PermissionManager.setOwner(userFolder, "git:git");
            PermissionManager.setOwner(repoDir, "git:git");
@@ -55,4 +63,12 @@ public class CreateRepoServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error creating repository: " + e.getMessage());
         }
     }
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
 }

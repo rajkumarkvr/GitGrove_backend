@@ -36,6 +36,6 @@ public class Commit {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	
-	
+
+
 }

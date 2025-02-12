@@ -24,7 +24,7 @@ import utils.PermissionManager;
 public class DBconnectionInit implements ServletContextListener, HttpSessionListener, ServletRequestListener {
 
     /**
-     * Default constructor. 
+     * Default constructor.
      */
     public DBconnectionInit() {
         // TODO Auto-generated constructor stub
@@ -33,35 +33,40 @@ public class DBconnectionInit implements ServletContextListener, HttpSessionList
 	/**
      * @see HttpSessionListener#sessionCreated(HttpSessionEvent)
      */
-    public void sessionCreated(HttpSessionEvent se)  { 
+    @Override
+	public void sessionCreated(HttpSessionEvent se)  {
          // TODO Auto-generated method stub
     }
 
 	/**
      * @see ServletRequestListener#requestDestroyed(ServletRequestEvent)
      */
-    public void requestDestroyed(ServletRequestEvent sre)  { 
+    @Override
+	public void requestDestroyed(ServletRequestEvent sre)  {
          // TODO Auto-generated method stub
     }
 
 	/**
      * @see ServletRequestListener#requestInitialized(ServletRequestEvent)
      */
-    public void requestInitialized(ServletRequestEvent sre)  { 
+    @Override
+	public void requestInitialized(ServletRequestEvent sre)  {
          // TODO Auto-generated method stub
     }
 
 	/**
      * @see HttpSessionListener#sessionDestroyed(HttpSessionEvent)
      */
-    public void sessionDestroyed(HttpSessionEvent se)  { 
+    @Override
+	public void sessionDestroyed(HttpSessionEvent se)  {
          // TODO Auto-generated method stub
     }
 
 	/**
      * @see ServletContextListener#contextDestroyed(ServletContextEvent)
      */
-    public void contextDestroyed(ServletContextEvent sce)  { 
+    @Override
+	public void contextDestroyed(ServletContextEvent sce)  {
     	 Enumeration<Driver> drivers = DriverManager.getDrivers();
          while (drivers.hasMoreElements()) {
              Driver driver = drivers.nextElement();
@@ -75,30 +80,31 @@ public class DBconnectionInit implements ServletContextListener, HttpSessionList
                  e.printStackTrace();
              }
          }
-     
+
          AbandonedConnectionCleanupThread.checkedShutdown();
     }
 
 	/**
      * @see ServletContextListener#contextInitialized(ServletContextEvent)
      */
-    public void contextInitialized(ServletContextEvent sce)  { 
+    @Override
+	public void contextInitialized(ServletContextEvent sce)  {
     	String pass = sce.getServletContext().getInitParameter("USER_PASSWORD");
-    	
-    PermissionManager.setPassword(pass);//Setting password 
+
+    PermissionManager.setPassword(pass);//Setting password
     	String conString = sce.getServletContext().getInitParameter("DB_URL");
     	String username = sce.getServletContext().getInitParameter("DB_USERNAME");
     	String password = sce.getServletContext().getInitParameter("DB_PASSWORD");
     	DBconnection.config(conString, username, password);
     	try {
 		Connection con=	DBconnection.getConnection();
-		
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 		System.out.println(e.getMessage());
 		}
-    	
-    	
+
+
     }
-	
+
 }

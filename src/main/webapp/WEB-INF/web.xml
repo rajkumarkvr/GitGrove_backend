@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>GitGrove</display-name>
+	<filter>
+		<description>
+		</description>
+		<display-name>CORSFilter</display-name>
+		<filter-name>CORSFilter</filter-name>
+		<filter-class>services.CORSFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CORSFilter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
 	<listener>
 		<listener-class>listeners.DBconnectionInit</listener-class>
 	</listener>
@@ -58,7 +69,7 @@
 	</welcome-file-list>
 	<context-param>
 		<param-name>USER_PASSWORD</param-name>
-		<param-value>simple</param-value>
+		<param-value>Rajkumardev@371</param-value>
 	</context-param>
 	<context-param>
 		<param-name>DB_URL</param-name>

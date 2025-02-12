@@ -17,7 +17,7 @@ public class PullRequest {
 	}
 	public PullRequest(int id, Branch sourceBranch, Branch targetBranch, PullRequestStatus status,
 			LocalDateTime createdAt) {
-	
+
 		this.id = id;
 		this.sourceBranch = sourceBranch;
 		this.targetBranch = targetBranch;
@@ -59,8 +59,8 @@ public class PullRequest {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	
-	
-	
-	
-}	
+
+
+
+
+}

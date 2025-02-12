@@ -1,17 +1,21 @@
 package services;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
-
 import java.io.File;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import java.io.File;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
+
+import models.Branch;
 
 public class RepositoryManager {
 	private static String BASE_URL = "/opt/repo/";
@@ -26,6 +30,8 @@ public class RepositoryManager {
 
 	public static void getAllBranches(String repoName) {
 		File file = null;
+
+		ArrayList<Branch> outBranches = new ArrayList<>();
 		try {
 			file = createFileObject(repoName);
 		} catch (Exception e) {
@@ -38,6 +44,18 @@ public class RepositoryManager {
 				System.out.println("Local Branches:");
 				for (Ref branch : branches) {
 					System.out.println(branch.getName());
+
+					 try (// Find the first commit of the branch
+					RevWalk revWalk = new RevWalk(git.getRepository())) {
+						RevCommit firstCommit = revWalk.parseCommit(branch.getObjectId());
+
+						// Get commit timestamp
+						int timestamp = firstCommit.getCommitTime(); // Epoch seconds
+						LocalDateTime dt = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
+						System.out.println("Created At: " + dt);
+
+						revWalk.dispose();
+					}
 				}
 
 				// Get remote branches
