@@ -36,58 +36,56 @@ public class SignIn extends HttpServlet {
 		
 		JSONObject userObj = JSONHandler.parse(request.getReader());
 		
-		String usernameOrEmail =  userObj.getString("username").trim().toLowerCase();
+		String usernameOrEmail =  userObj.getString("identifier").trim().toLowerCase();
 		String password = userObj.getString("password").trim();
 		String userAgent =request.getHeader("User-Agent");
-		
-		if(!UserDAO.getInstance().emailExists(usernameOrEmail) || !UserDAO.getInstance().userNameExists(usernameOrEmail)) {
+
+		System.out.println(usernameOrEmail+" pas"+password);
+		System.out.println(UserDAO.getInstance().emailExists(usernameOrEmail));
+		System.out.println(UserDAO.getInstance().userNameExists(usernameOrEmail));
+		if(!UserDAO.getInstance().userNameOrEmailExists(usernameOrEmail)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"Username or Email address doesn't exist\"}");
 			return;
 		}
 		
-		User user = null;
-		boolean isSignedIn = false;
-
-		if(usernameOrEmail != null || password != null) {
-			user =  UserDAO.getInstance().signIn(usernameOrEmail, password);
-			if(user != null) {
-				isSignedIn = true;
-			}
-		}
-
+		User user = UserDAO.getInstance().signIn(usernameOrEmail, password);
+			
 		JSONObject jsonObject = new JSONObject();
 
-		String username = usernameOrEmail;
 
-		if(username.endsWith(".com")) {
-			usernameOrEmail = user.getUsername();
-		}
+		if(user!=null) {
 
-		if(isSignedIn) {
 			response.setStatus(200);
 			jsonObject.put("username", user.getUsername());
 			jsonObject.put("email", user.getEmailaddress());
 			jsonObject.put("profile_url", user.getProfile_url());
 
 			String token = Jwts.builder()
-	                .setSubject(username)
+	                .setSubject(user.getUsername())
 	                .setIssuedAt(new Date())
 	                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
 	                .signWith(SECRET_KEY)
 	                .compact();
 
+			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
+			cookie.setPath("/");  // Make it accessible everywhere in your domain
+			cookie.setMaxAge((60 * 60 * 24) *2); // Set expiration (1 day)
+			cookie.setHttpOnly(false);  // Try setting to false for testing
+			cookie.setSecure(false);  // If you're testing on HTTP, must be false
+			response.addCookie(cookie);
 
-			Cookie cookie = new Cookie(COOKIE_KEY+username, token);
+			System.out.println(token);
+			
 
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
-
 			response.addCookie(cookie);
 			response.setHeader("Authorization", "Bearer " + token);
 			
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
 
+			System.out.println("login");
 			response.getWriter().write(wrappedJsonObject.toString());
 
 		}
