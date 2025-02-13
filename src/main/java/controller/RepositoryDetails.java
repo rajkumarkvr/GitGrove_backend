@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -63,8 +64,13 @@ public class RepositoryDetails extends HttpServlet {
 			jsonObject.put("id", repository.getId());
 			jsonObject.put("name", repository.getName());
 			jsonObject.put("description", repository.getDescription());
-			jsonObject.put("updated", RepositoryManager.getLastCommitedTime(username, repository.getName()));
+			LocalDateTime lastCommitDate = RepositoryManager.getLastCommitedTime(username, repository.getName());
+			if(lastCommitDate == null) {
+				lastCommitDate = repository.getCreatedAt();
+			}
+			jsonObject.put("updated", lastCommitDate);
 			jsonObject.put("stars", repository.getStars_count());
+			jsonObject.put("created_at", repository.getCreatedAt());
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");
 			jsonList.add(jsonObject);
 		}
