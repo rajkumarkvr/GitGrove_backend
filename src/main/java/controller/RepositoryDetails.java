@@ -68,7 +68,7 @@ public class RepositoryDetails extends HttpServlet {
 			if(lastCommitDate == null) {
 				lastCommitDate = repository.getCreatedAt();
 			}
-			jsonObject.put("updated", lastCommitDate);
+			jsonObject.put("updated", java.sql.Timestamp.valueOf(lastCommitDate));
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at", repository.getCreatedAt());
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");

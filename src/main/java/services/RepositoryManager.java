@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
-
-import com.mysql.cj.protocol.a.LocalDateTimeValueEncoder;
+import org.eclipse.jgit.treewalk.filter.TreeFilter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import models.Branch;
 
@@ -79,7 +79,6 @@ public class RepositoryManager {
 		try {
 			file = createFileObject( username,repoName);
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
 		if (file != null) {
@@ -100,32 +99,89 @@ public class RepositoryManager {
 
 	public static void getAllFiles(String repoName,String username) {
 
-		File file = null;
+		File file = createFileObject(username, repoName);
 		try {
-			file = createFileObject( username,repoName);
+			Repository repository = Git.open(file).getRepository();
+			Git git = new Git(repository);
+			
+			JSONObject repoJson = new JSONObject();
+
+            repoJson.put("name", repository.getDirectory().getParentFile().getName());
+            repoJson.put("sshUrl", "git@github.com:user/" + repoJson.getString("name") + ".git");
+
+            List<String> branches = new ArrayList<>();
+            for (String branch : git.branchList().call().stream().map(ref -> ref.getName()).toList()) {
+                branches.add(branch.replace("refs/heads/", ""));
+            }
+            repoJson.put("branches", new JSONArray(branches));
+
+            // Set default branch
+            repoJson.put("defaultBranch", repository.getBranch());
+
+            // Get commits
+            JSONArray commitsArray = new JSONArray();
+            for (RevCommit commit : git.log().setMaxCount(3).call()) {
+                JSONObject commitJson = new JSONObject();
+                commitJson.put("id", commit.getName());
+                commitJson.put("message", commit.getShortMessage());
+                commitJson.put("date", commit.getCommitterIdent().getWhen().toInstant().toString());
+                commitsArray.put(commitJson);
+            }
+            repoJson.put("commits", commitsArray);
+
+            // Get main files
+            repoJson.put("mainFiles", getMainFiles(git));
+
+            // Get all files with structure
+            repoJson.put("files", getFileStructure(git));
 		} catch (Exception e) {
-
+			System.out.println("Get all files "+e.getMessage());
 			e.printStackTrace();
-		}
-		if(file!=null) {
-		try (Git git = Git.open(file)) {
-			Repository repository = git.getRepository();
-			ObjectId head = repository.resolve("HEAD^{tree}"); // Get the latest commit tree
-
-			try (TreeWalk treeWalk = new TreeWalk(repository)) {
-				treeWalk.addTree(head);
-				treeWalk.setRecursive(true); // Set to false to get only top-level directories/files
-
-				System.out.println("Repository Files:");
-				while (treeWalk.next()) {
-					System.out.println(treeWalk.getPathString());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		}
 	}
+	
+	private static JSONArray getMainFiles(Git git) throws Exception {
+        JSONArray filesArray = new JSONArray();
+        Iterable<RevCommit> commits = git.log().setMaxCount(10).call(); // Fetch latest commits
+
+        for (RevCommit commit : commits) {
+            TreeWalk treeWalk = new TreeWalk(git.getRepository());
+            treeWalk.addTree(commit.getTree());
+            treeWalk.setRecursive(true);
+
+            while (treeWalk.next()) {
+                JSONObject fileJson = new JSONObject();
+                fileJson.put("name", treeWalk.getPathString());
+                fileJson.put("type", treeWalk.isSubtree() ? "folder" : "file");
+                fileJson.put("commitMessage", commit.getShortMessage());
+                fileJson.put("commitTime", commit.getCommitterIdent().getWhen().toString());
+                filesArray.put(fileJson);
+            }
+        }
+        return filesArray;
+    }
+	
+	 private static JSONArray getFileStructure(Git git) throws Exception {
+	        JSONArray filesArray = new JSONArray();
+	        Iterable<RevCommit> commits = git.log().setMaxCount(10).call();
+
+	        for (RevCommit commit : commits) {
+	            TreeWalk treeWalk = new TreeWalk(git.getRepository());
+	            treeWalk.addTree(commit.getTree());
+	            treeWalk.setRecursive(true);
+	            treeWalk.setFilter(TreeFilter.ALL);
+
+	            while (treeWalk.next()) {
+	                JSONObject fileJson = new JSONObject();
+	                fileJson.put("name", treeWalk.getPathString());
+	                fileJson.put("type", treeWalk.isSubtree() ? "folder" : "file");
+	                fileJson.put("content", "Sample content of " + treeWalk.getPathString()); // Mock content
+
+	                filesArray.put(fileJson);
+	            }
+	        }
+	        return filesArray;
+	    }
 	
 	public static LocalDateTime getLastCommitedTime(String username , String reponame) {
 		File repository = createFileObject(username, reponame);
