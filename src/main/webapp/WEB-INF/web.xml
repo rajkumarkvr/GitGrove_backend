@@ -89,15 +89,18 @@
 	<servlet>
 		<description>
 		</description>
-<<<<<<< HEAD
-		<display-name>RepositoryStructure</display-name>
-		<servlet-name>RepositoryStructure</servlet-name>
-		<servlet-class>controller.RepositoryStructure</servlet-class>
-=======
+
 		<display-name>RepositoryServlet</display-name>
 		<servlet-name>RepositoryServlet</servlet-name>
 		<servlet-class>controller.RepositoryServlet</servlet-class>
->>>>>>> 755e0e6faac7b9be62626f63a7f6dd33bfbefca2
+
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>AddStarToRepository</display-name>
+		<servlet-name>AddStarToRepository</servlet-name>
+		<servlet-class>controller.AddStarToRepository</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -139,14 +142,15 @@
 		<servlet-name>RepositoryDetails</servlet-name>
 		<url-pattern>/getAllRepositories</url-pattern>
 	</servlet-mapping>
+	
 	<servlet-mapping>
-<<<<<<< HEAD
-		<servlet-name>RepositoryStructure</servlet-name>
-		<url-pattern>/RepositoryStructure</url-pattern>
-=======
 		<servlet-name>RepositoryServlet</servlet-name>
 		<url-pattern>/repo-info</url-pattern>
->>>>>>> 755e0e6faac7b9be62626f63a7f6dd33bfbefca2
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>AddStarToRepository</servlet-name>
+		<url-pattern>/AddStarToRepository</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
@@ -170,6 +174,6 @@
 	</context-param>
 	<context-param>
 		<param-name>DB_PASSWORD</param-name>
-		<param-value>raj@777</param-value>
+		<param-value>kabil@26</param-value>
 	</context-param>
 </web-app>

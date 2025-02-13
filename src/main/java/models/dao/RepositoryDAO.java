@@ -122,7 +122,70 @@ public class RepositoryDAO {
 		}
 	}
 	
+	public void addStar(int userId, int repoId) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = null;
+			
+			if(needToMap(userId,repoId)) {
+				stmt = connection.prepareStatement("update repositories set stars_count = stars_count+1 where id = ?");
+				stmt.setInt(1, repoId);
+			}
+			else {
+				stmt = connection.prepareStatement("update repositories set stars_count = stars_count-1 where id = ?");
+				stmt.setInt(1, repoId);
+			}
+			
+			stmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("Add star : "+e.getMessage());
+		}
+	}
 	
+	public boolean needToMap(int userId, int repoId) {
+		
+		boolean needToMap = false;
+		
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = null;
+			if(isStarred(userId,repoId)) {
+				stmt = connection.prepareStatement("delete from repo_stared_details where userid = ? and repoid = ?");
+				stmt.setInt(1, userId);
+				stmt.setInt(2, repoId);
+			}
+			else {
+				stmt = connection.prepareStatement("insert into repo_stared_details values(?,?)");
+				stmt.setInt(1, userId);
+				stmt.setInt(2, repoId);
+				needToMap = true;
+			}
+			
+			stmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("Map star : "+e.getMessage());
+		}
+		
+		return needToMap;
+	}
 	
+	public boolean isStarred(int userId, int repoId) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from repo_stared_details where userid = ? and repoid =?");
+			stmt.setInt(1, userId);
+			stmt.setInt(2, repoId);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println("Is starred : "+e.getMessage());
+		}
+		
+		return false;
+	}
 
 }
