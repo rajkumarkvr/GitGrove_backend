@@ -28,70 +28,71 @@ public class SignUp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-
 	private static final String COOKIE_KEY = "gitgrove_";
 
-    public SignUp() {
-        super();
-    }
+	public SignUp() {
+		super();
+	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-	JSONObject userObj	=JSONHandler.parse(request.getReader());
+		JSONObject userObj = JSONHandler.parse(request.getReader());
 
-	String username = userObj.getString("username").trim();
-	String password = userObj.getString("password").trim();
-	String email = userObj.getString("email").trim();
-	String profile_url = "img";
-	String userAgent = request.getHeader("User-Agent");
+		String username = userObj.getString("username").trim().toLowerCase();
+		String password = userObj.getString("password").trim();
+		String email = userObj.getString("email").trim().toLowerCase();
+		String profile_url = "img";
+		String userAgent = request.getHeader("User-Agent");
 		User user = null;
 		boolean isSignedUp = false;
 
-		if(username != null || password != null || email != null || profile_url != null) {
-			user =  UserDAO.getInstance().signUp(username, email, password, profile_url);
-			if(user != null) {
+		if (username != null || password != null || email != null || profile_url != null) {
+			user = UserDAO.getInstance().signUp(username, email, password, profile_url);
+			if (user != null) {
 				isSignedUp = true;
 			}
 		}
+		
+		if(UserDAO.getInstance().userNameExists(username)) {
+			response.setStatus(400);
+			response.getWriter().write("{\"error\": \"Username already exists\"}");
+		}
+		
+		if(UserDAO.getInstance().emailExists(email)) {
+			response.setStatus(400);
+			response.getWriter().write("{\"error\": \"Email already exists\"}");
+		}
 
 
-
-		JSONObject jsonObject = new JSONObject();
-
-		if(isSignedUp) {
+		if (isSignedUp) {
+			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("username", user.getUsername());
 			jsonObject.put("email", user.getEmailaddress());
 			jsonObject.put("profile_url", user.getProfile_url());
 
+			String token = Jwts.builder().setSubject(username).setIssuedAt(new Date())
+					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)).signWith(SECRET_KEY)
+					.compact();
 
-			String token = Jwts.builder()
-	                .setSubject(username)
-	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-	                .signWith(SECRET_KEY)
-	                .compact();
-
-			Cookie cookie = new Cookie(COOKIE_KEY+username, token);
+			Cookie cookie = new Cookie(COOKIE_KEY + username, token);
 			System.out.println("Successfull");
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
 			response.setStatus(200);
 			response.addCookie(cookie);
 			response.setHeader("Authorization", "Bearer " + token);
-			
+
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
-
 			response.getWriter().write(wrappedJsonObject.toString());
-		
+
 		}
 
 		else {
-			System.out.println("Error");
 			response.setStatus(400);
+			response.getWriter().write("{\"error\": \"Invalid inputs\"}");
 		}
-
-	
 
 	}
 

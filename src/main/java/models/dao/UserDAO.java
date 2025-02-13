@@ -61,13 +61,62 @@ public class UserDAO {
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				if(BCrypt.checkpw(password, rs.getString(4))) {
-					user = new User(rs.getInt(1),rs.getString(2),rs.getString(3), rs.getString(4), rs.getString(5),rs.getTimestamp(6).toLocalDateTime());
+					int id = rs.getInt(1);
+					user = new User(id,rs.getString(2),rs.getString(3), rs.getString(4), rs.getString(5),rs.getTimestamp(6).toLocalDateTime());
+					user.setRepositories(RepositoryDAO.getInstance().getAllRepositoryOfUser(id));
 				}
 			}
 		} catch (Exception e) {
 			e.getMessage();
 		}
+		
 		return user;
+	}
+	
+	public boolean userNameExists(String username) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from users where username = ?");
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+	
+	public boolean emailExists(String email) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from users where email = ?");
+			stmt.setString(1, email);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+	
+	public int getUserId(String username) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select id from users where username = ?");
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return -1;
 	}
 
 	public User getUserByEmail(String email) {

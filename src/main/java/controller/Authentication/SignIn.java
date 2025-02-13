@@ -18,6 +18,7 @@ import io.jsonwebtoken.security.Keys;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.JSONHandler;
 
 public class SignIn extends HttpServlet {
 
@@ -32,10 +33,19 @@ public class SignIn extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String usernameOrEmail = request.getParameter("username").trim();
-		String password = request.getParameter("password").trim();
+		
+		JSONObject userObj = JSONHandler.parse(request.getReader());
+		
+		String usernameOrEmail =  userObj.getString("username").trim().toLowerCase();
+		String password = userObj.getString("password").trim();
 		String userAgent =request.getHeader("User-Agent");
-
+		
+		if(!UserDAO.getInstance().emailExists(usernameOrEmail) || !UserDAO.getInstance().userNameExists(usernameOrEmail)) {
+			response.setStatus(400);
+			response.getWriter().write("{\"error\" : \"Username or Email address doesn't exist\"}");
+			return;
+		}
+		
 		User user = null;
 		boolean isSignedIn = false;
 
@@ -74,17 +84,20 @@ public class SignIn extends HttpServlet {
 
 			response.addCookie(cookie);
 			response.setHeader("Authorization", "Bearer " + token);
+			
+			JSONObject wrappedJsonObject = new JSONObject();
+			wrappedJsonObject.put("user", jsonObject);
+
+			response.getWriter().write(wrappedJsonObject.toString());
 
 		}
 
 		else {
 			response.setStatus(400);
+			response.getWriter().write("{\"error\" : \"Invalid input\"}");
 		}
 
-		JSONObject wrappedJsonObject = new JSONObject();
-		wrappedJsonObject.put("user", jsonObject);
-
-		response.getWriter().write(wrappedJsonObject.toString());
+		
 	}
 
 }
