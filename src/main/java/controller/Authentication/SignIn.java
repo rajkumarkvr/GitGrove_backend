@@ -36,7 +36,7 @@ public class SignIn extends HttpServlet {
 		
 		JSONObject userObj = JSONHandler.parse(request.getReader());
 		
-		String usernameOrEmail =  userObj.getString("username").trim().toLowerCase();
+		String usernameOrEmail =  userObj.getString("identifier").trim().toLowerCase();
 		String password = userObj.getString("password").trim();
 		String userAgent =request.getHeader("User-Agent");
 		
@@ -83,7 +83,7 @@ public class SignIn extends HttpServlet {
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
 
 			response.addCookie(cookie);
-			response.setHeader("Authorization", "Bearer " + token);
+			response.setHeader("authorization", "Bearer " + token);
 			
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
