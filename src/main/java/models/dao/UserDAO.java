@@ -26,16 +26,16 @@ public class UserDAO {
 		return userDao;
 	}
 
-	public User signUp(String userName, String emailId, String password , String profile_url) {
+	public User signUp(String userName, String emailId, String password ) {
 		User user = null;
 		password = encrypt(password);
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into users(username,email,password_hash,profile_url) values(?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement stmt = connection.prepareStatement("insert into users(username,email,password_hash) values(?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, userName);
 			stmt.setString(2, emailId);
 			stmt.setString(3, password);
-			stmt.setString(4, profile_url);
+
 			int affected = stmt.executeUpdate();
 			ResultSet keys = stmt.getGeneratedKeys();
 			int id = -1;
@@ -43,7 +43,9 @@ public class UserDAO {
 				id = keys.getInt(1);
 			}
 			if(affected>0) {
-				user = new User(id,userName, emailId, password, profile_url,LocalDateTime.now());
+				
+				 user = getUserByEmail(emailId);
+				
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -58,8 +60,9 @@ public class UserDAO {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("select * from users where username = ? or email = ?");
 			stmt.setString(1, usernameOrEmail);
+			stmt.setString(2, usernameOrEmail);
 			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
+			if(rs.next()) {
 				if(BCrypt.checkpw(password, rs.getString(4))) {
 					int id = rs.getInt(1);
 					user = new User(id,rs.getString(2),rs.getString(3), rs.getString(4), rs.getString(5),rs.getTimestamp(6).toLocalDateTime());
@@ -67,7 +70,7 @@ public class UserDAO {
 				}
 			}
 		} catch (Exception e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}
 		
 		return user;
@@ -78,6 +81,22 @@ public class UserDAO {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("select * from users where username = ?");
 			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
+	
+	public boolean userNameOrEmailExists(String usernameoremail) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from users where username = ? or email=?");
+			stmt.setString(1, usernameoremail);
+			stmt.setString(2, usernameoremail);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
 				return true;

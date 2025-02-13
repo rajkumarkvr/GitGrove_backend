@@ -43,27 +43,32 @@ public class SignUp extends HttpServlet {
 		String username = userObj.getString("username").trim().toLowerCase();
 		String password = userObj.getString("password").trim();
 		String email = userObj.getString("email").trim().toLowerCase();
-		String profile_url = "img";
+
 		String userAgent = request.getHeader("User-Agent");
 		User user = null;
 		boolean isSignedUp = false;
-
-		if (username != null || password != null || email != null || profile_url != null) {
-			user = UserDAO.getInstance().signUp(username, email, password, profile_url);
-			if (user != null) {
-				isSignedUp = true;
-			}
-		}
 		
 		if(UserDAO.getInstance().userNameExists(username)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\": \"Username already exists\"}");
+			return;
 		}
 		
 		if(UserDAO.getInstance().emailExists(email)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\": \"Email already exists\"}");
+			return;
 		}
+
+		if (username != null || password != null || email != null) {
+			user = UserDAO.getInstance().signUp(username, email, password);
+			
+			if (user != null) {
+				isSignedUp = true;
+			}
+		}
+		
+		
 
 
 		if (isSignedUp) {
