@@ -36,20 +36,25 @@ public class RepositoryDetails extends HttpServlet {
 		
 		String username = request.getParameter("username");
 		User user = UserDAO.getInstance().getUserByUserName(username);
-		
+		System.out.println(username);
 		if(user == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"User doesn't exist\"}");
 			return;
 		}
 		
+		System.out.println(user.getId());
+		
 		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryOfUser(user.getId());
 		
+		System.out.println(repositoryList);
 		if(repositoryList == null || repositoryList.size()==0 ) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"No repository exists\"}");
 			return;
 		}
+		
+		System.out.println("Next");
 		
 		ArrayList<JSONObject> jsonList = new ArrayList<JSONObject>();
 		
