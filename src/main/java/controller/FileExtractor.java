@@ -18,7 +18,8 @@ public class FileExtractor extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String repoName = request.getParameter("repoName");
-		RepositoryManager.getAllFiles(repoName);
+		String nameString = "raj";
+		RepositoryManager.getAllFiles(repoName,nameString);
 
 		//
 	}

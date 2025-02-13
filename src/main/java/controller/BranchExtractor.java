@@ -16,7 +16,8 @@ public class BranchExtractor extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String repoName = request.getParameter("repoName");
-		RepositoryManager.getAllBranches(repoName);
+		String username ="raj";
+		RepositoryManager.getAllBranches(repoName,username);
 
 	}
 

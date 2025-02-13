@@ -79,6 +79,13 @@
 		<servlet-name>ExtendSession</servlet-name>
 		<servlet-class>controller.Authentication.ExtendSession</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>RepositoryDetails</display-name>
+		<servlet-name>RepositoryDetails</servlet-name>
+		<servlet-class>controller.RepositoryDetails</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
 		<url-pattern>/CreateRepoServlet/*</url-pattern>
@@ -114,6 +121,10 @@
 	<servlet-mapping>
 		<servlet-name>ExtendSession</servlet-name>
 		<url-pattern>/ExtendSession</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RepositoryDetails</servlet-name>
+		<url-pattern>/RepositoryDetails</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

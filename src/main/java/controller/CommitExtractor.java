@@ -18,7 +18,8 @@ public class CommitExtractor extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String repoName = request.getParameter("repoName");
-		RepositoryManager.getAllCommits(repoName);
+		String username ="raj";
+		RepositoryManager.getAllCommits(repoName,username);
 	}
 
 	/**

@@ -15,25 +15,27 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
+import com.mysql.cj.protocol.a.LocalDateTimeValueEncoder;
+
 import models.Branch;
 
 public class RepositoryManager {
 	private static String BASE_URL = "/opt/repo/";
 
-	private static File createFileObject(String repoName) {
-		File file = new File(BASE_URL + repoName);
+	private static File createFileObject(String username,String repoName) {
+		File file = new File(BASE_URL +username+"/"+ repoName+".git");
 		if (file.exists()) {
 			return file;
 		}
 		return null;
 	}
 
-	public static void getAllBranches(String repoName) {
+	public static void getAllBranches(String repoName,String username) {
 		File file = null;
 
 		ArrayList<Branch> outBranches = new ArrayList<>();
 		try {
-			file = createFileObject(repoName);
+			file = createFileObject( username,repoName);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -72,10 +74,10 @@ public class RepositoryManager {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void getAllCommits(String repoName) {
+	public static void getAllCommits(String repoName,String username) {
 		File file = null;
 		try {
-			file = createFileObject(repoName);
+			file = createFileObject( username,repoName);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -96,11 +98,11 @@ public class RepositoryManager {
 		}
 	}
 
-	public static void getAllFiles(String repoName) {
+	public static void getAllFiles(String repoName,String username) {
 
 		File file = null;
 		try {
-			file = createFileObject(repoName);
+			file = createFileObject( username,repoName);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -123,5 +125,19 @@ public class RepositoryManager {
 			e.printStackTrace();
 		}
 		}
+	}
+	
+	public static LocalDateTime getLastCommitedTime(String username , String reponame) {
+		File repository = createFileObject(username, reponame);
+		LocalDateTime lastCommitedTime = null;
+		
+		try (Git git = Git.open(repository)){
+			RevCommit lastCommit = git.log().setMaxCount(1).call().iterator().next();
+			lastCommitedTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(lastCommit.getCommitTime()), ZoneId.systemDefault());
+		} catch (Exception e) {
+			System.out.println("Get last commited time : "+e.getMessage());
+		}
+		
+		return lastCommitedTime;
 	}
 }
