@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +17,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.*;
-
+import org.eclipse.jgit.treewalk.TreeWalk;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -105,48 +107,160 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     // Get top-level files and folders
-    private JSONArray getMainFiles(File repoPath) {
+    private JSONArray getMainFiles(File file) {
         JSONArray mainFilesArray = new JSONArray();
-        File[] files = repoPath.listFiles();
 
-        if (files != null) {
-            for (File file : files) {
-                if (!file.getName().equals(".git")) { // Ignore .git directory
-                    JSONObject fileJson = new JSONObject();
-                    fileJson.put("name", file.getName());
-                    fileJson.put("type", file.isDirectory() ? "folder" : "file");
-                    fileJson.put("commitMessage", "Recent change"); // Placeholder, fetch commit if needed
-                    fileJson.put("commitTime", "2025-02-13 10:30 AM"); // Placeholder, format needed
-                    mainFilesArray.put(fileJson);
+        if (file != null) {
+            try (Git git = Git.open(file)) {
+                Repository repository = git.getRepository();
+                ObjectId head = repository.resolve("HEAD^{tree}"); // Get the latest commit tree
+
+                if (head == null) {
+                    // No commits in the repository
+                    return mainFilesArray;
                 }
+
+                try (RevWalk revWalk = new RevWalk(repository);
+                     TreeWalk treeWalk = new TreeWalk(repository)) {
+                    
+                    RevCommit commit = revWalk.parseCommit(repository.resolve("HEAD")); // Get latest commit
+                    treeWalk.addTree(commit.getTree()); 
+                    treeWalk.setRecursive(false); // Only top-level files/folders
+                    
+                    while (treeWalk.next()) {
+                        JSONObject fileJson = new JSONObject();
+                        String fileName = treeWalk.getNameString();
+                        boolean isFolder = treeWalk.isSubtree();
+                        
+                        fileJson.put("name", fileName);
+                        fileJson.put("type", isFolder ? "folder" : "file");
+
+                        // Get last commit message and time for the file
+                        String commitMessage = commit.getShortMessage();
+                        String commitTime = commit.getAuthorIdent().getWhen().toInstant().toString();
+
+                        fileJson.put("commitMessage", commitMessage);
+                        fileJson.put("commitTime", commitTime);
+
+                        mainFilesArray.put(fileJson);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return mainFilesArray;
     }
 
-    // Recursive function to get full file structure
-    private JSONArray getFileStructure(File dir) throws IOException {
-        JSONArray fileArray = new JSONArray();
-        File[] files = dir.listFiles();
 
-        if (files != null) {
-            for (File file : files) {
-                if (!file.getName().equals(".git")) { // Ignore .git directory
-                    JSONObject fileJson = new JSONObject();
-                    fileJson.put("name", file.getName());
-                    fileJson.put("type", file.isDirectory() ? "folder" : "file");
-
-                    if (file.isDirectory()) {
-                        fileJson.put("children", getFileStructure(file));
-                    } else {
-                        String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-                        fileJson.put("content", content);
-                    }
-
-                    fileArray.put(fileJson);
+    private JSONArray getFileStructure(File repoPath) {
+        JSONArray rootArray = new JSONArray();
+        
+        if (repoPath != null) {
+            try (Git git = Git.open(repoPath)) {
+                Repository repository = git.getRepository();
+                ObjectId head = repository.resolve("HEAD^{tree}"); // Get the latest commit tree
+                
+                if (head == null) {
+                    return rootArray; // Return empty array if no commits
                 }
+
+                try (RevWalk revWalk = new RevWalk(repository);
+                     TreeWalk treeWalk = new TreeWalk(repository)) {
+
+                    RevCommit commit = revWalk.parseCommit(repository.resolve("HEAD")); // Get latest commit
+                    treeWalk.addTree(commit.getTree());
+                    treeWalk.setRecursive(false); // Process parent-child hierarchy manually
+
+                    // Use a map to store folder structures
+                    Map<String, JSONObject> fileMap = new HashMap<>();
+
+                    while (treeWalk.next()) {
+                        String path = treeWalk.getPathString();
+
+                        // Ignore Git internals
+                        if (path.startsWith(".git") || path.startsWith("hooks") || path.startsWith("branches") || path.startsWith("refs")) {
+                            continue;
+                        }
+
+                        JSONObject fileJson = new JSONObject();
+                        fileJson.put("name", treeWalk.getNameString());
+
+                        boolean isFolder = treeWalk.isSubtree(); // True if it's a folder
+
+                        if (isFolder) {
+                            fileJson.put("type", "folder");
+                            fileJson.put("children", new JSONArray()); // Initialize empty children
+                            treeWalk.enterSubtree(); // Dive into folder
+                        } else {
+                            fileJson.put("type", "file");
+                            fileJson.put("content", readFileContent(new File(repoPath, path))); // Read file content
+                        }
+
+                        // Handle hierarchy
+                        String parentPath = getParentPath(path);
+                        if (parentPath.isEmpty()) {
+                            rootArray.put(fileJson);
+                        } else {
+                            // Ensure parent exists
+                            JSONObject parentJson = fileMap.computeIfAbsent(parentPath, k -> new JSONObject());
+                            JSONArray childrenArray = parentJson.optJSONArray("children");
+
+                            // Initialize children array if not present
+                            if (childrenArray == null) {
+                                childrenArray = new JSONArray();
+                                parentJson.put("children", childrenArray);
+                            }
+
+                            childrenArray.put(fileJson);
+                        }
+
+                        // Store in map
+                        fileMap.put(path, fileJson);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        return fileArray;
+        return rootArray;
     }
+
+//    // Utility method to read file content
+//    private String readFileContent(File file) {
+//        try {
+//            return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+//        } catch (IOException e) {
+//            return "Error reading file";
+//        }
+//    }
+
+    private String readFileContent(File file) {
+    	  if (!file.exists()) {
+              return "File not found: " + file.getAbsolutePath();
+          }
+          if (!file.canRead()) {
+              return "Cannot read file: " + file.getAbsolutePath();
+          }
+         
+        StringBuilder content = new StringBuilder();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error reading large file: " + e.getMessage();
+        }
+        return content.toString();
+    }
+
+    // Utility method to get the parent path
+    private String getParentPath(String path) {
+        int lastSlash = path.lastIndexOf('/');
+        return lastSlash == -1 ? "" : path.substring(0, lastSlash);
+    }
+
 }
