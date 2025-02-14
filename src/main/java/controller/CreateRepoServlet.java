@@ -32,7 +32,7 @@ public class CreateRepoServlet extends HttpServlet {
 		JSONObject jsonData = JSONHandler.parse(req.getReader());
 
 		String username = jsonData.getString("username").toLowerCase();
-		String repoName = jsonData.getString("repoName");
+		String repoName = jsonData.getString("repoName").toLowerCase();
 		String repoDescription = jsonData.getString("description");
 		Visibility visibility = Visibility.valueOf(jsonData.getString("visibility").toUpperCase());
 		int userId = UserDAO.getInstance().getUserId(username);

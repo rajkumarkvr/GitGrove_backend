@@ -81,6 +81,7 @@ public class RepositoryDAO {
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
+		
 				repositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
 			}
 		} catch (Exception e) {

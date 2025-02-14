@@ -34,6 +34,13 @@ public class User {
 		this.repositories = new ArrayList<>();
 	}
 
+	public User(String username, String emailaddress, String profile_url) {
+		super();
+		this.username = username;
+		this.emailaddress = emailaddress;
+		this.profile_url = profile_url;
+	}
+
 	public int getId() {
 		return id;
 	}
