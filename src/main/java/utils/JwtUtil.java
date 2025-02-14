@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import models.User;
 import models.dao.UserDAO;
 import io.jsonwebtoken.io.Decoders;
 import javax.crypto.SecretKey;
@@ -32,15 +33,21 @@ public class JwtUtil {
 				.signWith(SECRET_KEY) // No need to specify algorithm explicitly
 				.compact();
 	}
-//
-//	public Claims validateToken(String token) {
-//		try {
-//			return Jwts.parser().verifyWith(SECRET_KEY) // New method in 0.12.6
-//					.build().parseSignedClaims(token).getPayload();
-//		} catch (JwtException e) {
-//			throw new RuntimeException("Invalid or expired JWT token", e);
-//		}
-//	}
+
+	public String getEmailId(String token) {
+		try {
+			
+			Claims claim = Jwts.parser().verifyWith(SECRET_KEY) // New method in 0.12.6
+					.build().parseSignedClaims(token).getPayload();
+			
+			String username = claim.getSubject();
+			User user = UserDAO.getInstance().getUserByUserName(username);
+			return user.getEmailaddress();
+			
+		} catch (JwtException e) {
+			throw new RuntimeException("Invalid or expired JWT token", e);
+		}
+	}
 	
 	public String validateAndExtendToken(String token) {
         try {

@@ -8,14 +8,17 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.dao.SessionDAO;
 import utils.JwtUtil;
 
 public class JwtFilter extends HttpFilter implements Filter {
     private static final long serialVersionUID = 1L;
+    private static final String COOKIE_KEY = "gitgrove_";
     
 
 	public JwtFilter() {
@@ -42,12 +45,17 @@ public class JwtFilter extends HttpFilter implements Filter {
 		jwtToken = jwtToken.substring(7);
 		
 		try {
-			JwtUtil.getInstance().validateAndExtendToken(jwtToken);
-			((HttpServletResponse) response).setHeader("authorization", "Bearer " + jwtToken);
-			 
+			String token =  JwtUtil.getInstance().validateAndExtendToken(jwtToken);
+			((HttpServletResponse) response).setHeader("authorization", "Bearer " + token);
+			
+			String email = JwtUtil.getInstance().getEmailId(token);
+			Cookie cookie = new Cookie(COOKIE_KEY + email, token);
+			httpResponse.addCookie(cookie);
+			
 		}catch (Exception e) {
 			httpResponse.setStatus(400);			
 			httpResponse.getWriter().write("{\"error\": \"Token expired\"}");
+			return;
 		}
 		
 		chain.doFilter(request,response);
