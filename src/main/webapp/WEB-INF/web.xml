@@ -24,7 +24,7 @@
 	
 	<filter-mapping>
 		<filter-name>JwtFilter</filter-name>
-		<url-pattern>service/*</url-pattern>
+		<url-pattern>/service/*</url-pattern>
 	</filter-mapping>
 	
 	<listener>
@@ -135,27 +135,27 @@
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
-		<url-pattern>service/CreateRepoServlet/*</url-pattern>
+		<url-pattern>/service/CreateRepoServlet/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>BranchExtractor</servlet-name>
-		<url-pattern>service/BranchExtractor/*</url-pattern>
+		<url-pattern>/service/BranchExtractor/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>CommitExtractor</servlet-name>
-		<url-pattern>service/CommitExtractor/*</url-pattern>
+		<url-pattern>/service/CommitExtractor/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>FileExtractor</servlet-name>
-		<url-pattern>service/FileExtractor/*</url-pattern>
+		<url-pattern>/service/FileExtractor/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>UpdatePassword</servlet-name>
-		<url-pattern>service/UpdatePassword</url-pattern>
+		<url-pattern>/service/UpdatePassword</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
@@ -178,27 +178,27 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>RepositoryDetails</servlet-name>
-		<url-pattern>service/getAllRepositories</url-pattern>
+		<url-pattern>/service/getAllRepositories</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>RepositoryServlet</servlet-name>
-		<url-pattern>service/repo-info</url-pattern>
+		<url-pattern>/service/repo-info</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>AddStarToRepository</servlet-name>
-		<url-pattern>service/AddStarToRepository</url-pattern>
+		<url-pattern>/service/AddStarToRepository</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>GetStarredRepositories</servlet-name>
-		<url-pattern>service/getstarredrepositories</url-pattern>
+		<url-pattern>/service/getstarredrepositories</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>UpdateUserProfile</servlet-name>
-		<url-pattern>service/users/update/profile</url-pattern>
+		<url-pattern>/service/users/update/profile</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
