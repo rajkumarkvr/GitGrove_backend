@@ -210,4 +210,52 @@ public class UserDAO {
     	return BCrypt.hashpw(text, salt);
     }
 
+	public User updateUserProfile(String oldusername,User user,User olduser) {
+		try {
+		
+
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt =null;
+			if(olduser.getUsername().equals(user.getUsername())&&!olduser.getEmailaddress().equals(user.getEmailaddress())){
+				stmt= connection.prepareStatement("update users set email=?,profile_url=? where username=? ");
+				stmt.setString(1, user.getEmailaddress());
+				stmt.setString(2, user.getProfile_url());
+				stmt.setString(3, oldusername);
+				int affected = stmt.executeUpdate();
+	
+					User newuser = getUserByEmail(user.getEmailaddress());
+				 return newuser;
+				
+			}else if(!olduser.getUsername().equals(user.getUsername())&&olduser.getEmailaddress().equals(user.getEmailaddress())){
+			stmt= connection.prepareStatement("update users set username=?,profile_url=? where username=? ");
+			stmt.setString(1, user.getUsername());
+			stmt.setString(2, user.getProfile_url());
+			stmt.setString(3, oldusername);
+			int affected = stmt.executeUpdate();
+	
+			User newuser = getUserByUserName(user.getUsername());
+				 return newuser;
+				 
+				 
+			}else {
+				stmt= connection.prepareStatement("update users set username=?,email=?,profile_url=? where username=? ");
+				stmt.setString(1, user.getUsername());
+				stmt.setString(2, user.getEmailaddress());
+				stmt.setString(3, user.getProfile_url());
+				stmt.setString(4, oldusername);
+				int affected2 = stmt.executeUpdate();
+				
+					User newuser = getUserByUserName(user.getUsername());
+					 return newuser;
+			
+			
+				
+			
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return null;
+	}
 }

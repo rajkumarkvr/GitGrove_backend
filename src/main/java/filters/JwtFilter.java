@@ -57,5 +57,4 @@ public class JwtFilter extends HttpFilter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
 	
 	}
-
 }
