@@ -29,12 +29,12 @@ public class JwtUtil {
 
 	public String generateToken(String username) {
 		return Jwts.builder().subject(username) // New method in 0.12.6
-				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 3600 * 24)) // 1-hour expiry
+				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + (24*60*60*1000))) // 1-day expiry
 				.signWith(SECRET_KEY) // No need to specify algorithm explicitly
 				.compact();
 	}
 
-	public String getEmailId(String token) {
+	public String getusername(String token) {
 		try {
 			
 			Claims claim = Jwts.parser().verifyWith(SECRET_KEY) // New method in 0.12.6
@@ -42,7 +42,7 @@ public class JwtUtil {
 			
 			String username = claim.getSubject();
 			User user = UserDAO.getInstance().getUserByUserName(username);
-			return user.getEmailaddress();
+			return user.getUsername();
 			
 		} catch (JwtException e) {
 			throw new RuntimeException("Invalid or expired JWT token", e);
