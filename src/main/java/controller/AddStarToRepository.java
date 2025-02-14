@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.User;
 import models.dao.RepositoryDAO;
+import models.dao.UserDAO;
 
 
 public class AddStarToRepository extends HttpServlet {
@@ -18,9 +20,10 @@ public class AddStarToRepository extends HttpServlet {
     }
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int userId = Integer.parseInt(request.getParameter("userid"));
+		String username = request.getParameter("username");
+		User user = UserDAO.getInstance().getUserByUserName(username);
 		int repoId = Integer.parseInt(request.getParameter("repoid"));
-		RepositoryDAO.getInstance().addStar(userId, repoId);
+		RepositoryDAO.getInstance().addStar(user.getId(), repoId);
 		
 	}
 

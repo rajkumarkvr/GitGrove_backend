@@ -28,7 +28,7 @@ public class JwtUtil {
 
 	public String generateToken(String username) {
 		return Jwts.builder().subject(username) // New method in 0.12.6
-				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 3600 * 10000)) // 1-hour expiry
+				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 3600 * 24)) // 1-hour expiry
 				.signWith(SECRET_KEY) // No need to specify algorithm explicitly
 				.compact();
 	}
@@ -57,7 +57,7 @@ public class JwtUtil {
                 long remainingTime = expiration.getTime() - System.currentTimeMillis();
 
                 // If the token is close to expiring (e.g., < 10 minutes left), extend it
-                if (remainingTime < (10 * 60 * 1000)*24) { 
+                if (remainingTime < (10 * 60 * 1000)*12) { 
                     return generateToken(claims.getSubject()); // Generate a new token
                 }
             }
