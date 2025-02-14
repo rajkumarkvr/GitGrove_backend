@@ -238,7 +238,7 @@ public class RepositoryDAO {
 		boolean isLiked = false;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select * from repo_stared_details where userid = ? and userid = ?");
+			PreparedStatement stmt = connection.prepareStatement("select * from repo_stared_details where repoid = ? and userid = ?");
 			stmt.setInt(1, userId);
 			stmt.setInt(2, repoId);
 			ResultSet rs = stmt.executeQuery();
