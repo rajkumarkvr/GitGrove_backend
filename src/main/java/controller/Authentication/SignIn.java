@@ -1,8 +1,6 @@
 package controller.Authentication;
 
 import java.io.IOException;
-import java.security.Key;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -12,18 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
 import utils.JSONHandler;
+import utils.JwtUtil;
 
 public class SignIn extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	private static final String COOKIE_KEY = "gitgrove_";
 
     public SignIn() {
@@ -60,17 +55,11 @@ public class SignIn extends HttpServlet {
 			jsonObject.put("username", user.getUsername());
 			jsonObject.put("email", user.getEmailaddress());
 			jsonObject.put("profile_url", user.getProfile_url());
+			
+			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 
-			String token = Jwts.builder()
-	                .setSubject(user.getUsername())
-	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-	                .signWith(SECRET_KEY)
-	                .compact();
-
-			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
+			Cookie cookie = new Cookie(COOKIE_KEY + user.getEmailaddress(), token);
 			cookie.setPath("/");  // Make it accessible everywhere in your domain
-			cookie.setMaxAge((60 * 60 * 24) *2); // Set expiration (1 day)
 			cookie.setHttpOnly(false);  // Try setting to false for testing
 			cookie.setSecure(false);  // If you're testing on HTTP, must be false
 			response.addCookie(cookie);

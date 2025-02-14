@@ -1,14 +1,10 @@
 package controller;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +13,9 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.*;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -194,7 +192,7 @@ public class RepositoryServlet extends HttpServlet {
                             treeWalk.enterSubtree(); // Dive into folder
                         } else {
                             fileJson.put("type", "file");
-                            fileJson.put("content", readFileContent(new File(repoPath, path))); // Read file content
+                            fileJson.put("content", readFileContent(repoPath, path)); // Read file content
                         }
 
                         // Handle hierarchy
@@ -235,26 +233,41 @@ public class RepositoryServlet extends HttpServlet {
 //        }
 //    }
 
-    private String readFileContent(File file) {
-    	  if (!file.exists()) {
-              return "File not found: " + file.getAbsolutePath();
-          }
-          if (!file.canRead()) {
-              return "Cannot read file: " + file.getAbsolutePath();
-          }
-         
-        StringBuilder content = new StringBuilder();
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
+    private String readFileContent(File repoPath, String filePath) {
+        try (Repository repository = new FileRepositoryBuilder()
+                .setGitDir(repoPath) // This is a bare repo
+                .build()) {
+
+            ObjectId lastCommitId = repository.resolve(Constants.HEAD);
+            if (lastCommitId == null) {
+                return "No commits found in the repository.";
             }
-        } catch (IOException e) {
+
+            try (RevWalk revWalk = new RevWalk(repository)) {
+                RevCommit commit = revWalk.parseCommit(lastCommitId);
+                RevTree tree = commit.getTree();
+
+                try (TreeWalk treeWalk = new TreeWalk(repository)) {
+                    treeWalk.addTree(tree);
+                    treeWalk.setRecursive(true);
+                    treeWalk.setFilter(PathFilter.create(filePath));
+
+                    if (!treeWalk.next()) {
+                        return "File not found in repository: " + filePath;
+                    }
+
+                    ObjectId objectId = treeWalk.getObjectId(0);
+                    ObjectLoader loader = repository.open(objectId);
+
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    loader.copyTo(outputStream);
+                    return outputStream.toString(); // Convert content to String and return
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            return "Error reading large file: " + e.getMessage();
+            return "Error reading file: " + e.getMessage();
         }
-        return content.toString();
     }
 
     // Utility method to get the parent path

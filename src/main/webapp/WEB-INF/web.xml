@@ -102,6 +102,13 @@
 		<servlet-name>AddStarToRepository</servlet-name>
 		<servlet-class>controller.AddStarToRepository</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetStarredRepositories</display-name>
+		<servlet-name>GetStarredRepositories</servlet-name>
+		<servlet-class>controller.GetStarredRepositories</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
 		<url-pattern>/CreateRepoServlet/*</url-pattern>
@@ -151,6 +158,10 @@
 	<servlet-mapping>
 		<servlet-name>AddStarToRepository</servlet-name>
 		<url-pattern>/AddStarToRepository</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetStarredRepositories</servlet-name>
+		<url-pattern>/getstarredrepositories</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

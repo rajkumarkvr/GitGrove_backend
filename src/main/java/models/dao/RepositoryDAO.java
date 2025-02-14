@@ -187,5 +187,39 @@ public class RepositoryDAO {
 		
 		return false;
 	}
+	
+	public ArrayList<Repository> getStarredRepositoriesByUser(int userid){
+		ArrayList<Repository> repositoryList = new ArrayList<Repository>();
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select r.id,r.name,r.description,r.visibility,r.createdAt,r.stars_count from repositories r join repo_stared_details rs on r.id=rs.repoid join users u on u.id = rs.userid where rs.userid=?");
+			stmt.setInt(1, userid);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				repositoryList.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
+			}
+		} catch (Exception e) {
+			System.out.println("Get starred repositories : "+e.getMessage());
+		}
+		
+		return repositoryList;
+	}
+	
+	public String getOwnerName(int repoId) {
+		String ownerName = null;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select username from users u join repositories r on u.id = r.owner_id where r.id = ?");
+			stmt.setInt(1, repoId);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				ownerName = rs.getString(1);
+			}
+		} catch (Exception e) {	
+			System.out.println("Get owner name : "+e.getMessage());
+		}
+		
+		return ownerName;
+	}
 
 }

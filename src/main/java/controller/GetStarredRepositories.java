@@ -12,72 +12,55 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import models.Repository;
-import models.User;
 import models.dao.RepositoryDAO;
 import models.dao.UserDAO;
 import services.RepositoryManager;
 
-/**
- * Servlet implementation class RepositoryDetails
- */
 
-public class RepositoryDetails extends HttpServlet {
+public class GetStarredRepositories extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
        
-    public RepositoryDetails() {
+
+    public GetStarredRepositories() {
         super();
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+    
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String username = request.getParameter("username");
-		User user = UserDAO.getInstance().getUserByUserName(username);
-		System.out.println(username);
-		if(user == null) {
-			response.setStatus(400);
-			response.getWriter().write("{\"error\" : \"User doesn't exist\"}");
-			return;
-		}
+		String userName = request.getParameter("username");
+		int userId = UserDAO.getInstance().getUserId(userName);
 		
-		System.out.println(user.getId());
+		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getStarredRepositoriesByUser(userId);
 		
-		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryOfUser(user.getId());
-		
-		System.out.println(repositoryList);
-		if(repositoryList == null || repositoryList.size()==0 ) {
-			response.setStatus(400);
+		if(repositoryList == null || repositoryList.size() == 0) {
 			response.getWriter().write("{\"error\" : \"No repository exists\"}");
 			return;
 		}
 		
-		System.out.println("Next");
-		
 		ArrayList<JSONObject> jsonList = new ArrayList<JSONObject>();
 		
 		for(Repository repository : repositoryList) {
+			String repoOwnerName = RepositoryDAO.getInstance().getOwnerName(repository.getId());
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("id", repository.getId());
 			jsonObject.put("name", repository.getName());
 			jsonObject.put("description", repository.getDescription());
-			LocalDateTime lastCommitDate = RepositoryManager.getLastCommitedTime(username, repository.getName());
+			LocalDateTime lastCommitDate = RepositoryManager.getLastCommitedTime(repoOwnerName, repository.getName());
 			
 	
 			if(lastCommitDate == null) {
 				lastCommitDate = repository.getCreatedAt();
 			}
-//			lastCommitDate=lastCommitDate.plusHours(5).plusMinutes(30);
 			
 		
 			jsonObject.put("updated",lastCommitDate.toString());
 
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at",repository.getCreatedAt().toString() );
-			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");
+			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+repoOwnerName+"/"+repository.getName()+".git");
 			jsonList.add(jsonObject);
 		}
 		
@@ -89,9 +72,6 @@ public class RepositoryDetails extends HttpServlet {
 		
 		response.setStatus(200);
 		response.getWriter().write(jsonResponse.toString());
-		
-
-		
 		
 	}
 

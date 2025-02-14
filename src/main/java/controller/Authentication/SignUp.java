@@ -1,9 +1,6 @@
 package controller.Authentication;
 
 import java.io.IOException;
-import java.security.Key;
-import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -12,21 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
 import utils.JSONHandler;
+import utils.JwtUtil;
 
-/**
- * Servlet implementation class SignUp
- */
+
 //@WebServlet("/SignUp")
 public class SignUp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
 	private static final String COOKIE_KEY = "gitgrove_";
 
@@ -68,8 +60,6 @@ public class SignUp extends HttpServlet {
 			}
 		}
 		
-		
-
 
 		if (isSignedUp) {
 			JSONObject jsonObject = new JSONObject();
@@ -77,12 +67,10 @@ public class SignUp extends HttpServlet {
 			jsonObject.put("email", user.getEmailaddress());
 			jsonObject.put("profile_url", user.getProfile_url());
 
-			String token = Jwts.builder().setSubject(username).setIssuedAt(new Date())
-					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)).signWith(SECRET_KEY)
-					.compact();
-
-			Cookie cookie = new Cookie(COOKIE_KEY + username, token);
-			System.out.println("Successfull");
+			String token = JwtUtil.getInstance().generateToken(user.getUsername());
+			
+			Cookie cookie = new Cookie(COOKIE_KEY + user.getEmailaddress(), token);
+			
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
 			response.setStatus(200);
 			response.addCookie(cookie);
