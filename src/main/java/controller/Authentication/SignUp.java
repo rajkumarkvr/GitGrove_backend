@@ -69,12 +69,12 @@ public class SignUp extends HttpServlet {
 
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 			
-			Cookie cookie = new Cookie(COOKIE_KEY + user.getEmailaddress(), token);
+			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
 			
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
 			response.setStatus(200);
 			response.addCookie(cookie);
-			response.setHeader("Authorization", "Bearer " + token);
+//			response.setHeader("Authorization", "Bearer " + token);
 
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);

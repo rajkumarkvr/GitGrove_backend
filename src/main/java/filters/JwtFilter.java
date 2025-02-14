@@ -35,7 +35,7 @@ public class JwtFilter extends HttpFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		
 		String jwtToken = httpRequest.getHeader("Authorization");
-		
+		System.out.println(jwtToken);
 		if(jwtToken == null || !jwtToken.startsWith("Bearer")) {
 			 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	         httpResponse.getWriter().write("{\"error\": \"Missing or invalid token\"}");
@@ -44,15 +44,18 @@ public class JwtFilter extends HttpFilter implements Filter {
 		
 		jwtToken = jwtToken.substring(7);
 		
+		System.out.println("jwt"+jwtToken);
+		
 		try {
 			String token =  JwtUtil.getInstance().validateAndExtendToken(jwtToken);
-			((HttpServletResponse) response).setHeader("authorization", "Bearer " + token);
+//			((HttpServletResponse) response).setHeader("authorization", "Bearer " + token);
 			
-			String email = JwtUtil.getInstance().getEmailId(token);
-			Cookie cookie = new Cookie(COOKIE_KEY + email, token);
-			httpResponse.addCookie(cookie);
+//			String username = JwtUtil.getInstance().getusername(token);
+//			Cookie cookie = new Cookie(COOKIE_KEY + username, token);
+//			httpResponse.addCookie(cookie);
 			
 		}catch (Exception e) {
+		
 			httpResponse.setStatus(400);			
 			httpResponse.getWriter().write("{\"error\": \"Token expired\"}");
 			return;

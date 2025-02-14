@@ -58,7 +58,7 @@ public class SignIn extends HttpServlet {
 			
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 
-			Cookie cookie = new Cookie(COOKIE_KEY + user.getEmailaddress(), token);
+			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
 			cookie.setPath("/");  // Make it accessible everywhere in your domain
 			cookie.setHttpOnly(false);  // Try setting to false for testing
 			cookie.setSecure(false);  // If you're testing on HTTP, must be false
@@ -69,7 +69,7 @@ public class SignIn extends HttpServlet {
 
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
 			response.addCookie(cookie);
-			response.setHeader("authorization", "Bearer " + token);
+//			response.setHeader("authorization", "Bearer " + token);
 			
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
