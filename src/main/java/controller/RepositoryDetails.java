@@ -36,26 +36,28 @@ public class RepositoryDetails extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String username = request.getParameter("username");
+		
+		if(username == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"error\"}");
+		}
+		
 		User user = UserDAO.getInstance().getUserByUserName(username);
 		System.out.println(username);
+		
 		if(user == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"User doesn't exist\"}");
 			return;
 		}
 		
-		System.out.println(user.getId());
-		
 		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryOfUser(user.getId());
-		
-		System.out.println(repositoryList);
+
 		if(repositoryList == null || repositoryList.size()==0 ) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"No repository exists\"}");
 			return;
 		}
-		
-		System.out.println("Next");
 		
 		ArrayList<JSONObject> jsonList = new ArrayList<JSONObject>();
 		
@@ -70,14 +72,13 @@ public class RepositoryDetails extends HttpServlet {
 			if(lastCommitDate == null) {
 				lastCommitDate = repository.getCreatedAt();
 			}
-//			lastCommitDate=lastCommitDate.plusHours(5).plusMinutes(30);
-			
 		
 			jsonObject.put("updated",lastCommitDate.toString());
 
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at",repository.getCreatedAt().toString() );
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");
+			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), user.getId()));
 			jsonList.add(jsonObject);
 		}
 		

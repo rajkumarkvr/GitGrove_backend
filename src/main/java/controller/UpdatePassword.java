@@ -28,6 +28,12 @@ public class UpdatePassword extends HttpServlet {
 
 		String email = request.getParameter("email");
 		String password = request.getParameter("username");
+		
+		if(email == null || password == null) {
+			response.setStatus(200);
+			response.getWriter().write("{\"error\" : \"Invalid input\"}");
+		}
+		
 		boolean isUpdated = UserDAO.getInstance().updatePassword(email, password);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

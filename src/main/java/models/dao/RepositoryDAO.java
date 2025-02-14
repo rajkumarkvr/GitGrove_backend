@@ -54,6 +54,17 @@ public class RepositoryDAO {
 		}
 		return false;
 	}
+	
+	public ArrayList<Repository> getAllRepositoryExceptCurrentUser(int userId){
+		ArrayList<Repository> repositories = new ArrayList<Repository>();
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from ");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return repositories;
+	}
 
 	public ArrayList<Repository> repositoriesByOwnerId(int ownerId){
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
@@ -85,7 +96,7 @@ public class RepositoryDAO {
 				repositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("Getting all repositories : "+e.getMessage());
 		}
 		return repositories;
 	}
@@ -221,6 +232,22 @@ public class RepositoryDAO {
 		}
 		
 		return ownerName;
+	}
+	
+	public boolean isRepositoryLikedByUser(int repoId, int userId) {
+		boolean isLiked = false;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from repo_stared_details where userid = ? and userid = ?");
+			stmt.setInt(1, userId);
+			stmt.setInt(2, repoId);
+			ResultSet rs = stmt.executeQuery();
+			isLiked = rs.next();
+		} catch (Exception e) {
+			System.out.println("Is repository like by user : "+e.getMessage());
+		}
+		
+		return isLiked;
 	}
 
 }
