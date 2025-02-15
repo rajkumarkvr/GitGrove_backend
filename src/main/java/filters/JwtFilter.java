@@ -48,7 +48,10 @@ public class JwtFilter extends HttpFilter implements Filter {
 		
 		try {
 			String token =  JwtUtil.getInstance().validateAndExtendToken(jwtToken);
-//			((HttpServletResponse) response).setHeader("authorization", "Bearer " + token);
+			
+			if(token!=jwtToken) {
+//				Cookie cookie = Cookie
+			}
 			
 //			String username = JwtUtil.getInstance().getusername(token);
 //			Cookie cookie = new Cookie(COOKIE_KEY + username, token);
