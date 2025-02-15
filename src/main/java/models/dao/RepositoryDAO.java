@@ -239,8 +239,8 @@ public class RepositoryDAO {
 		try {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("select * from repo_stared_details where repoid = ? and userid = ?");
-			stmt.setInt(1, userId);
-			stmt.setInt(2, repoId);
+			stmt.setInt(1, repoId);
+			stmt.setInt(2, userId);
 			ResultSet rs = stmt.executeQuery();
 			isLiked = rs.next();
 		} catch (Exception e) {

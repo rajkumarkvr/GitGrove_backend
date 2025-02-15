@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.IPLocationInfo;
 import utils.JSONHandler;
 import utils.JwtUtil;
 
@@ -70,8 +71,9 @@ public class SignUp extends HttpServlet {
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 			
 			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
-			
-			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
+			String ipaddress =IPLocationInfo.getIPAddress(request);
+			String location = IPLocationInfo.getLocationInfo(ipaddress);
+			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent,ipaddress,location);
 			response.setStatus(200);
 			response.addCookie(cookie);
 //			response.setHeader("Authorization", "Bearer " + token);

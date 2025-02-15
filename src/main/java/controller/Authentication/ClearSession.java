@@ -27,6 +27,7 @@ public class ClearSession extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String token = request.getParameter("expiredToken");
+		System.out.println("calling");
 		boolean isCleared =  SessionDAO.getInstance().clearSession(token);
 		JSONObject jsonObject = new JSONObject();
 		if(isCleared) {
