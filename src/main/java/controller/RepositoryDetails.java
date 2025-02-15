@@ -42,20 +42,19 @@ public class RepositoryDetails extends HttpServlet {
 			response.getWriter().write("{\"error\"}");
 		}
 		
-		User user = UserDAO.getInstance().getUserByUserName(username);
-		System.out.println(username);
+		int userId = UserDAO.getInstance().getUserId(username);
 		
-		if(user == null) {
+		if(userId<0) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"User doesn't exist\"}");
 			return;
 		}
 		
-		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryOfUser(user.getId());
+		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryOfUser(userId);
 
 		if(repositoryList == null || repositoryList.size()==0 ) {
-			response.setStatus(400);
-			response.getWriter().write("{\"error\" : \"No repository exists\"}");
+			response.setStatus(204);
+			response.getWriter().write("{\"message\" : \"No repository exists\"}");
 			return;
 		}
 		
@@ -78,7 +77,7 @@ public class RepositoryDetails extends HttpServlet {
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at",repository.getCreatedAt().toString() );
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");
-			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), user.getId()));
+			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), userId));
 			jsonList.add(jsonObject);
 		}
 		

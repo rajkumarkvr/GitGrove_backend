@@ -153,6 +153,20 @@
 		<servlet-name>ValidSession</servlet-name>
 		<servlet-class>controller.ValidSession</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetAllUsers</display-name>
+		<servlet-name>GetAllUsers</servlet-name>
+		<servlet-class>controller.GetAllUsers</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>FindPeople</display-name>
+		<servlet-name>FindPeople</servlet-name>
+		<servlet-class>controller.FindPeople</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -232,6 +246,14 @@
 	<servlet-mapping>
 		<servlet-name>ValidSession</servlet-name>
 		<url-pattern>/service/ValidSession</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetAllUsers</servlet-name>
+		<url-pattern>service/getallusers</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FindPeople</servlet-name>
+		<url-pattern>service/findpeople</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

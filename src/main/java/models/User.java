@@ -24,6 +24,13 @@ public class User {
 		this.createdAt = createdAt;
 		this.repositories = new ArrayList<>();
 	}
+	
+	public User(int id, String username, String email, String profileUrl){
+		this.id = id;
+		this.username = username;
+		this.emailaddress = email;
+		this.profile_url = profileUrl;
+	}
 
 	public User(String username, String emailaddress, String password, String profile_url) {
 
@@ -41,6 +48,14 @@ public class User {
 		this.profile_url = profile_url;
 	}
 
+	public User(String username, String emailaddress, String profile_url, LocalDateTime createdAt) {
+		this.username = username;
+		this.emailaddress = emailaddress;
+		this.profile_url = profile_url;
+		this.createdAt = createdAt;
+	}
+	
+	
 	public int getId() {
 		return id;
 	}
