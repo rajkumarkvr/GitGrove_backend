@@ -146,6 +146,13 @@
 		<servlet-name>LogoutSession</servlet-name>
 		<servlet-class>controller.LogoutSession</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ValidSession</display-name>
+		<servlet-name>ValidSession</servlet-name>
+		<servlet-class>controller.ValidSession</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -221,6 +228,10 @@
 	<servlet-mapping>
 		<servlet-name>LogoutSession</servlet-name>
 		<url-pattern>/service/logoutsession</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ValidSession</servlet-name>
+		<url-pattern>/service/ValidSession</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

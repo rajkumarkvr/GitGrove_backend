@@ -12,6 +12,11 @@ import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+<<<<<<< HEAD
+=======
+import models.dao.SessionDAO;
+import utils.CookieUtil;
+>>>>>>> 8a605e94ecbd49953772aa881b9a8ea59df1e7ae
 import utils.JwtUtil;
 
 public class JwtFilter extends HttpFilter implements Filter {
@@ -40,7 +45,22 @@ public class JwtFilter extends HttpFilter implements Filter {
 	         return;
 		}
 		
+		
 		jwtToken = jwtToken.substring(7);
+		
+		if(!SessionDAO.getInstance().isSessionAlive(jwtToken)){
+			
+			httpResponse.setStatus(401);
+			String username = JwtUtil.getInstance().getusername(jwtToken);
+//			//
+//			Cookie cookie = CookieUtil.getInstance().getCookie(username, jwtToken);
+//			cookie.setMaxAge(-1);
+//			httpResponse.addCookie(cookie);
+//	
+			httpResponse.getWriter().write("{\"error\": \"Token expired or unauthorized access\"}");
+			return;
+		}
+		
 		
 		System.out.println("jwt"+jwtToken);
 		
@@ -48,12 +68,15 @@ public class JwtFilter extends HttpFilter implements Filter {
 			String token =  JwtUtil.getInstance().validateAndExtendToken(jwtToken);
 			
 			if(token!=jwtToken) {
-//				Cookie cookie = Cookie
+				System.out.println("Token regeneration");
+				String username = JwtUtil.getInstance().getusername(token);
+				Cookie cookie = CookieUtil.getInstance().getCookie(username, token);
+				httpResponse.addCookie(cookie);
 			}
 			
 //			String username = JwtUtil.getInstance().getusername(token);
 //			Cookie cookie = new Cookie(COOKIE_KEY + username, token);
-//			httpResponse.addCookie(cookie);
+
 			
 		}catch (Exception e) {
 	
