@@ -120,5 +120,18 @@ public class SessionDAO {
 		return false;
 
 	}
+	
+	public boolean isSessionAlive(String token) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from sessions where session_value =?");
+			stmt.setString(1, token);
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
+	}
 
 }

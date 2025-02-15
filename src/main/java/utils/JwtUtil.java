@@ -29,7 +29,7 @@ public class JwtUtil {
 
 	public String generateToken(String username) {
 		return Jwts.builder().subject(username) // New method in 0.12.6
-				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 1*60*1000)) // 1-day expiry
+				.issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 24*60*60*1000)) // 1-day expiry
 				.signWith(SECRET_KEY) // No need to specify algorithm explicitly
 				.compact();
 	}
