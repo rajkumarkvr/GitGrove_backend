@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.CookieUtil;
 import utils.IPLocationInfo;
 import utils.JSONHandler;
 import utils.JwtUtil;
@@ -20,8 +21,6 @@ import utils.JwtUtil;
 //@WebServlet("/SignUp")
 public class SignUp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	private static final String COOKIE_KEY = "gitgrove_";
 
 	public SignUp() {
 		super();
@@ -69,12 +68,11 @@ public class SignUp extends HttpServlet {
 			jsonObject.put("profile_url", user.getProfile_url());
 
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
-			
-			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
 			String ipaddress =IPLocationInfo.getIPAddress(request);
 			String location = IPLocationInfo.getLocationInfo(ipaddress);
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent,ipaddress,location);
 			response.setStatus(200);
+			Cookie cookie = CookieUtil.getInstance().getCookie(username, token);
 			response.addCookie(cookie);
 //			response.setHeader("Authorization", "Bearer " + token);
 

@@ -18,7 +18,7 @@ public class CookieUtil {
 		return cookie;
 	}
 	
-	public Cookie setCookie(String username,String token) {
+	public Cookie getCookie(String username,String token) {
 		Cookie cookie = new Cookie(COOKIE_KEY+username, token);
 		return cookie;
 	}

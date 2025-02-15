@@ -55,7 +55,7 @@ public class JwtFilter extends HttpFilter implements Filter {
 //			httpResponse.addCookie(cookie);
 			
 		}catch (Exception e) {
-		
+	
 			httpResponse.setStatus(400);			
 			httpResponse.getWriter().write("{\"error\": \"Token expired\"}");
 			return;
