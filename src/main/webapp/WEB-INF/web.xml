@@ -139,6 +139,13 @@
 		<servlet-name>GetSessionsDetails</servlet-name>
 		<servlet-class>controller.GetSessionsDetails</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>LogoutSession</display-name>
+		<servlet-name>LogoutSession</servlet-name>
+		<servlet-class>controller.LogoutSession</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -210,6 +217,10 @@
 	<servlet-mapping>
 		<servlet-name>GetSessionsDetails</servlet-name>
 		<url-pattern>/service/getactivesessions</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LogoutSession</servlet-name>
+		<url-pattern>/service/logoutsession</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
