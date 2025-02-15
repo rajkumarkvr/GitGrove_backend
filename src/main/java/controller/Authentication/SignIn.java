@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.IPLocationInfo;
 import utils.JSONHandler;
 import utils.JwtUtil;
 
@@ -34,7 +35,7 @@ public class SignIn extends HttpServlet {
 		String usernameOrEmail =  userObj.getString("identifier").trim().toLowerCase();
 		String password = userObj.getString("password").trim();
 		String userAgent =request.getHeader("User-Agent");
-
+		
 		System.out.println(usernameOrEmail+" pas"+password);
 		System.out.println(UserDAO.getInstance().emailExists(usernameOrEmail));
 		System.out.println(UserDAO.getInstance().userNameExists(usernameOrEmail));
@@ -65,9 +66,10 @@ public class SignIn extends HttpServlet {
 			response.addCookie(cookie);
 
 			System.out.println(token);
-			
+				String ipaddress =IPLocationInfo.getIPAddress(request);
+				String location = IPLocationInfo.getLocationInfo(ipaddress);
 
-			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent);
+			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent,ipaddress,location);
 			response.addCookie(cookie);
 //			response.setHeader("authorization", "Bearer " + token);
 			
