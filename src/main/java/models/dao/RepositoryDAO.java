@@ -59,9 +59,18 @@ public class RepositoryDAO {
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select * from ");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? ");
+			stmt.setInt(1, userId);
+			stmt.setString(2, Visibility.PUBLIC.toString());
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				Repository repository = new Repository(rs.getInt(1),rs.getString(2),Visibility.PUBLIC,rs.getString(3),rs.getTimestamp(4).toLocalDateTime(),rs.getInt(5));
+				repository.setOwnerName(rs.getString(6));
+				repositories.add(repository);
+			}
+			
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("Get all repositories except current user : "+e.getMessage());
 		}
 		return repositories;
 	}

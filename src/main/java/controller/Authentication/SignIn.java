@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import models.User;
 import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.CookieUtil;
 import utils.IPLocationInfo;
 import utils.JSONHandler;
 import utils.JwtUtil;
@@ -20,7 +21,6 @@ import utils.JwtUtil;
 public class SignIn extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final String COOKIE_KEY = "gitgrove_";
 
     public SignIn() {
         super();
@@ -59,7 +59,7 @@ public class SignIn extends HttpServlet {
 			
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 
-			Cookie cookie = new Cookie(COOKIE_KEY + user.getUsername(), token);
+			Cookie cookie = CookieUtil.getInstance().getCookie(user.getUsername(), token);
 			cookie.setPath("/");  // Make it accessible everywhere in your domain
 			cookie.setHttpOnly(false);  // Try setting to false for testing
 			cookie.setSecure(false);  // If you're testing on HTTP, must be false
