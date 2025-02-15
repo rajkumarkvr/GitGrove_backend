@@ -15,7 +15,7 @@ public class Repository {
 	private String description;
 	private ArrayList<Branch> branches;
 	private ArrayList<PullRequest> pullrequets;
-
+	private String ownerName;
 
 	public Repository(int id, String name, Visibility visibility) {
 		this.id = id;
@@ -92,6 +92,12 @@ public class Repository {
 	}
 	public void setPullrequets(ArrayList<PullRequest> pullrequets) {
 		this.pullrequets = pullrequets;
+	}
+	public String getOwnerName() {
+		return ownerName;
+	}
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 
 
