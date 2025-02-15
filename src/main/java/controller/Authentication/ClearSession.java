@@ -14,6 +14,7 @@ import models.dao.SessionDAO;
 /**
  * Servlet implementation class ClearSession
  */
+
 public class ClearSession extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -22,7 +23,6 @@ public class ClearSession extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
