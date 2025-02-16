@@ -90,9 +90,6 @@ public class RepositoryDetails extends HttpServlet {
 		response.setStatus(200);
 		response.getWriter().write(jsonResponse.toString());
 		
-
-		
-		
 	}
 
 }

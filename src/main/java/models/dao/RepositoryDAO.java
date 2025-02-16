@@ -1,6 +1,5 @@
 package models.dao;
 
-import java.awt.RadialGradientPaint;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -275,6 +274,39 @@ public class RepositoryDAO {
 		}
 		
 		return isLiked;
+	}
+	
+	public boolean requestCollaborator(int invitee_id, int repo_id, int owner_id) {
+		boolean isRequested = false;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("insert into collaborator_requests values(?,?)");
+			stmt.setInt(1, owner_id);
+			stmt.setInt(2, invitee_id);
+			int affected = stmt.executeUpdate();
+			isRequested = affected>0;
+		} catch (Exception e) {
+			System.out.println("Adding collaborator error : "+e.getMessage());
+		}
+		
+		return isRequested;
+	}
+
+	public boolean addCollaborator(int invitee_id, int repo_id, int owner_id) {
+		boolean isAdded = false;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("update collaborator_requests set status = 'ACCEPTED' where owner_id = ? and invitee_id = ? and repo_id = ?");
+			stmt.setInt(1, owner_id);
+			stmt.setInt(2, invitee_id);
+			stmt.setInt(3, repo_id);
+			int affected = stmt.executeUpdate();
+			isAdded = affected>0;
+		} catch (Exception e) {
+			System.out.println("Adding collaborator error : "+e.getMessage());
+		}
+		
+		return isAdded;
 	}
 
 }
