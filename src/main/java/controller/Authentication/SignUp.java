@@ -35,7 +35,7 @@ public class SignUp extends HttpServlet {
 		String username = userObj.getString("username").trim().toLowerCase();
 		String password = userObj.getString("password").trim();
 		String email = userObj.getString("email").trim().toLowerCase();
-
+		String avator = userObj.optString("avator").trim();
 		String userAgent = request.getHeader("User-Agent");
 		User user = null;
 		boolean isSignedUp = false;
@@ -53,7 +53,7 @@ public class SignUp extends HttpServlet {
 		}
 
 		if (username != null || password != null || email != null) {
-			user = UserDAO.getInstance().signUp(username, email, password);
+			user = UserDAO.getInstance().signUp(username, email, password,avator);
 			
 			if (user != null) {
 				isSignedUp = true;
@@ -68,14 +68,16 @@ public class SignUp extends HttpServlet {
 			jsonObject.put("profile_url", user.getProfile_url());
 
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
+			Cookie cookie = CookieUtil.getInstance().getCookie(username, token);
+			
+			response.addCookie(cookie);
 			String ipaddress =IPLocationInfo.getIPAddress(request);
 			String location = IPLocationInfo.getLocationInfo(ipaddress);
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent,ipaddress,location);
 			response.setStatus(200);
-			Cookie cookie = CookieUtil.getInstance().getCookie(username, token);
-			response.addCookie(cookie);
-//			response.setHeader("Authorization", "Bearer " + token);
-
+		
+			response.setHeader("Authorization", "Bearer " + token);
+			System.out.println("Cookie setted");
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
 			response.getWriter().write(wrappedJsonObject.toString());

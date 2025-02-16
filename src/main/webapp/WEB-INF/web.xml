@@ -249,11 +249,11 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetAllUsers</servlet-name>
-		<url-pattern>service/getallusers</url-pattern>
+		<url-pattern>/service/getallusers</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FindPeople</servlet-name>
-		<url-pattern>service/findpeople</url-pattern>
+		<url-pattern>/service/findpeople</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

@@ -26,6 +26,7 @@ public class LogoutSession extends HttpServlet {
 		}
 		SessionDAO.getInstance().clearSession(token);
 		response.setStatus(200);
+		System.out.println("Session clear properly");
 		JSONObject success = new JSONObject();
 		success.put("message", "session cleared properly");
 		response.getWriter().write(success.toString());

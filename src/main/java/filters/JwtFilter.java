@@ -36,6 +36,9 @@ public class JwtFilter extends HttpFilter implements Filter {
 		String jwtToken = httpRequest.getHeader("Authorization");
 		System.out.println(jwtToken);
 		if(jwtToken == null || !jwtToken.startsWith("Bearer")) {
+			  String origin = httpRequest.getHeader("Origin");
+		        System.out.println("jwt origin "+origin);
+		        
 			 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	         httpResponse.getWriter().write("{\"error\": \"Missing or invalid token\"}");
 	         return;
