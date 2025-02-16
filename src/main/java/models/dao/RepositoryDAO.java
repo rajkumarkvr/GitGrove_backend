@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import enums.Collaborator_Request;
 import enums.Role;
 import enums.Visibility;
 import models.Repository;
@@ -280,9 +281,10 @@ public class RepositoryDAO {
 		boolean isRequested = false;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into collaborator_requests values(?,?)");
+			PreparedStatement stmt = connection.prepareStatement("insert into collaborator_requests values(?,?,?)");
 			stmt.setInt(1, owner_id);
 			stmt.setInt(2, invitee_id);
+			stmt.setInt(3, repo_id);
 			int affected = stmt.executeUpdate();
 			isRequested = affected>0;
 		} catch (Exception e) {
@@ -296,10 +298,11 @@ public class RepositoryDAO {
 		boolean isAdded = false;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("update collaborator_requests set status = 'ACCEPTED' where owner_id = ? and invitee_id = ? and repo_id = ?");
-			stmt.setInt(1, owner_id);
-			stmt.setInt(2, invitee_id);
-			stmt.setInt(3, repo_id);
+			PreparedStatement stmt = connection.prepareStatement("update collaborator_requests set status = ? where owner_id = ? and invitee_id = ? and repo_id = ?");
+			stmt.setString(1, Collaborator_Request.ACCEPTED.toString());
+			stmt.setInt(2, owner_id);
+			stmt.setInt(3, invitee_id);
+			stmt.setInt(4, repo_id);
 			int affected = stmt.executeUpdate();
 			isAdded = affected>0;
 		} catch (Exception e) {
