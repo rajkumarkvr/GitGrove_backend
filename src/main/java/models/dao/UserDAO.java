@@ -26,15 +26,28 @@ public class UserDAO {
 		return userDao;
 	}
 
-	public User signUp(String userName, String emailId, String password ) {
+	public User signUp(String userName, String emailId, String password ,String avator) {
 		User user = null;
 		password = encrypt(password);
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into users(username,email,password_hash) values(?,?,?)",Statement.RETURN_GENERATED_KEYS);
-			stmt.setString(1, userName);
-			stmt.setString(2, emailId);
-			stmt.setString(3, password);
+			
+			PreparedStatement stmt=null;
+				if(avator==null||avator.isEmpty()) {
+					stmt=connection.prepareStatement("insert into users(username,email,password_hash) values(?,?,?)",Statement.RETURN_GENERATED_KEYS);
+					stmt.setString(1, userName);
+					stmt.setString(2, emailId);
+					stmt.setString(3, password);
+				}else {
+					stmt=connection.prepareStatement("insert into users(username,email,password_hash,profile_url) values(?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+					stmt.setString(1, userName);
+					stmt.setString(2, emailId);
+					stmt.setString(3, password);
+					stmt.setString(4, avator);
+				}
+					
+					
+		
 			
 			int affected = stmt.executeUpdate();
 			if(affected>0) {
