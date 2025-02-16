@@ -1,5 +1,6 @@
 package models.dao;
 
+import java.awt.RadialGradientPaint;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -125,6 +126,23 @@ public class RepositoryDAO {
 			System.out.println(e.getMessage());
 		}
 		return repository;
+	}
+	
+	public int getRepositoryId(String repoName) {
+		int id = -1;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select id from repositories where name = ?");
+			stmt.setString(1, repoName);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				id = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("Get Repository Id : "+e.getMessage());
+		}
+		
+		return id;
 	}
 	
 	

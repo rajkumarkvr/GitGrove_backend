@@ -27,6 +27,7 @@ public class FindPeople extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String username = request.getParameter("username");
 		String query = request.getParameter("searchterm");
+		String repoName = request.getParameter("reponame");
 		
 		if(username == null || query == null) {
 			response.setStatus(400);
@@ -57,7 +58,8 @@ public class FindPeople extends HttpServlet {
 			jsonObject.put("username", user.getUsername());
 			jsonObject.put("email", user.getEmailaddress());
 			jsonObject.put("avatar", user.getProfile_url());
-			jsonList.add(jsonObject);
+			jsonObject.put("alreadycollaborated", false);
+//		.add(jsonObject);
 		}
 		
 		JSONArray jsonArray = new JSONArray(jsonList);
