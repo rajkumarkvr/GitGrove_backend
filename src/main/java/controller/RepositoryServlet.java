@@ -1,6 +1,5 @@
 package controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -12,15 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.*;
-import org.eclipse.jgit.revwalk.*;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import services.FileStructureHelper;
-
 
 public class RepositoryServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -31,8 +25,9 @@ public class RepositoryServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         String repoName = request.getParameter("reponame");
+        String branchName = request.getParameter("branchname");
 
-        if (username == null || repoName == null) {
+        if (username == null || repoName == null || branchName == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Missing username or reponame\"}");
             return;
@@ -44,7 +39,7 @@ public class RepositoryServlet extends HttpServlet {
             response.getWriter().write("{\"error\": \"Repository not found\"}");
             return;
         }
-
+        
         try (Git git = Git.open(repoPath)) {
             JSONObject repoJson = new JSONObject();
             repoJson.put("name", repoName);
@@ -77,7 +72,7 @@ public class RepositoryServlet extends HttpServlet {
             } else {
                 repoJson.put("commits", commitsArray);
                 repoJson.put("mainFiles",FileStructureHelper.getInstance().getMainFiles(repoPath));
-                repoJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath));
+                repoJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath,branchName));
             }
 
             response.setContentType("application/json");

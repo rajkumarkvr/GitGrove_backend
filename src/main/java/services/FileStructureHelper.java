@@ -226,4 +226,58 @@ public class FileStructureHelper {
         int lastSlash = path.lastIndexOf('/');
         return lastSlash == -1 ? "" : path.substring(0, lastSlash);
     }
+    
+    
+    public JSONArray getFileStructure(File repoPath , String branchName) {
+        JSONArray rootArray = new JSONArray();
+
+        if (repoPath != null) {
+            try (Git git = Git.open(repoPath)) {
+            	
+            	Repository repository = git.getRepository();
+
+                ObjectId head = repository.resolve("refs/heads/" + branchName);
+                
+                if (head == null) {
+                    return rootArray; // Return empty array if no commits
+                }
+
+                try (RevWalk revWalk = new RevWalk(repository);
+                     TreeWalk treeWalk = new TreeWalk(repository)) {
+
+                    RevCommit commit = revWalk.parseCommit(head);
+                    treeWalk.addTree(commit.getTree());
+                    treeWalk.setRecursive(false);
+
+                    while (treeWalk.next()) {
+                        String path = treeWalk.getPathString();
+
+                        // Ignore Git internals
+                        if (path.startsWith(".git") || path.startsWith("hooks") || path.startsWith("branches") || path.startsWith("refs")) {
+                            continue;
+                        }
+
+                        JSONObject fileJson = new JSONObject();
+                        fileJson.put("name", treeWalk.getNameString());
+                        boolean isFolder = treeWalk.isSubtree();
+                        fileJson.put("type", isFolder ? "folder" : "file");
+
+                        // Fetch content only for files
+                        if (!isFolder) {
+                            String fileContent = readFileContent(repoPath, path);
+                            fileJson.put("content", fileContent);
+                        }
+
+                        rootArray.put(fileJson);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        }
+        return rootArray;
+    }
+
+
 }
