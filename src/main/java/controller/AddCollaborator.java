@@ -6,8 +6,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import models.dao.RepositoryDAO;
 import models.dao.UserDAO;
+import utils.JSONHandler;
 
 
 public class AddCollaborator extends HttpServlet {
@@ -21,11 +24,15 @@ public class AddCollaborator extends HttpServlet {
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String ownerName = request.getParameter("ownername");
-		String inviteeName = request.getParameter("inviteename");
-		String repoName = request.getParameter("reponame");
 		
+		JSONObject userobj =JSONHandler.parse(request.getReader());
+		String ownerName = userobj.optString("inviterUsername");
+		String inviteeName = userobj.optString("inviteeUsername");
+		String repoName = userobj.optString("repository");
+		
+		System.out.println("owner name "+ownerName);
 		if(ownerName == null || inviteeName == null || repoName == null) {
+			System.out.println("owner name "+ownerName);
 			response.setStatus(400);
             response.getWriter().write("{\"error\": \"Missing invittename or reponame\"}");
             return;

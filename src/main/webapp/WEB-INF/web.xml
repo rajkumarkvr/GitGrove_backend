@@ -181,6 +181,20 @@
 		<servlet-name>AddCollaborator</servlet-name>
 		<servlet-class>controller.AddCollaborator</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetCollaborators</display-name>
+		<servlet-name>GetCollaborators</servlet-name>
+		<servlet-class>controller.GetCollaborators</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetCollabRequests</display-name>
+		<servlet-name>GetCollabRequests</servlet-name>
+		<servlet-class>controller.GetCollabRequests</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -275,7 +289,15 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AddCollaborator</servlet-name>
-		<url-pattern>/service/addcollaborator</url-pattern>
+		<url-pattern>/service/accept-invite</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetCollaborators</servlet-name>
+		<url-pattern>/service/getcollaborators</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetCollabRequests</servlet-name>
+		<url-pattern>/service/getcollabrequests</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

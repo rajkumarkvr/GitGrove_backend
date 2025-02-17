@@ -293,6 +293,7 @@ public class UserDAO {
 	}
 	
 	
+	
 	public String encrypt(String text) {
     	String salt = BCrypt.gensalt(12);
     	return BCrypt.hashpw(text, salt);
