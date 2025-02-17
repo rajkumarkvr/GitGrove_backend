@@ -56,7 +56,7 @@ public class RepositoryServlet extends HttpServlet {
             // Check if the repository has commits
             JSONArray commitsArray;
             try {
-                commitsArray = FileStructureHelper.getInstance().getCommitHistory(git) ;
+                commitsArray = FileStructureHelper.getInstance().getCommitHistory(git,branchName) ;
                 } catch (GitAPIException e) {
                 // If an error occurs, assume no commits exist
                 commitsArray = new JSONArray();
@@ -74,6 +74,7 @@ public class RepositoryServlet extends HttpServlet {
                 repoJson.put("mainFiles",FileStructureHelper.getInstance().getMainFiles(repoPath,branchName));
                 repoJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath,branchName));
             }
+
 
             response.setContentType("application/json");
             response.getWriter().write(repoJson.toString(4));

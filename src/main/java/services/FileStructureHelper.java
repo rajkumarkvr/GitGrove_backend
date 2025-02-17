@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
@@ -23,27 +22,26 @@ import org.json.JSONObject;
 
 public class FileStructureHelper {
 
-	static FileStructureHelper helper= null;
-	
-		private FileStructureHelper() {
-			
-			
-			
-			
-		}
-		
-		public static FileStructureHelper getInstance() {
-			
-			if(helper==null) {
-				helper = new FileStructureHelper();
-				return helper;
-			}
-			return helper;
-		}
-    // Method to fetch commit history
-    public  JSONArray getCommitHistory(Git git) throws GitAPIException, IOException {
+    static FileStructureHelper helper = null;
+
+    private FileStructureHelper() {
+    }
+
+    public static FileStructureHelper getInstance() {
+        if (helper == null) {
+            helper = new FileStructureHelper();
+        }
+        return helper;
+    }
+
+    // Fetches commit history of a specific branch
+    public JSONArray getCommitHistory(Git git, String branchName) throws GitAPIException, IOException {
         JSONArray commitsArray = new JSONArray();
-        Iterable<RevCommit> commits = git.log().setMaxCount(3).call();
+
+        Iterable<RevCommit> commits = git.log()
+                .add(git.getRepository().resolve("refs/heads/" + branchName))
+                .setMaxCount(3)
+                .call();
 
         for (RevCommit commit : commits) {
             JSONObject commitJson = new JSONObject();
@@ -54,27 +52,26 @@ public class FileStructureHelper {
         }
         return commitsArray;
     }
+
+    // Fetches main files from a specific branch
     public JSONArray getMainFiles(File repoPath, String branchName) {
         JSONArray mainFilesArray = new JSONArray();
-        System.out.println("Branchname "+branchName);
+
         if (repoPath != null) {
             try (Git git = Git.open(repoPath)) {
                 Repository repository = git.getRepository();
-
-                // Resolve the correct branch reference
                 ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
+
                 if (branchHead == null) {
-                    return mainFilesArray; // No commits found in this branch
+                    return mainFilesArray;
                 }
 
                 try (RevWalk revWalk = new RevWalk(repository);
                      TreeWalk treeWalk = new TreeWalk(repository)) {
 
                     RevCommit commit = revWalk.parseCommit(branchHead);
-                    revWalk.dispose();  // Free resources
-
                     treeWalk.addTree(commit.getTree());
-                    treeWalk.setRecursive(false); // Fetch only first-level items
+                    treeWalk.setRecursive(false);
 
                     while (treeWalk.next()) {
                         JSONObject fileJson = new JSONObject();
@@ -84,9 +81,12 @@ public class FileStructureHelper {
                         fileJson.put("name", fileName);
                         fileJson.put("type", isFolder ? "folder" : "file");
 
-                        // Get last commit details only for this branch
-                        fileJson.put("commitMessage", commit.getShortMessage());
-                        fileJson.put("commitTime", commit.getAuthorIdent().getWhen().toInstant().toString());
+                        RevCommit fileCommit = getLastCommitForFile(repository, branchHead, treeWalk.getPathString());
+
+                        if (fileCommit != null) {
+                            fileJson.put("commitMessage", fileCommit.getShortMessage());
+                            fileJson.put("commitTime", fileCommit.getAuthorIdent().getWhen().toInstant().toString());
+                        }
 
                         mainFilesArray.put(fileJson);
                     }
@@ -98,102 +98,43 @@ public class FileStructureHelper {
         return mainFilesArray;
     }
 
+    // Get the last commit associated with a specific file in a given branch
+    private RevCommit getLastCommitForFile(Repository repository, ObjectId branchHead, String filePath) {
+        try (Git git = new Git(repository);
+             RevWalk revWalk = new RevWalk(repository)) {
 
+            revWalk.markStart(revWalk.parseCommit(branchHead));
 
-    public  JSONArray getFileStructure(File repoPath) {
-        JSONArray rootArray = new JSONArray();
-        
-        if (repoPath != null) {
-            try (Git git = Git.open(repoPath)) {
-                Repository repository = git.getRepository();
-                ObjectId head = repository.resolve("HEAD^{tree}"); // Get the latest commit tree
-                
-                if (head == null) {
-                    return rootArray; // Return empty array if no commits
-                }
-
-                try (RevWalk revWalk = new RevWalk(repository);
-                     TreeWalk treeWalk = new TreeWalk(repository)) {
-
-                    RevCommit commit = revWalk.parseCommit(repository.resolve("HEAD")); // Get latest commit
+            for (RevCommit commit : revWalk) {
+                try (TreeWalk treeWalk = new TreeWalk(repository)) {
                     treeWalk.addTree(commit.getTree());
-                    treeWalk.setRecursive(false); // Process parent-child hierarchy manually
+                    treeWalk.setRecursive(true);
+                    treeWalk.setFilter(PathFilter.create(filePath));
 
-                    // Use a map to store folder structures
-                    Map<String, JSONObject> fileMap = new HashMap<>();
-
-                    while (treeWalk.next()) {
-                        String path = treeWalk.getPathString();
-
-                        // Ignore Git internals
-                        if (path.startsWith(".git") || path.startsWith("hooks") || path.startsWith("branches") || path.startsWith("refs")) {
-                            continue;
-                        }
-
-                        JSONObject fileJson = new JSONObject();
-                        fileJson.put("name", treeWalk.getNameString());
-
-                        boolean isFolder = treeWalk.isSubtree(); // True if it's a folder
-
-                        if (isFolder) {
-                            fileJson.put("type", "folder");
-                            fileJson.put("children", new JSONArray()); // Initialize empty children
-                            treeWalk.enterSubtree(); // Dive into folder
-                        } else {
-                            fileJson.put("type", "file");
-                            fileJson.put("content", readFileContent(repoPath, path)); // Read file content
-                        }
-
-                        // Handle hierarchy
-                        String parentPath = getParentPath(path);
-                        if (parentPath.isEmpty()) {
-                            rootArray.put(fileJson);
-                        } else {
-                            // Ensure parent exists
-                            JSONObject parentJson = fileMap.computeIfAbsent(parentPath, k -> new JSONObject());
-                            JSONArray childrenArray = parentJson.optJSONArray("children");
-
-                            // Initialize children array if not present
-                            if (childrenArray == null) {
-                                childrenArray = new JSONArray();
-                                parentJson.put("children", childrenArray);
-                            }
-
-                            childrenArray.put(fileJson);
-                        }
-
-                        // Store in map
-                        fileMap.put(path, fileJson);
+                    if (treeWalk.next()) {
+                        return commit;
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return rootArray;
+        return null;
     }
 
-//    // Utility method to read file content
-//    private String readFileContent(File file) {
-//        try {
-//            return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-//        } catch (IOException e) {
-//            return "Error reading file";
-//        }
-//    }
-
-    private  String readFileContent(File repoPath, String filePath) {
+    // Reads file content from a specific branch
+    private String readFileContent(File repoPath, String branchName, String filePath) {
         try (Repository repository = new FileRepositoryBuilder()
-                .setGitDir(repoPath) // This is a bare repo
+                .setGitDir(repoPath)
                 .build()) {
 
-            ObjectId lastCommitId = repository.resolve(Constants.HEAD);
-            if (lastCommitId == null) {
-                return "No commits found in the repository.";
+            ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
+            if (branchHead == null) {
+                return "No commits found in the branch: " + branchName;
             }
 
             try (RevWalk revWalk = new RevWalk(repository)) {
-                RevCommit commit = revWalk.parseCommit(lastCommitId);
+                RevCommit commit = revWalk.parseCommit(branchHead);
                 RevTree tree = commit.getTree();
 
                 try (TreeWalk treeWalk = new TreeWalk(repository)) {
@@ -202,7 +143,7 @@ public class FileStructureHelper {
                     treeWalk.setFilter(PathFilter.create(filePath));
 
                     if (!treeWalk.next()) {
-                        return "File not found in repository: " + filePath;
+                        return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
                     }
 
                     ObjectId objectId = treeWalk.getObjectId(0);
@@ -210,7 +151,7 @@ public class FileStructureHelper {
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     loader.copyTo(outputStream);
-                    return outputStream.toString(); // Convert content to String and return
+                    return outputStream.toString();
                 }
             }
         } catch (Exception e) {
@@ -220,23 +161,22 @@ public class FileStructureHelper {
     }
 
     // Utility method to get the parent path
-    private  String getParentPath(String path) {
+    private String getParentPath(String path) {
         int lastSlash = path.lastIndexOf('/');
         return lastSlash == -1 ? "" : path.substring(0, lastSlash);
     }
-    
-    
+
+    // Fetches file structure from a specific branch
     public JSONArray getFileStructure(File repoPath, String branchName) {
         JSONArray rootArray = new JSONArray();
 
         if (repoPath != null) {
             try (Git git = Git.open(repoPath)) {
                 Repository repository = git.getRepository();
+                ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
 
-                // Resolve the branch reference
-                ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
                 if (branchHead == null) {
-                    return rootArray; // No commits in the branch
+                    return rootArray;
                 }
 
                 try (RevWalk revWalk = new RevWalk(repository);
@@ -244,14 +184,12 @@ public class FileStructureHelper {
 
                     RevCommit commit = revWalk.parseCommit(branchHead);
                     treeWalk.addTree(commit.getTree());
-                    treeWalk.setRecursive(false); // Allow manual folder processing
+                    treeWalk.setRecursive(false);
 
                     Map<String, JSONObject> fileMap = new HashMap<>();
 
                     while (treeWalk.next()) {
                         String path = treeWalk.getPathString();
-
-                        // Ignore Git metadata files
                         if (path.startsWith(".git") || path.startsWith("hooks") || path.startsWith("branches") || path.startsWith("refs")) {
                             continue;
                         }
@@ -260,16 +198,16 @@ public class FileStructureHelper {
                         fileJson.put("name", treeWalk.getNameString());
 
                         boolean isFolder = treeWalk.isSubtree();
-                        fileJson.put("type", isFolder ? "folder" : "file");
 
                         if (isFolder) {
-                            fileJson.put("children", new JSONArray()); // Prepare for nesting
-                            treeWalk.enterSubtree(); // Process folder contents
+                            fileJson.put("type", "folder");
+                            fileJson.put("children", new JSONArray());
+                            treeWalk.enterSubtree();
                         } else {
-                            fileJson.put("content", readFileContent(repoPath, path)); // Read file content
+                            fileJson.put("type", "file");
+                            fileJson.put("content", readFileContent(repoPath, branchName, path));
                         }
 
-                        // Handle the hierarchy
                         String parentPath = getParentPath(path);
                         if (parentPath.isEmpty()) {
                             rootArray.put(fileJson);
@@ -284,7 +222,6 @@ public class FileStructureHelper {
 
                             childrenArray.put(fileJson);
                         }
-
                         fileMap.put(path, fileJson);
                     }
                 }
@@ -292,10 +229,6 @@ public class FileStructureHelper {
                 e.printStackTrace();
             }
         }
-
         return rootArray;
     }
-
-
-
 }
