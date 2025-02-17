@@ -33,7 +33,7 @@ public class RequestCollaborator extends HttpServlet {
 		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 		int inviteeId = UserDAO.getInstance().getUserId(inviteeName);
 		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName);
-		
+	
 		if(ownerId<0 || inviteeId<0 || repoId<0) {
 			response.setStatus(400);
             response.getWriter().write("{\"error\": \"Missing Inviter or repository\"}");
@@ -41,6 +41,7 @@ public class RequestCollaborator extends HttpServlet {
 		}
 		
 		if(RepositoryDAO.getInstance().requestCollaborator(inviteeId, repoId, ownerId)){
+			
 			response.setStatus(200);
             response.getWriter().write("{\"message\": \"Collaborator requested\"}");
 		}

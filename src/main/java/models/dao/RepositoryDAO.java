@@ -6,11 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 import enums.Collaborator_Request;
 import enums.Role;
 import enums.Visibility;
 import models.Repository;
 import services.DBconnection;
+
+
 
 public class RepositoryDAO {
 
@@ -281,7 +285,7 @@ public class RepositoryDAO {
 		boolean isRequested = false;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into collaborator_requests values(?,?,?)");
+			PreparedStatement stmt = connection.prepareStatement("insert into collaborator_requests(owner_id,invitee_id,repo_id) values(?,?,?)");
 			stmt.setInt(1, owner_id);
 			stmt.setInt(2, invitee_id);
 			stmt.setInt(3, repo_id);
@@ -298,13 +302,21 @@ public class RepositoryDAO {
 		boolean isAdded = false;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("update collaborator_requests set status = ? where owner_id = ? and invitee_id = ? and repo_id = ?");
-			stmt.setString(1, Collaborator_Request.ACCEPTED.toString());
+			
+			
+			PreparedStatement stmt =null;
+			stmt= connection.prepareStatement("update collaborator_requests set status = ? where owner_id = ? and invitee_id = ? and repo_id = ?");
+			stmt.setString(1, Collaborator_Request.ACCEPTED.name());
 			stmt.setInt(2, owner_id);
 			stmt.setInt(3, invitee_id);
 			stmt.setInt(4, repo_id);
 			int affected = stmt.executeUpdate();
-			isAdded = affected>0;
+			stmt= connection.prepareStatement("insert into repository_access(user_id,repo_id,role) values(?,?,?)");
+			stmt.setInt(1, invitee_id);
+			stmt.setInt(2, repo_id);
+			stmt.setString(3, Role.COLLABORATOR.name());
+			int newAffected = stmt.executeUpdate();
+			isAdded = affected>0&&newAffected>0;
 		} catch (Exception e) {
 			System.out.println("Adding collaborator error : "+e.getMessage());
 		}
@@ -312,5 +324,83 @@ public class RepositoryDAO {
 		return isAdded;
 	}
 	
+	
+	public Collaborator_Request isAlreadyCollaboratorOrRequested(int ownerid,int userid,int repoid) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select * from collaborator_requests where invitee_id=? and owner_id=? and repo_id=?");
+			stmt.setInt(1,userid);
+			stmt.setInt(2,ownerid);
+			stmt.setInt(3, repoid);
 
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				System.out.println("Collab");
+				return Collaborator_Request.valueOf(rs.getString(4));
+			}
+			else {
+				System.out.println("no collaboration");
+			}
+		}catch(Exception e) {
+			System.out.println("Error from isAlready a collaborator func"+"\n"+e.getMessage());
+		}
+		return null;
+	}
+	
+	public ArrayList<JSONObject> getCollaborators(int repoid,int ownerid){
+		try {
+			Connection connection = DBconnection.getConnection();
+			String query ="select u.username,u.email,u.profile_url as avator from repository_access r left join users u on r.user_id=u.id where r.user_id!=? and r.repo_id=?";
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setInt(1,ownerid);
+			stmt.setInt(2,repoid);
+		
+
+			ResultSet rs = stmt.executeQuery();
+			ArrayList<JSONObject> users = new ArrayList<JSONObject>();
+			while(rs.next()) {
+				JSONObject user = new JSONObject();
+				
+				user.put("username", rs.getString(1));
+				user.put("email", rs.getString(2));
+				user.put("avatar", rs.getString(3));
+				users.add(user);
+			}
+			
+			return users;
+		}catch(Exception e) {
+			System.out.println("Error from getCollaborators"+"\n"+e.getMessage());
+		}
+		return null;
+	}
+	
+	public ArrayList<JSONObject> getCollabRequests(int repoid,int ownerid){
+		try {
+			Connection connection = DBconnection.getConnection();
+			String query ="select u.username,u.email,u.profile_url as avator from collaborator_requests r left join users u on r.invitee_id=u.id where status!='ACCEPTED' and owner_id=? and repo_id=?";
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setInt(1,ownerid);
+			stmt.setInt(2,repoid);
+		
+
+			ResultSet rs = stmt.executeQuery();
+			ArrayList<JSONObject> users = new ArrayList<JSONObject>();
+			while(rs.next()) {
+				JSONObject user = new JSONObject();
+				
+				user.put("username", rs.getString(1));
+				user.put("email", rs.getString(2));
+				user.put("avatar", rs.getString(3));
+				users.add(user);
+			}
+			
+			return users;
+		}catch(Exception e) {
+			System.out.println("Error from getCollabRequests"+"\n"+e.getMessage());
+		}
+		return null;
+	}
+
+	
+	
 }
