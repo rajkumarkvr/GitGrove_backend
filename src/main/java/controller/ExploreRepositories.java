@@ -48,7 +48,7 @@ public class ExploreRepositories extends HttpServlet {
 		int userId = UserDAO.getInstance().getUserId(username);
 		int limit = Integer.parseInt(perPage);
 		
-		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryExceptCurrentUser(userId,limit,startPoint);
+		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryExceptCurrentUser(userId,limit,startPoint,query);
 
 		if(repositoryList == null || repositoryList.size()==0 ) {
 			response.setStatus(204);

@@ -60,35 +60,17 @@ public class RepositoryDAO {
 		return false;
 	}
 	
-	public ArrayList<Repository> getAllRepositoryExceptCurrentUser(int userId, int limit, int startPoint){
+	public ArrayList<Repository> getAllRepositoryExceptCurrentUser(int userId, int limit, int startPoint, String query){
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? limit ? offset ?");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? and (r.name = ? || u1.username = ?) limit ? offset ?");
 			stmt.setInt(1, userId);
 			stmt.setString(2, Visibility.PUBLIC.toString());
-			stmt.setInt(3, limit);
-			stmt.setInt(4, startPoint);
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				Repository repository = new Repository(rs.getInt(1),rs.getString(2),Visibility.PUBLIC,rs.getString(3),rs.getTimestamp(4).toLocalDateTime(),rs.getInt(5));
-				repository.setOwnerName(rs.getString(6));
-				repositories.add(repository);
-			}
-			
-		} catch (Exception e) {
-			System.out.println("Get all repositories except current user : "+e.getMessage());
-		}
-		return repositories;
-	}
-	
-	public ArrayList<Repository> searchRepositoryExceptCurrentUser(int userId, int limit, String query){
-		ArrayList<Repository> repositories = new ArrayList<Repository>();
-		try {
-			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? and r.name limit ?");
-			stmt.setInt(1, userId);
-			stmt.setString(2, Visibility.PUBLIC.toString());
+			stmt.setString(3, query+"%");
+			stmt.setString(3, query+"%");
+			stmt.setInt(4, limit);
+			stmt.setInt(5, startPoint);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				Repository repository = new Repository(rs.getInt(1),rs.getString(2),Visibility.PUBLIC,rs.getString(3),rs.getTimestamp(4).toLocalDateTime(),rs.getInt(5));
@@ -427,7 +409,7 @@ public class RepositoryDAO {
 		ArrayList<Repository> topRepositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.visibility = ? limit ?");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.visibility = ? order by starts_count desc limit ?");
 			stmt.setString(1, Visibility.PUBLIC.toString());
 			stmt.setInt(2, limit);
 			ResultSet rs = stmt.executeQuery();
