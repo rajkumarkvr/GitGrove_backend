@@ -54,42 +54,39 @@ public class FileStructureHelper {
         }
         return commitsArray;
     }
-
-    // Get top-level files and folders
-    public  JSONArray getMainFiles(File file) {
+    public JSONArray getMainFiles(File repoPath, String branchName) {
         JSONArray mainFilesArray = new JSONArray();
-
-        if (file != null) {
-            try (Git git = Git.open(file)) {
+        System.out.println("Branchname "+branchName);
+        if (repoPath != null) {
+            try (Git git = Git.open(repoPath)) {
                 Repository repository = git.getRepository();
-                ObjectId head = repository.resolve("HEAD^{tree}"); // Get the latest commit tree
 
-                if (head == null) {
-                    // No commits in the repository
-                    return mainFilesArray;
+                // Resolve the correct branch reference
+                ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
+                if (branchHead == null) {
+                    return mainFilesArray; // No commits found in this branch
                 }
 
                 try (RevWalk revWalk = new RevWalk(repository);
                      TreeWalk treeWalk = new TreeWalk(repository)) {
-                    
-                    RevCommit commit = revWalk.parseCommit(repository.resolve("HEAD")); // Get latest commit
-                    treeWalk.addTree(commit.getTree()); 
-                    treeWalk.setRecursive(false); // Only top-level files/folders
-                    
+
+                    RevCommit commit = revWalk.parseCommit(branchHead);
+                    revWalk.dispose();  // Free resources
+
+                    treeWalk.addTree(commit.getTree());
+                    treeWalk.setRecursive(false); // Fetch only first-level items
+
                     while (treeWalk.next()) {
                         JSONObject fileJson = new JSONObject();
                         String fileName = treeWalk.getNameString();
                         boolean isFolder = treeWalk.isSubtree();
-                        
+
                         fileJson.put("name", fileName);
                         fileJson.put("type", isFolder ? "folder" : "file");
 
-                        // Get last commit message and time for the file
-                        String commitMessage = commit.getShortMessage();
-                        String commitTime = commit.getAuthorIdent().getWhen().toInstant().toString();
-
-                        fileJson.put("commitMessage", commitMessage);
-                        fileJson.put("commitTime", commitTime);
+                        // Get last commit details only for this branch
+                        fileJson.put("commitMessage", commit.getShortMessage());
+                        fileJson.put("commitTime", commit.getAuthorIdent().getWhen().toInstant().toString());
 
                         mainFilesArray.put(fileJson);
                     }
@@ -100,6 +97,7 @@ public class FileStructureHelper {
         }
         return mainFilesArray;
     }
+
 
 
     public  JSONArray getFileStructure(File repoPath) {

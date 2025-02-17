@@ -71,7 +71,7 @@ public class RepositoryServlet extends HttpServlet {
                 repoJson.put("mainFiles", new JSONArray()); // Empty main files
             } else {
                 repoJson.put("commits", commitsArray);
-                repoJson.put("mainFiles",FileStructureHelper.getInstance().getMainFiles(repoPath));
+                repoJson.put("mainFiles",FileStructureHelper.getInstance().getMainFiles(repoPath,branchName));
                 repoJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath,branchName));
             }
 
