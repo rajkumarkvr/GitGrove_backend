@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -27,24 +28,25 @@ public class ExploreRepositories extends HttpServlet {
     }
   
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String lengthStr = request.getParameter("size");
-		String query = request.getParameter("query");
+		String lengthStr = request.getParameter("page");
+		String query = request.getParameter("search");
+		String perPage = request.getParameter("per_page");
 		if(query == null) {
 			query = "";
 		}
-		String limitStr = request.getParameter("limit");
 		String username = request.getParameter("username");
 		
 		
-		if(username == null || limitStr == null || lengthStr == null) {
+		if(username == null || perPage == null || lengthStr == null) {
 			response.setStatus(400);
             response.getWriter().write("{\"error\": \"Missing input\"}");
             return;
 		}
 		
-		int startPoint = Integer.parseInt(lengthStr);
+		int startPoint = (Integer.parseInt(lengthStr)-1)*Integer.parseInt(perPage);
+		System.out.println("Start point"+startPoint);
 		int userId = UserDAO.getInstance().getUserId(username);
-		int limit = Integer.parseInt(limitStr);
+		int limit = Integer.parseInt(perPage);
 		
 		ArrayList<Repository> repositoryList = RepositoryDAO.getInstance().getAllRepositoryExceptCurrentUser(userId,limit,startPoint);
 
@@ -65,7 +67,11 @@ public class ExploreRepositories extends HttpServlet {
 			ownerJson.put("username", repository.getOwnerName());
 			ownerJson.put("avatar", UserDAO.getInstance().getAvatar(repository.getOwnerName()));
 			jsonObject.put("owner", ownerJson);
-			jsonObject.put("updated_at", RepositoryManager.getLastCommitedTime(username, repository.getName()).toString());
+			LocalDateTime dt = RepositoryManager.getLastCommitedTime(username, repository.getName());
+			if(dt ==null) {
+				dt =repository.getCreatedAt();
+			}
+			jsonObject.put("updated_at",dt.toString());
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), userId));
 			jsonList.add(jsonObject);

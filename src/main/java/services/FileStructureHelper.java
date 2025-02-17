@@ -60,18 +60,20 @@ public class FileStructureHelper {
         if (repoPath != null) {
             try (Git git = Git.open(repoPath)) {
                 Repository repository = git.getRepository();
-                ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
 
+                // Resolving the HEAD commit of the given branch
+                ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
                 if (branchHead == null) {
-                    return mainFilesArray;
+                    return mainFilesArray; // Empty if no branch found
                 }
 
                 try (RevWalk revWalk = new RevWalk(repository);
                      TreeWalk treeWalk = new TreeWalk(repository)) {
 
                     RevCommit commit = revWalk.parseCommit(branchHead);
-                    treeWalk.addTree(commit.getTree());
-                    treeWalk.setRecursive(false);
+                    RevTree tree = commit.getTree();  // Commit tree for specific branch
+                    treeWalk.addTree(tree);
+                    treeWalk.setRecursive(false);  // Don't go into subdirectories
 
                     while (treeWalk.next()) {
                         JSONObject fileJson = new JSONObject();
@@ -81,6 +83,7 @@ public class FileStructureHelper {
                         fileJson.put("name", fileName);
                         fileJson.put("type", isFolder ? "folder" : "file");
 
+                        // Get the last commit for the file
                         RevCommit fileCommit = getLastCommitForFile(repository, branchHead, treeWalk.getPathString());
 
                         if (fileCommit != null) {
@@ -128,7 +131,7 @@ public class FileStructureHelper {
                 .setGitDir(repoPath)
                 .build()) {
 
-            ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
+            ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
             if (branchHead == null) {
                 return "No commits found in the branch: " + branchName;
             }
@@ -173,23 +176,26 @@ public class FileStructureHelper {
         if (repoPath != null) {
             try (Git git = Git.open(repoPath)) {
                 Repository repository = git.getRepository();
-                ObjectId branchHead = repository.resolve("refs/heads/" + branchName + "^{commit}");
 
+                // Resolve the HEAD commit for the branch
+                ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
                 if (branchHead == null) {
-                    return rootArray;
+                    return rootArray; // Empty if no branch found
                 }
 
                 try (RevWalk revWalk = new RevWalk(repository);
                      TreeWalk treeWalk = new TreeWalk(repository)) {
 
                     RevCommit commit = revWalk.parseCommit(branchHead);
-                    treeWalk.addTree(commit.getTree());
+                    RevTree tree = commit.getTree();  // Get the tree of the specific branch commit
+                    treeWalk.addTree(tree);
                     treeWalk.setRecursive(false);
 
                     Map<String, JSONObject> fileMap = new HashMap<>();
 
                     while (treeWalk.next()) {
                         String path = treeWalk.getPathString();
+                        // Skip unwanted paths that are irrelevant to the branch
                         if (path.startsWith(".git") || path.startsWith("hooks") || path.startsWith("branches") || path.startsWith("refs")) {
                             continue;
                         }

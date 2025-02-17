@@ -326,7 +326,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ExploreRepositories</servlet-name>
-		<url-pattern>/service/explorerepositories</url-pattern>
+		<url-pattern>/service/explore/repositories</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>TopRatingRepositories</servlet-name>
