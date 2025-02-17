@@ -65,8 +65,7 @@ public class RepositoryDetails extends HttpServlet {
 			jsonObject.put("id", repository.getId());
 			jsonObject.put("name", repository.getName());
 			jsonObject.put("description", repository.getDescription());
-			LocalDateTime lastCommitDate = RepositoryManager.getLastCommitedTime(username, repository.getName());
-			
+			LocalDateTime lastCommitDate = RepositoryManager.getLastCommitedTime(username, repository.getName());	
 	
 			if(lastCommitDate == null) {
 				lastCommitDate = repository.getCreatedAt();

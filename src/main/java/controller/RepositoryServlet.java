@@ -26,7 +26,6 @@ public class RepositoryServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
 
         String username = request.getParameter("username");
         String repoName = request.getParameter("reponame");
