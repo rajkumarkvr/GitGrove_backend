@@ -202,6 +202,20 @@
 		<servlet-name>SpecificBranchRepositoryStructure</servlet-name>
 		<servlet-class>controller.SpecificBranchRepositoryStructure</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ExploreRepositories</display-name>
+		<servlet-name>ExploreRepositories</servlet-name>
+		<servlet-class>controller.ExploreRepositories</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>TopRatingRepositories</display-name>
+		<servlet-name>TopRatingRepositories</servlet-name>
+		<servlet-class>controller.TopRatingRepositories</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
@@ -309,6 +323,14 @@
 	<servlet-mapping>
 		<servlet-name>SpecificBranchRepositoryStructure</servlet-name>
 		<url-pattern>/SpecificBranchRepositoryStructure</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExploreRepositories</servlet-name>
+		<url-pattern>/service/explorerepositories</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TopRatingRepositories</servlet-name>
+		<url-pattern>/service/topratedrepositories</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

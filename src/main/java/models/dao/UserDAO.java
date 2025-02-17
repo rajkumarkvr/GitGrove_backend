@@ -292,6 +292,23 @@ public class UserDAO {
 		return usersList;
 	}
 	
+	// This method is to find the profile url of a user with username(which passed as a parmeter)
+	public String getAvatar(String username) {
+		String profileUrl = null;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select profile_url from users where username = ? ");
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				profileUrl = rs.getString(1); 
+			}
+		} catch (Exception e) {
+			System.out.println("Get avatar error : "+e.getMessage());
+		}
+		
+		return profileUrl;
+	}
 	
 	
 	public String encrypt(String text) {

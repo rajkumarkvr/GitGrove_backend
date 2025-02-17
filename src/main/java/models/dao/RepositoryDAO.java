@@ -60,11 +60,33 @@ public class RepositoryDAO {
 		return false;
 	}
 	
-	public ArrayList<Repository> getAllRepositoryExceptCurrentUser(int userId){
+	public ArrayList<Repository> getAllRepositoryExceptCurrentUser(int userId, int limit, int startPoint){
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? ");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? limit ? offset ?");
+			stmt.setInt(1, userId);
+			stmt.setString(2, Visibility.PUBLIC.toString());
+			stmt.setInt(3, limit);
+			stmt.setInt(4, startPoint);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				Repository repository = new Repository(rs.getInt(1),rs.getString(2),Visibility.PUBLIC,rs.getString(3),rs.getTimestamp(4).toLocalDateTime(),rs.getInt(5));
+				repository.setOwnerName(rs.getString(6));
+				repositories.add(repository);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Get all repositories except current user : "+e.getMessage());
+		}
+		return repositories;
+	}
+	
+	public ArrayList<Repository> searchRepositoryExceptCurrentUser(int userId, int limit, String query){
+		ArrayList<Repository> repositories = new ArrayList<Repository>();
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? and r.name limit ?");
 			stmt.setInt(1, userId);
 			stmt.setString(2, Visibility.PUBLIC.toString());
 			ResultSet rs = stmt.executeQuery();
@@ -79,6 +101,7 @@ public class RepositoryDAO {
 		}
 		return repositories;
 	}
+
 
 	public ArrayList<Repository> repositoriesByOwnerId(int ownerId){
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
@@ -148,7 +171,6 @@ public class RepositoryDAO {
 		
 		return id;
 	}
-	
 	
 	// To Map repositories with the users using repositoy_access database.
 	public void mapRepository (int user_id,int repo_id,Role role) {
@@ -400,7 +422,24 @@ public class RepositoryDAO {
 		}
 		return null;
 	}
-
+	
+	public ArrayList<Repository> getTopStarredRepositories(int limit) {
+		ArrayList<Repository> topRepositories = new ArrayList<Repository>();
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.visibility = ? limit ?");
+			stmt.setString(1, Visibility.PUBLIC.toString());
+			stmt.setInt(2, limit);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				topRepositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
+			}
+		} catch (Exception e) {
+			System.out.println("Get top starred repositories error : "+e.getMessage());
+		}
+		
+		return topRepositories;
+	}
 	
 	
 }
