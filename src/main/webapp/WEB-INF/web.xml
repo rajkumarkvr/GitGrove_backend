@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>GitGrove</display-name>
 	<filter>
 		<description>
@@ -8,7 +11,7 @@
 		<filter-name>CORSFilter</filter-name>
 		<filter-class>filters.CORSFilter</filter-class>
 	</filter>
-	
+
 	<filter>
 		<description>
 		</description>
@@ -21,12 +24,12 @@
 		<filter-name>CORSFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>JwtFilter</filter-name>
 		<url-pattern>/service/*</url-pattern>
 	</filter-mapping>
-	
+
 	<listener>
 		<listener-class>listeners.DBconnectionInit</listener-class>
 	</listener>
@@ -119,12 +122,12 @@
 	<servlet>
 		<description>
 		</description>
-		
+
 		<display-name>GetStarredRepositories</display-name>
 		<servlet-name>GetStarredRepositories</servlet-name>
 		<servlet-class>controller.GetStarredRepositories</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<description>
 		</description>
@@ -216,10 +219,10 @@
 		<servlet-name>TopRatedRepositories</servlet-name>
 		<servlet-class>controller.TopRatedRepositories</servlet-class>
 	</servlet>
-	
-	
-	
-		<servlet>
+
+
+
+	<servlet>
 		<description>
 		</description>
 		<display-name>MainServlet</display-name>
@@ -227,14 +230,14 @@
 		<servlet-class>util.repocreate.MainServlet</servlet-class>
 
 	</servlet>
-		<servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>MainServlet</servlet-name>
 		<url-pattern>/mainserve/*</url-pattern>
 	</servlet-mapping>
-	
-	
-	
-			<servlet>
+
+
+
+	<servlet>
 		<description>
 		</description>
 		<display-name>GitHttpServlet</display-name>
@@ -242,67 +245,81 @@
 		<servlet-class>util.repocreate.GitHttpServlet</servlet-class>
 
 	</servlet>
-			<servlet>
-				<description>
+	<servlet>
+		<description>
+		</description>
+		<display-name>NewGitHttpServlet</display-name>
+		<servlet-name>NewGitHttpServlet</servlet-name>
+		<servlet-class>util.repocreate.NewGitHttpServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetFIlesAccordingToCommit</display-name>
+		<servlet-name>GetFIlesAccordingToCommit</servlet-name>
+		<servlet-class>controller.GetFIlesAccordingToCommit</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
 				</description>
-				<display-name>NewGitHttpServlet</display-name>
-				<servlet-name>NewGitHttpServlet</servlet-name>
-				<servlet-class>util.repocreate.NewGitHttpServlet</servlet-class>
-			</servlet>
-			<servlet>
-				<description>
+		<display-name>RenameUsernameFolderServlet</display-name>
+		<servlet-name>RenameUsernameFolderServlet</servlet-name>
+		<servlet-class>controller.RenameUsernameFolderServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
 				</description>
-				<display-name>GetFIlesAccordingToCommit</display-name>
-				<servlet-name>GetFIlesAccordingToCommit</servlet-name>
-				<servlet-class>controller.GetFIlesAccordingToCommit</servlet-class>
-			</servlet>
-		<servlet-mapping>
+		<display-name>IsValidUser</display-name>
+		<servlet-name>IsValidUser</servlet-name>
+		<servlet-class>controller.Authentication.IsValidUser</servlet-class>
+	</servlet>
+	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
 	</servlet-mapping>
-	
-	
-	
-	
+
+
+
+
 	<servlet-mapping>
 		<servlet-name>CreateRepoServlet</servlet-name>
 		<url-pattern>/service/CreateRepoServlet/*</url-pattern>
 	</servlet-mapping>
-	
-	
-	
-	
-	
+
+
+
+
+
 	<servlet-mapping>
 		<servlet-name>BranchExtractor</servlet-name>
 		<url-pattern>/service/BranchExtractor/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>CommitExtractor</servlet-name>
 		<url-pattern>/service/CommitExtractor/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>FileExtractor</servlet-name>
 		<url-pattern>/service/FileExtractor/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>UpdatePassword</servlet-name>
 		<url-pattern>/service/UpdatePassword</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>SignUp</servlet-name>
-		<url-pattern>/auth/register</url-pattern>	
+		<url-pattern>/auth/register</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>SignIn</servlet-name>
 		<url-pattern>/auth/login</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>ClearSession</servlet-name>
 		<url-pattern>/clearsession</url-pattern>
@@ -315,17 +332,17 @@
 		<servlet-name>RepositoryDetails</servlet-name>
 		<url-pattern>/service/getAllRepositories</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>RepositoryServlet</servlet-name>
 		<url-pattern>/service/repo-info</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>AddStarToRepository</servlet-name>
 		<url-pattern>/service/AddStarToRepository</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>GetStarredRepositories</servlet-name>
 		<url-pattern>/service/getstarredrepositories</url-pattern>
@@ -391,7 +408,16 @@
 		<servlet-name>GetFIlesAccordingToCommit</servlet-name>
 		<url-pattern>/GetFIlesAccordingToCommit</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet-mapping>
+		<servlet-name>RenameUsernameFolderServlet</servlet-name>
+		<url-pattern>/service/RenameUsernameFolderServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>IsValidUser</servlet-name>
+		<url-pattern>/service/auth/isuserexists</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

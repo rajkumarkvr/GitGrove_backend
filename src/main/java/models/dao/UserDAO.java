@@ -217,6 +217,7 @@ public class UserDAO {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt =null;
 			if(olduser.getUsername().equals(user.getUsername())&&!olduser.getEmailaddress().equals(user.getEmailaddress())){
+				System.out.println("first condition");
 				stmt= connection.prepareStatement("update users set email=?,profile_url=? where username=? ");
 				stmt.setString(1, user.getEmailaddress());
 				stmt.setString(2, user.getProfile_url());
@@ -227,16 +228,23 @@ public class UserDAO {
 				return newuser;
 				
 			}else if(!olduser.getUsername().equals(user.getUsername())&&olduser.getEmailaddress().equals(user.getEmailaddress())){
+				System.out.println("second condition");
 			stmt= connection.prepareStatement("update users set username=?,profile_url=? where username=? ");
 			stmt.setString(1, user.getUsername());
 			stmt.setString(2, user.getProfile_url());
+			
+		
+			System.out.println("Current username"+user.getUsername());
+			System.out.println("Olduser username"+oldusername);
 			stmt.setString(3, oldusername);
-	
+			stmt.executeUpdate();
 			User newuser = getUserByUserName(user.getUsername());
 				 return newuser;
 				 
 				 
 			}else {
+				System.out.println("else condition");
+				
 				stmt= connection.prepareStatement("update users set username=?,email=?,profile_url=? where username=? ");
 				stmt.setString(1, user.getUsername());
 				stmt.setString(2, user.getEmailaddress());

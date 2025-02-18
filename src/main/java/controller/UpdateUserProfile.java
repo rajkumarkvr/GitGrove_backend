@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,8 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import models.User;
+import models.dao.SessionDAO;
 import models.dao.UserDAO;
+import utils.CookieUtil;
 import utils.JSONHandler;
+import utils.JwtUtil;
 
 /**
  * Servlet implementation class UpdateUserProfile
@@ -59,6 +63,18 @@ public class UpdateUserProfile extends HttpServlet {
 			ouputUserObject.put("email", user.getEmailaddress());
 			ouputUserObject.put("profile_url", user.getProfile_url());
 			response.getWriter().write(ouputUserObject.toString());
+			
+	
+			String token = JwtUtil.getInstance().generateToken(newusername);
+			 Cookie cookie = CookieUtil.getInstance().getCookie(newusername, token);
+			
+				String oldtoken = request.getHeader("Authorization");
+			
+				System.out.println("Token updation------------------start"+oldtoken);
+				oldtoken = oldtoken.substring(7);
+			 boolean res = SessionDAO.getInstance().updateToken(oldtoken, token);
+			 System.out.println("is updated token "+res);
+			response.addCookie(cookie);
 		}else {
 			System.out.println(usr);
 			response.setStatus(400);

@@ -89,6 +89,7 @@ public class SessionDAO {
 		try {
 			System.out.println(ip+"location - "+location);
 			Connection connection = DBconnection.getConnection();
+		System.out.println("Inserted + inserted");
 			PreparedStatement stmt = connection.prepareStatement("insert into sessions(user_id,session_value,agent,location,ipaddress) values(?,?,?,?,?)");
 			stmt.setInt(1, user_id);
 			stmt.setString(2, jwtToken);
@@ -136,4 +137,18 @@ public class SessionDAO {
 		return false;
 	}
 
+	
+	public boolean updateToken(String oldToken,String token) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("update sessions set session_value=? where session_value=?");
+			stmt.setString(1, token);
+			stmt.setString(2, oldToken);
+			int res= stmt.executeUpdate();
+			return res>0;
+		} catch (Exception e) {
+			System.out.println("error from update token"+e.getMessage());
+		}
+		return false;
+	}
 }

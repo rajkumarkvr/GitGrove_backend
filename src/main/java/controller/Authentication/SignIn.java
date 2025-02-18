@@ -30,6 +30,8 @@ public class SignIn extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		
+		System.out.println("Origin print"+request.getHeader("Origin"));
 		JSONObject userObj = JSONHandler.parse(request.getReader());
 		
 		String usernameOrEmail =  userObj.getString("identifier").trim().toLowerCase();
