@@ -38,6 +38,15 @@ public class Repository {
 		this.stars_count = starsCount;
 	}
 
+
+	public Repository(int id, String name, Visibility visibility, String description, LocalDateTime createdAt, int starsCount,String ownername) {
+		this(id,name,visibility);
+		this.description = description;
+		this.createdAt = createdAt;
+		this.stars_count = starsCount;
+		this.ownerName=ownername;
+	}
+	
 	public Repository(String name, Visibility visibility, String description) {
 		super();
 		this.name = name;
