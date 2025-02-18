@@ -355,6 +355,6 @@
 	</context-param>
 	<context-param>
 		<param-name>DB_PASSWORD</param-name>
-		<param-value>raj@777</param-value>
+		<param-value>kabil@26</param-value>
 	</context-param>
 </web-app>

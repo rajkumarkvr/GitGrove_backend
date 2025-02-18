@@ -28,17 +28,16 @@ public class CreateRepoServlet extends HttpServlet {
 //    	resp.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 //    	resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 //    	resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//
+		
 		JSONObject jsonData = JSONHandler.parse(req.getReader());
 
 		String username = jsonData.getString("username").toLowerCase();
 		String repoName = jsonData.getString("repoName").toLowerCase();
 		String repoDescription = jsonData.getString("description");
 		Visibility visibility = Visibility.valueOf(jsonData.getString("visibility").toUpperCase());
+		
 		int userId = UserDAO.getInstance().getUserId(username);
 
-		System.out.println("hello");
-		System.out.println(username + " repo: " + repoName);
 		if (username == null || username.trim().isEmpty() || repoName == null || repoName.trim().isEmpty()) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and repository name are required.");
 			return;
@@ -48,7 +47,6 @@ public class CreateRepoServlet extends HttpServlet {
 		if (!userFolder.exists()) {
 			userFolder.mkdirs(); // Create user directory if not exists
 		}
-		System.out.println("exit");
 
 		// Define repo path
 		File repoDir = new File(userFolder, repoName + ".git");
@@ -57,11 +55,11 @@ public class CreateRepoServlet extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_CONFLICT, "Repository already exists.");
 			return;
 		}
+		
 
 		try {
 			// Initialize a bare repository
 			Git.init().setBare(true).setDirectory(repoDir).call();
-
 			PermissionManager.setRecursivePermissions(repoDir.toPath(), "rwxrwxrwx");
 			PermissionManager.setOwner(userFolder, "git:git");
 			PermissionManager.setOwner(repoDir, "git:git");
@@ -70,6 +68,7 @@ public class CreateRepoServlet extends HttpServlet {
 			RepositoryDAO.getInstance().addRepository(repoName, repoDescription, visibility.toString(), userId);
 			resp.getWriter().write("Repository created:" + username + "/" + repoName + ".git");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println(e.getMessage());
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Error creating repository: " + e.getMessage());
