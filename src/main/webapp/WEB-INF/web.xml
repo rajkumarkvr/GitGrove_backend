@@ -273,6 +273,13 @@
 		<servlet-name>IsValidUser</servlet-name>
 		<servlet-class>controller.Authentication.IsValidUser</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetCommitVersions</display-name>
+		<servlet-name>GetCommitVersions</servlet-name>
+		<servlet-class>controller.GetCommitVersions</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -416,6 +423,10 @@
 	<servlet-mapping>
 		<servlet-name>IsValidUser</servlet-name>
 		<url-pattern>/service/auth/isuserexists</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetCommitVersions</servlet-name>
+		<url-pattern>/GetCommitVersions</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

@@ -4,17 +4,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.json.JSONArray;
@@ -25,6 +31,7 @@ public class FileStructureHelper {
     static FileStructureHelper helper = null;
 
     private FileStructureHelper() {
+    	
     }
 
     public static FileStructureHelper getInstance() {
@@ -237,4 +244,93 @@ public class FileStructureHelper {
         }
         return rootArray;
     }
+    
+    public JSONObject getCommitChanges(Repository repository, String commitHash) {
+        JSONObject rootJson = new JSONObject();
+
+        try (RevWalk revWalk = new RevWalk(repository)) {
+            ObjectId commitId = repository.resolve(commitHash);
+            RevCommit commit = revWalk.parseCommit(commitId);
+
+            RevCommit parentCommit = commit.getParentCount() > 0 ? revWalk.parseCommit(commit.getParent(0)) : null;
+
+            try (DiffFormatter diffFormatter = new DiffFormatter(new ByteArrayOutputStream())) {
+                diffFormatter.setRepository(repository);
+                diffFormatter.setDetectRenames(true); // Detect renames
+
+                AbstractTreeIterator oldTree = (parentCommit != null) ? prepareTreeParser(repository, parentCommit) : null;
+                AbstractTreeIterator newTree = prepareTreeParser(repository, commit);
+                List<DiffEntry> diffs = diffFormatter.scan(oldTree, newTree);
+
+                for (DiffEntry entry : diffs) {
+                    String filePath = entry.getNewPath();
+                    String[] pathParts = filePath.split("/");
+
+                    JSONObject parent = rootJson;
+                    for (int i = 0; i < pathParts.length - 1; i++) {
+                        parent = parent.optJSONObject(pathParts[i]);
+                        if (parent == null) {
+                            parent = new JSONObject();
+                            rootJson.put(pathParts[i], parent);
+                        }
+                    }
+
+                    JSONObject fileJson = new JSONObject();
+                    fileJson.put("changeType", entry.getChangeType().name());
+
+                    if (parentCommit != null && entry.getChangeType() != DiffEntry.ChangeType.ADD) {
+                        String oldContent = readFileContentFromCommit(repository, parentCommit, entry.getOldPath());
+                        fileJson.put("oldContent", oldContent);
+                    }
+
+                    String newContent = readFileContentFromCommit(repository, commit, filePath);
+                    fileJson.put("newContent", newContent);
+
+                    parent.put(pathParts[pathParts.length - 1], fileJson);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rootJson;
+    }
+    
+    private AbstractTreeIterator prepareTreeParser(Repository repository, RevCommit commit) throws IOException {
+        try (RevWalk revWalk = new RevWalk(repository)) {
+            RevTree tree = commit.getTree(); // Get the tree of the commit
+
+            CanonicalTreeParser treeParser = new CanonicalTreeParser();
+            try (ObjectReader reader = repository.newObjectReader()) {
+                treeParser.reset(reader, tree.getId()); // Parse the tree
+            }
+
+            return treeParser;
+        }
+    }
+    
+    private String readFileContentFromCommit(Repository repository, RevCommit commit, String filePath) {
+        try (TreeWalk treeWalk = new TreeWalk(repository)) {
+            treeWalk.addTree(commit.getTree());
+            treeWalk.setRecursive(true);
+            treeWalk.setFilter(PathFilter.create(filePath));
+
+            if (!treeWalk.next()) {
+                return ""; // File not found in this commit
+            }
+
+            ObjectId objectId = treeWalk.getObjectId(0);
+            ObjectLoader loader = repository.open(objectId);
+            
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            loader.copyTo(outputStream);
+            
+            return outputStream.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error reading file: " + e.getMessage();
+        }
+    }
+
+
 }
