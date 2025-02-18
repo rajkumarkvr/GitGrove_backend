@@ -249,6 +249,13 @@
 				<servlet-name>NewGitHttpServlet</servlet-name>
 				<servlet-class>util.repocreate.NewGitHttpServlet</servlet-class>
 			</servlet>
+			<servlet>
+				<description>
+				</description>
+				<display-name>GetFIlesAccordingToCommit</display-name>
+				<servlet-name>GetFIlesAccordingToCommit</servlet-name>
+				<servlet-class>controller.GetFIlesAccordingToCommit</servlet-class>
+			</servlet>
 		<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -379,6 +386,10 @@
 	<servlet-mapping>
 		<servlet-name>NewGitHttpServlet</servlet-name>
 		<url-pattern>/NewGitHttpServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetFIlesAccordingToCommit</servlet-name>
+		<url-pattern>/GetFIlesAccordingToCommit</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

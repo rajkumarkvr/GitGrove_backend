@@ -121,6 +121,8 @@ public class SessionDAO {
 
 	}
 	
+	
+	
 	public boolean isSessionAlive(String token) {
 		try {
 			Connection connection = DBconnection.getConnection();
