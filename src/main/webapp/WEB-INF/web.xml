@@ -249,6 +249,20 @@
 				<servlet-name>NewGitHttpServlet</servlet-name>
 				<servlet-class>util.repocreate.NewGitHttpServlet</servlet-class>
 			</servlet>
+			<servlet>
+				<description>
+				</description>
+				<display-name>RenameUsernameFolderServlet</display-name>
+				<servlet-name>RenameUsernameFolderServlet</servlet-name>
+				<servlet-class>controller.RenameUsernameFolderServlet</servlet-class>
+			</servlet>
+			<servlet>
+				<description>
+				</description>
+				<display-name>IsValidUser</display-name>
+				<servlet-name>IsValidUser</servlet-name>
+				<servlet-class>controller.Authentication.IsValidUser</servlet-class>
+			</servlet>
 		<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -379,6 +393,14 @@
 	<servlet-mapping>
 		<servlet-name>NewGitHttpServlet</servlet-name>
 		<url-pattern>/NewGitHttpServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RenameUsernameFolderServlet</servlet-name>
+		<url-pattern>/service/RenameUsernameFolderServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>IsValidUser</servlet-name>
+		<url-pattern>/service/auth/isuserexists</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

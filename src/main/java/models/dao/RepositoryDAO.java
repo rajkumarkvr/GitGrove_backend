@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.json.JSONObject;
@@ -423,5 +424,16 @@ public class RepositoryDAO {
 		return topRepositories;
 	}
 	
-	
+	public void updateRepositoryName(String oldRepoName, String newRepoName) {
+	    String query = "UPDATE repositories SET name = ? WHERE name = ?";
+	    try (Connection conn = DBconnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+	        stmt.setString(1, newRepoName);
+	        stmt.setString(2, oldRepoName);
+	        stmt.executeUpdate();
+	    } catch (SQLException e) {
+	       System.out.println("Error from updateRepositoryName"+e.getMessage());
+	    }
+	}
+
 }
