@@ -64,13 +64,13 @@ public class RepositoryDAO {
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? and (r.name = ? || u1.username = ?) limit ? offset ?");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.owner_id != ? and r.visibility = ? and (r.name like ? or u1.username like ?) limit ? offset ?");
 			stmt.setInt(1, userId);
 			stmt.setString(2, Visibility.PUBLIC.toString());
 			stmt.setString(3, query+"%");
-			stmt.setString(3, query+"%");
-			stmt.setInt(4, limit);
-			stmt.setInt(5, startPoint);
+			stmt.setString(4, query+"%");
+			stmt.setInt(5, limit);
+			stmt.setInt(6, startPoint);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				Repository repository = new Repository(rs.getInt(1),rs.getString(2),Visibility.PUBLIC,rs.getString(3),rs.getTimestamp(4).toLocalDateTime(),rs.getInt(5));
@@ -409,12 +409,12 @@ public class RepositoryDAO {
 		ArrayList<Repository> topRepositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.visibility = ? order by starts_count desc limit ?");
+			PreparedStatement stmt = connection.prepareStatement("select r.id, r.name, r.description, r.createdAt, r.stars_count ,u1.username from repositories r join users u1 on r.owner_id = u1.id where r.visibility = ? order by r.stars_count desc limit ?");
 			stmt.setString(1, Visibility.PUBLIC.toString());
 			stmt.setInt(2, limit);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-				topRepositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
+				topRepositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.PUBLIC, rs.getString(3), rs.getTimestamp(4).toLocalDateTime(), rs.getInt(5),rs.getString(6)));
 			}
 		} catch (Exception e) {
 			System.out.println("Get top starred repositories error : "+e.getMessage());

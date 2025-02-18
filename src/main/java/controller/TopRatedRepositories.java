@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -30,6 +31,7 @@ public class TopRatedRepositories extends HttpServlet {
 		String limitStr = request.getParameter("limit");
 		String username = request.getParameter("username");
 		
+		System.out.println("top rated............");
 		if(limitStr == null || username == null) {
 			response.setStatus(400);
             response.getWriter().write("{\"error\": \"Missing input\"}");
@@ -54,10 +56,15 @@ public class TopRatedRepositories extends HttpServlet {
 			jsonObject.put("name", repository.getName());
 			
 			JSONObject ownerJson = new JSONObject();
+//			System.out.println("Owner name"+repository.getOwnerName());
 			ownerJson.put("username", repository.getOwnerName());
 			ownerJson.put("avatar", UserDAO.getInstance().getAvatar(repository.getOwnerName()));
 			jsonObject.put("owner", ownerJson);
-			jsonObject.put("updated_at", RepositoryManager.getLastCommitedTime(username, repository.getName()).toString());
+			LocalDateTime dt = RepositoryManager.getLastCommitedTime(username, repository.getName());
+			if(dt ==null) {
+				dt =repository.getCreatedAt();
+			}
+			jsonObject.put("updated_at",dt.toString());
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), userId));
 			jsonList.add(jsonObject);
