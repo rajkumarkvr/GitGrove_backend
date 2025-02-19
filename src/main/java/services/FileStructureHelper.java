@@ -11,6 +11,8 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.diff.EditList;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
@@ -245,18 +247,18 @@ public class FileStructureHelper {
         return rootArray;
     }
     
-    public JSONObject getCommitChanges(Repository repository, String commitHash) {
-        JSONObject rootJson = new JSONObject();
+    public JSONArray getCommitChanges(Repository repository, String commitHash) {
+        JSONArray changesArray = new JSONArray();
 
         try (RevWalk revWalk = new RevWalk(repository)) {
             ObjectId commitId = repository.resolve(commitHash);
             RevCommit commit = revWalk.parseCommit(commitId);
 
-            RevCommit parentCommit = commit.getParentCount() > 0 ? revWalk.parseCommit(commit.getParent(0)) : null;
+            RevCommit parentCommit = (commit.getParentCount() > 0) ? revWalk.parseCommit(commit.getParent(0)) : null;
 
             try (DiffFormatter diffFormatter = new DiffFormatter(new ByteArrayOutputStream())) {
                 diffFormatter.setRepository(repository);
-                diffFormatter.setDetectRenames(true); // Detect renames
+                diffFormatter.setDetectRenames(true);
 
                 AbstractTreeIterator oldTree = (parentCommit != null) ? prepareTreeParser(repository, parentCommit) : null;
                 AbstractTreeIterator newTree = prepareTreeParser(repository, commit);
@@ -264,37 +266,48 @@ public class FileStructureHelper {
 
                 for (DiffEntry entry : diffs) {
                     String filePath = entry.getNewPath();
-                    String[] pathParts = filePath.split("/");
-
-                    JSONObject parent = rootJson;
-                    for (int i = 0; i < pathParts.length - 1; i++) {
-                        parent = parent.optJSONObject(pathParts[i]);
-                        if (parent == null) {
-                            parent = new JSONObject();
-                            rootJson.put(pathParts[i], parent);
-                        }
-                    }
+                    if (filePath.equals("/dev/null")) continue; // Skip non-existent files
 
                     JSONObject fileJson = new JSONObject();
+                    fileJson.put("path", filePath);
                     fileJson.put("changeType", entry.getChangeType().name());
 
-                    if (parentCommit != null && entry.getChangeType() != DiffEntry.ChangeType.ADD) {
-                        String oldContent = readFileContentFromCommit(repository, parentCommit, entry.getOldPath());
-                        fileJson.put("oldContent", oldContent);
+                    // Store changes with line numbers
+                    JSONArray changesArrayForFile = new JSONArray();
+                    diffFormatter.format(entry);
+                    EditList editList = diffFormatter.toFileHeader(entry).toEditList();
+
+                    for (Edit edit : editList) {
+                        JSONObject changeJson = new JSONObject();
+                        changeJson.put("startLineOld", edit.getBeginA() + 1); // Line number in old file
+                        changeJson.put("endLineOld", edit.getEndA()); 
+                        changeJson.put("startLineNew", edit.getBeginB() + 1); // Line number in new file
+                        changeJson.put("endLineNew", edit.getEndB());
+
+                        // Fetch old content
+                        if (parentCommit != null && entry.getChangeType() != DiffEntry.ChangeType.ADD) {
+                            String oldContent = readFileContentFromCommit(repository, parentCommit, entry.getOldPath());
+                            changeJson.put("oldContent", oldContent != null ? oldContent : "File not found");
+                        }
+
+                        // Fetch new content
+                        String newContent = readFileContentFromCommit(repository, commit, filePath);
+                        changeJson.put("newContent", newContent != null ? newContent : "File not found");
+
+                        changesArrayForFile.put(changeJson);
                     }
 
-                    String newContent = readFileContentFromCommit(repository, commit, filePath);
-                    fileJson.put("newContent", newContent);
-
-                    parent.put(pathParts[pathParts.length - 1], fileJson);
+                    fileJson.put("changes", changesArrayForFile);
+                    changesArray.put(fileJson);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return rootJson;
+        return changesArray;
     }
+
     
     private AbstractTreeIterator prepareTreeParser(Repository repository, RevCommit commit) throws IOException {
         try (RevWalk revWalk = new RevWalk(repository)) {
