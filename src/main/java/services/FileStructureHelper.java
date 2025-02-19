@@ -53,9 +53,7 @@ public class FileStructureHelper {
         JSONArray commitsArray = new JSONArray();
 
         Iterable<RevCommit> commits = git.log()
-                .add(git.getRepository().resolve("refs/heads/" + branchName))
-                .setMaxCount(3)
-                .call();
+                .add(git.getRepository().resolve("refs/heads/" + branchName)).call();
 
         for (RevCommit commit : commits) {
             JSONObject commitJson = new JSONObject();

@@ -433,7 +433,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetCommitVersions</servlet-name>
-		<url-pattern>/GetCommitVersions</url-pattern>
+		<url-pattern>/service/GetCommitVersions</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ZipFileConverter</servlet-name>
@@ -462,6 +462,6 @@
 	</context-param>
 	<context-param>
 		<param-name>DB_PASSWORD</param-name>
-		<param-value>kabil@26</param-value>
+		<param-value>raj@777</param-value>
 	</context-param>
 </web-app>
