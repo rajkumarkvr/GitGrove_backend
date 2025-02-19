@@ -26,8 +26,9 @@ public class RepositoryServlet extends HttpServlet {
         String username = request.getParameter("username");
         String repoName = request.getParameter("reponame");
         String branchName = request.getParameter("branchname");
-
+    	
         if (username == null || repoName == null || branchName == null) {
+        
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Missing username or reponame\"}");
             return;
@@ -57,7 +58,10 @@ public class RepositoryServlet extends HttpServlet {
             JSONArray commitsArray;
             try {
                 commitsArray = FileStructureHelper.getInstance().getCommitHistory(git,branchName) ;
-                } catch (GitAPIException e) {
+                } 
+            
+            
+            catch (GitAPIException|NullPointerException e) {
                 // If an error occurs, assume no commits exist
                 commitsArray = new JSONArray();
             }
@@ -80,6 +84,8 @@ public class RepositoryServlet extends HttpServlet {
             response.getWriter().write(repoJson.toString(4));
 
         } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        	e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\": \"Internal server error: " + e.getMessage() + "\"}");
         }

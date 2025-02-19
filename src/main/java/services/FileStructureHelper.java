@@ -47,6 +47,7 @@ public class FileStructureHelper {
     public JSONArray getCommitHistory(Git git, String branchName) throws GitAPIException, IOException {
         JSONArray commitsArray = new JSONArray();
 
+     
         Iterable<RevCommit> commits = git.log()
                 .add(git.getRepository().resolve("refs/heads/" + branchName)).call();
 
