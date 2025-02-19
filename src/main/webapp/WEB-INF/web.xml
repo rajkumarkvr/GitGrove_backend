@@ -280,6 +280,13 @@
 		<servlet-name>GetCommitVersions</servlet-name>
 		<servlet-class>controller.GetCommitVersions</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ZipFileConverter</display-name>
+		<servlet-name>ZipFileConverter</servlet-name>
+		<servlet-class>controller.ZipFileConverter</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -427,6 +434,10 @@
 	<servlet-mapping>
 		<servlet-name>GetCommitVersions</servlet-name>
 		<url-pattern>/GetCommitVersions</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ZipFileConverter</servlet-name>
+		<url-pattern>/servive/download/zip</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
