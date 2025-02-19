@@ -25,12 +25,13 @@ public class GetCommitVersions extends HttpServlet {
     }
 
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
-		String commitHash = jsonObject.optString("commithash");
+		String commitHash = jsonObject.optString("commitHash");
 		String repoName = jsonObject.optString("reponame");
 		String username = jsonObject.optString("username");
+		
 		
 		String repoPath = "/opt/repo/"+username+"/"+repoName+".git";
 		
