@@ -24,6 +24,7 @@ public class ZipFileConverter extends HttpServlet {
 		String repoName = request.getParameter("reponame");
 		String userName = request.getParameter("username");
 		
+		System.out.println("Entry"+repoName+userName);
 		if(repoName == null || userName == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"Repository not found\"}");

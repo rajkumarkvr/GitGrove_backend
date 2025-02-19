@@ -437,7 +437,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ZipFileConverter</servlet-name>
-		<url-pattern>/servive/download/zip</url-pattern>
+		<url-pattern>/service/download/zip</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
