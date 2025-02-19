@@ -257,47 +257,71 @@ public class FileStructureHelper {
             try (DiffFormatter diffFormatter = new DiffFormatter(new ByteArrayOutputStream())) {
                 diffFormatter.setRepository(repository);
                 diffFormatter.setDetectRenames(true);
+                
+                if (parentCommit == null) {
+                    // FIRST COMMIT: List all files in the commit
+                    try (TreeWalk treeWalk = new TreeWalk(repository)) {
+                        treeWalk.addTree(commit.getTree());
+                        treeWalk.setRecursive(true);
 
-                AbstractTreeIterator oldTree = (parentCommit != null) ? prepareTreeParser(repository, parentCommit) : null;
-                AbstractTreeIterator newTree = prepareTreeParser(repository, commit);
-                List<DiffEntry> diffs = diffFormatter.scan(oldTree, newTree);
+                        while (treeWalk.next()) {
+                            JSONObject fileJson = new JSONObject();
+                            String filePath = treeWalk.getPathString();
+                            fileJson.put("path", filePath);
+                            fileJson.put("changeType", "ADD");
 
-                for (DiffEntry entry : diffs) {
-                    String filePath = entry.getNewPath();
-                    if (filePath.equals("/dev/null")) continue; // Skip non-existent files
+                            // Fetch file content from the first commit
+                            String content = readFileContentFromCommit(repository, commit, filePath);
+                            fileJson.put("newContent", content != null ? content : "");
 
-                    JSONObject fileJson = new JSONObject();
-                    fileJson.put("path", filePath);
-                    fileJson.put("changeType", entry.getChangeType().name());
-
-                    // Store changes with line numbers
-                    JSONArray changesArrayForFile = new JSONArray();
-                    diffFormatter.format(entry);
-                    EditList editList = diffFormatter.toFileHeader(entry).toEditList();
-
-                    for (Edit edit : editList) {
-                        JSONObject changeJson = new JSONObject();
-                        changeJson.put("startLineOld", edit.getBeginA() + 1); // Line number in old file
-                        changeJson.put("endLineOld", edit.getEndA()); 
-                        changeJson.put("startLineNew", edit.getBeginB() + 1); // Line number in new file
-                        changeJson.put("endLineNew", edit.getEndB());
-
-                        // Fetch old content
-                        if (parentCommit != null && entry.getChangeType() != DiffEntry.ChangeType.ADD) {
-                            String oldContent = readFileContentFromCommit(repository, parentCommit, entry.getOldPath());
-                            changeJson.put("oldContent", oldContent != null ? oldContent : "File not found");
+                            changesArray.put(fileJson);
                         }
-
-                        // Fetch new content
-                        String newContent = readFileContentFromCommit(repository, commit, filePath);
-                        changeJson.put("newContent", newContent != null ? newContent : "File not found");
-
-                        changesArrayForFile.put(changeJson);
                     }
-
-                    fileJson.put("changes", changesArrayForFile);
-                    changesArray.put(fileJson);
                 }
+                else {
+                	  AbstractTreeIterator oldTree = (parentCommit != null) ? prepareTreeParser(repository, parentCommit) : null;
+                      AbstractTreeIterator newTree = prepareTreeParser(repository, commit);
+                      List<DiffEntry> diffs = diffFormatter.scan(oldTree, newTree);
+
+                      for (DiffEntry entry : diffs) {
+                          String filePath = entry.getNewPath();
+                          if (filePath.equals("/dev/null")) continue; // Skip non-existent files
+
+                          JSONObject fileJson = new JSONObject();
+                          fileJson.put("path", filePath);
+                          fileJson.put("changeType", entry.getChangeType().name());
+
+                          // Store changes with line numbers
+                          JSONArray changesArrayForFile = new JSONArray();
+                          diffFormatter.format(entry);
+                          EditList editList = diffFormatter.toFileHeader(entry).toEditList();
+
+                          for (Edit edit : editList) {
+                              JSONObject changeJson = new JSONObject();
+                              changeJson.put("startLineOld", edit.getBeginA() + 1); // Line number in old file
+                              changeJson.put("endLineOld", edit.getEndA()); 
+                              changeJson.put("startLineNew", edit.getBeginB() + 1); // Line number in new file
+                              changeJson.put("endLineNew", edit.getEndB());
+
+                              // Fetch old content
+                              if (parentCommit != null && entry.getChangeType() != DiffEntry.ChangeType.ADD) {
+                                  String oldContent = readFileContentFromCommit(repository, parentCommit, entry.getOldPath());
+                                  changeJson.put("oldContent", oldContent != null ? oldContent : "File not found");
+                              }
+
+                              // Fetch new content
+                              String newContent = readFileContentFromCommit(repository, commit, filePath);
+                              changeJson.put("newContent", newContent != null ? newContent : "File not found");
+
+                              changesArrayForFile.put(changeJson);
+                          }
+
+                          fileJson.put("changes", changesArrayForFile);
+                          changesArray.put(fileJson);
+                      }
+                }
+
+              
             }
         } catch (Exception e) {
             e.printStackTrace();
