@@ -374,12 +374,31 @@ public class FileStructureHelper {
         }
     }
     
-    public File zipRepository(File repoPath, String zipFileName) throws IOException {
-        File zipFile = new File(repoPath.getParent(), zipFileName);
+    public File zipRepository(File bareRepoPath, String branch, String zipFileName) throws IOException, GitAPIException {
+    	
+        // Create a temporary directory to checkout files
+        File tempDir = new File(bareRepoPath.getParent(), "temp_repo");
+        if (tempDir.exists()) {
+            deleteDirectory(tempDir); // Cleanup if it exists
+        }
+
+        // Clone the repository (checkout files)
+        Git git = Git.cloneRepository()
+                .setURI(bareRepoPath.getAbsolutePath()) // Clone from bare repo
+                .setDirectory(tempDir) // Checkout files here
+                .setBranch(branch) // Checkout specific branch
+                .call();
+
+        // Zip the working directory (not .git folder)
+        File zipFile = new File(bareRepoPath.getParent(), zipFileName);
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-            zipDirectory(repoPath.toPath(), repoPath.toPath(), zipOut);
+            zipDirectory(tempDir.toPath(), tempDir.toPath(), zipOut);
         }
+
+        // Cleanup: Delete temp working directory
+        deleteDirectory(tempDir);
+
         return zipFile;
     }
 
@@ -396,6 +415,15 @@ public class FileStructureHelper {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void deleteDirectory(File dir) throws IOException {
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                deleteDirectory(file);
+            }
+        }
+        dir.delete();
     }
 
 

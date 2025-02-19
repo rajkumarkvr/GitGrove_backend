@@ -23,6 +23,7 @@ public class ZipFileConverter extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String repoName = request.getParameter("reponame");
 		String userName = request.getParameter("username");
+		String branchName = request.getParameter("branchname");
 		
 		System.out.println("Entry"+repoName+userName);
 		if(repoName == null || userName == null) {
@@ -33,7 +34,14 @@ public class ZipFileConverter extends HttpServlet {
 		String repoPath = "/opt/repo/"+userName+"/"+repoName+".git";
 		File file = new File(repoPath);
 		
-		File zipFile = FileStructureHelper.getInstance().zipRepository(file, repoName);
+		File zipFile = null;
+		
+		try {
+			zipFile = FileStructureHelper.getInstance().zipRepository(file,"",repoName);
+		} catch (Exception e) {
+			response.setStatus(400);
+			response.getWriter().write("{\"error\" : \"Unable to read content\"}");
+		}
 
 	    response.setContentType("application/zip");
 	    response.setHeader("Content-Disposition", "attachment; filename=\"repository.zip\"");
