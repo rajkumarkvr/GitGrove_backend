@@ -42,6 +42,7 @@ public class CreateRepoServlet extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username and repository name are required.");
 			return;
 		}
+		
 		// Create user folder
 		File userFolder = new File(REPO_PATH, username);
 		if (!userFolder.exists()) {

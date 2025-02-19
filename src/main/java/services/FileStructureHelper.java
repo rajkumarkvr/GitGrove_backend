@@ -2,10 +2,15 @@ package services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -165,6 +170,7 @@ public class FileStructureHelper {
                     return outputStream.toString();
                 }
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
             return "Error reading file: " + e.getMessage();
@@ -366,6 +372,30 @@ public class FileStructureHelper {
             e.printStackTrace();
             return "Error reading file: " + e.getMessage();
         }
+    }
+    
+    public File zipRepository(File repoPath, String zipFileName) throws IOException {
+        File zipFile = new File(repoPath.getParent(), zipFileName);
+        try (FileOutputStream fos = new FileOutputStream(zipFile);
+             ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+            zipDirectory(repoPath.toPath(), repoPath.toPath(), zipOut);
+        }
+        return zipFile;
+    }
+
+    private void zipDirectory(Path sourcePath, Path rootPath, ZipOutputStream zipOut) throws IOException {
+        Files.walk(sourcePath).forEach(path -> {
+            try {
+                if (!Files.isDirectory(path)) {
+                    String zipEntryName = rootPath.relativize(path).toString();
+                    zipOut.putNextEntry(new ZipEntry(zipEntryName));
+                    Files.copy(path, zipOut);
+                    zipOut.closeEntry();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 
