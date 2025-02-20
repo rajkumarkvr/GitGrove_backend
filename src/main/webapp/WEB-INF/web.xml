@@ -33,6 +33,9 @@
 	<listener>
 		<listener-class>listeners.DBconnectionInit</listener-class>
 	</listener>
+	<listener>
+		<listener-class>listeners.SshGitListener</listener-class>
+	</listener>
 	<servlet>
 		<description>s
 		</description>
@@ -287,6 +290,13 @@
 		<servlet-name>ZipFileConverter</servlet-name>
 		<servlet-class>controller.ZipFileConverter</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GitAuthService</display-name>
+		<servlet-name>GitAuthService</servlet-name>
+		<servlet-class>services.GitAuthService</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -438,6 +448,10 @@
 	<servlet-mapping>
 		<servlet-name>ZipFileConverter</servlet-name>
 		<url-pattern>/service/download/zip</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GitAuthService</servlet-name>
+		<url-pattern>/git/auth/*</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
