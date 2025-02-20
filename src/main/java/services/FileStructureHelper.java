@@ -387,6 +387,8 @@ public class FileStructureHelper {
                 .setDirectory(tempDir) // Checkout files here
                 .setBranch(branch) // Checkout specific branch
                 .call();
+        
+        git.checkout().setName(branch).call();
 
         // Zip the working directory (not .git folder)
         File zipFile = new File(bareRepoPath.getParent(), zipFileName);
@@ -395,7 +397,8 @@ public class FileStructureHelper {
             zipDirectory(tempDir.toPath(), tempDir.toPath(), zipOut);
         }
 
-        // Cleanup: Delete temp working directory
+
+        // Cleanup: Delete temp worsking directory
         deleteDirectory(tempDir);
 
         return zipFile;
