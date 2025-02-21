@@ -178,7 +178,7 @@ public class RepositoryDAO {
 			Connection connection = DBconnection.getConnection();
 			PreparedStatement stmt = connection.prepareStatement("select name from repositories where id = ? and visibility = ?");
 			stmt.setInt(1, id);
-			stmt.setString(1, Visibility.PRIVATE.toString());
+			stmt.setString(2, Visibility.PRIVATE.toString());
 			ResultSet rs = stmt.executeQuery();
 			isPrivate = rs.next();
 		} catch (Exception e) {

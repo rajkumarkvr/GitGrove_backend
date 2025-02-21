@@ -18,11 +18,13 @@ public class GitAuthService extends HttpServlet {
         String repo = request.getParameter("repo");
         String action = request.getParameter("action");
         System.out.println("Username"+user+" reponame"+repo+" action"+action);
-        
+        	repo=repo.replaceAll("/opt/repo/", "").split("/")[1].replaceAll(".git", "");
+        	System.out.println(repo);
         boolean isValid = false;
         int userId = UserDAO.getInstance().getUserId(user);
         int repoId = RepositoryDAO.getInstance().getRepositoryId(repo,2);
         
+        System.out.println("repoid : "+repoId+" User id : "+userId);
         if(action.equals("fetch")) {
         	if(!RepositoryDAO.getInstance().isPrivate(repoId) || RepositoryDAO.getInstance().canCollaborate(repoId, userId)) {
         		isValid = true;
@@ -34,6 +36,7 @@ public class GitAuthService extends HttpServlet {
         		isValid = true;
         	}
         }	
+        
         
   
         if(isValid) {
