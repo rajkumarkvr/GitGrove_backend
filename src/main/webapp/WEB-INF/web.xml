@@ -33,9 +33,6 @@
 	<listener>
 		<listener-class>listeners.DBconnectionInit</listener-class>
 	</listener>
-	<listener>
-		<listener-class>listeners.SshGitListener</listener-class>
-	</listener>
 	<servlet>
 		<description>s
 		</description>
@@ -297,6 +294,13 @@
 		<servlet-name>GitAuthService</servlet-name>
 		<servlet-class>services.GitAuthService</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>PullRequest</display-name>
+		<servlet-name>PullRequest</servlet-name>
+		<servlet-class>controller.pullrequests.PullRequest</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -452,6 +456,10 @@
 	<servlet-mapping>
 		<servlet-name>GitAuthService</servlet-name>
 		<url-pattern>/git/auth/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PullRequest</servlet-name>
+		<url-pattern>/PullRequest</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
