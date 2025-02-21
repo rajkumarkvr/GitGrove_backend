@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.eclipse.jgit.util.FS;
 import org.json.JSONObject;
 
 import enums.Collaborator_Request;
@@ -153,6 +154,23 @@ public class RepositoryDAO {
 		}
 		
 		return id;
+	}
+	
+	public boolean isPrivate(int id) {
+		boolean isPrivate = false;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select name from repositories where id = ? and visibility = ?");
+			stmt.setInt(1, id);
+			stmt.setString(1, Visibility.PRIVATE.toString());
+			ResultSet rs = stmt.executeQuery();
+			isPrivate = rs.next();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("Is private error : "+e.getMessage());
+		}
+		
+		return isPrivate;
 	}
 	
 	// To Map repositories with the users using repositoy_access database.
@@ -327,6 +345,24 @@ public class RepositoryDAO {
 		}
 		
 		return isAdded;
+	}
+	
+	public boolean canCollaborate(int repoId, int userId) {
+		boolean isCollab = false;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select id from repository_access where user_id = ? and repo_id = ? and role != ?");
+			stmt.setInt(1, userId);
+			stmt.setInt(2, repoId);
+			stmt.setString(3, "VIWER");
+			ResultSet rs = stmt.executeQuery();
+			isCollab = rs.next();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("Can Collaborate error : "+e.getMessage());
+		}
+		
+		return isCollab;
 	}
 	
 	

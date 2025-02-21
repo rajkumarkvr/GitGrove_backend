@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.dao.RepositoryDAO;
+import models.dao.UserDAO;
+
 public class GitAuthService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -16,7 +19,36 @@ public class GitAuthService extends HttpServlet {
         String action = request.getParameter("action");
         System.out.println("Username"+user+" reponame"+repo+" action"+action);
         
-        response.setStatus(HttpServletResponse.SC_OK);
+        boolean isValid = false;
+        int repoId = RepositoryDAO.getInstance().getRepositoryId(repo);
+        int userId = UserDAO.getInstance().getUserId(user);
+        
+        if(action.equals("clone")) {
+        	if(!RepositoryDAO.getInstance().isPrivate(repoId)) {
+        		isValid = true;
+        	}
+        }
+        
+        if(action.equals("push")) {
+        	if(RepositoryDAO.getInstance().canCollaborate(repoId, userId)){
+        		isValid = true;
+        	}
+        }	
+        
+        if(action.equals("pull")) {
+        	if(RepositoryDAO.getInstance().canCollaborate(repoId, userId)) {
+        		isValid = true;
+        	}
+        }
+        
+        if(isValid) {
+        	response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else {
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+        
+        
   	}
 
 }
