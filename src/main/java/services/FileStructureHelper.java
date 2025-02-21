@@ -52,6 +52,7 @@ public class FileStructureHelper {
     public JSONArray getCommitHistory(Git git, String branchName) throws GitAPIException, IOException {
         JSONArray commitsArray = new JSONArray();
 
+     
         Iterable<RevCommit> commits = git.log()
                 .add(git.getRepository().resolve("refs/heads/" + branchName)).call();
 
@@ -374,23 +375,34 @@ public class FileStructureHelper {
     }
     
     public File zipRepository(File bareRepoPath, String branch, String zipFileName) throws IOException, GitAPIException {
-    	
-        // Create a temporary directory to checkout files
+      
         File tempDir = new File(bareRepoPath.getParent(), "temp_repo");
         if (tempDir.exists()) {
             deleteDirectory(tempDir); // Cleanup if it exists
         }
 
-        // Clone the repository (checkout files)
-        Git git = Git.cloneRepository()
-                .setURI(bareRepoPath.getAbsolutePath()) // Clone from bare repo
-                .setDirectory(tempDir) // Checkout files here
+        // Initialize a new repository in temp directory
+        try (Git git = Git.cloneRepository()
+                .setURI(bareRepoPath.getAbsolutePath())  // Clone from bare repo
+                .setDirectory(tempDir) // Clone into temp directory
                 .setBranch(branch) // Checkout specific branch
+<<<<<<< HEAD
                 .call();
         
         git.checkout().setName(branch).call();
 
         // Zip the working directory (not .git folder)
+=======
+                .setCloneAllBranches(false)
+                .setBare(false) // Ensure it is NOT a bare repo
+                .call()) {
+            
+            // Force checkout the branch
+            git.checkout().setName(branch).call();
+        }
+        
+        // Zip the working directory (excluding .git folder)
+>>>>>>> 867cf2654abebf8204ff2d83b2882220dca30703
         File zipFile = new File(bareRepoPath.getParent(), zipFileName);
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zipOut = new ZipOutputStream(fos)) {
@@ -419,14 +431,25 @@ public class FileStructureHelper {
         });
     }
 
+ 
+
     private void deleteDirectory(File dir) throws IOException {
-        if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
+        if (!dir.exists()) {
+            return; // Avoid errors if directory does not exist
+        }
+        
+        File[] files = dir.listFiles();
+        if (files != null) { // Check if directory is not empty
+            for (File file : files) {
                 deleteDirectory(file);
             }
         }
-        dir.delete();
+        
+        if (!dir.delete()) {
+            throw new IOException("Failed to delete: " + dir.getAbsolutePath());
+        }
     }
+
 
 
 }

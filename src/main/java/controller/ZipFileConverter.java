@@ -25,6 +25,7 @@ public class ZipFileConverter extends HttpServlet {
 		String userName = request.getParameter("username");
 		String branchName = request.getParameter("branchname");
 		
+		System.out.println("Entry"+repoName+userName);
 		if(repoName == null || userName == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"Repository not found\"}");
@@ -36,8 +37,11 @@ public class ZipFileConverter extends HttpServlet {
 		File zipFile = null;
 		
 		try {
-			zipFile = FileStructureHelper.getInstance().zipRepository(file,"",repoName);
+			zipFile = FileStructureHelper.getInstance().zipRepository(file,branchName,repoName);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
+//			System.out.println();
+			e.printStackTrace();
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"Unable to read content\"}");
 		}
@@ -52,8 +56,14 @@ public class ZipFileConverter extends HttpServlet {
 	        while ((bytesRead = fis.read(buffer)) != -1) {
 	            os.write(buffer, 0, bytesRead);
 	        }
+<<<<<<< HEAD
 	    }
 	    
+=======
+	    }  catch(Exception e) {
+        	System.out.println("Main zip serve"+e.getMessage());
+        }
+>>>>>>> 867cf2654abebf8204ff2d83b2882220dca30703
 		
 	}
 
