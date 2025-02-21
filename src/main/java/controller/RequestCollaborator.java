@@ -32,7 +32,7 @@ public class RequestCollaborator extends HttpServlet {
 		
 		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 		int inviteeId = UserDAO.getInstance().getUserId(inviteeName);
-		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName);
+		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName,ownerId);
 	
 		if(ownerId<0 || inviteeId<0 || repoId<0) {
 			response.setStatus(400);

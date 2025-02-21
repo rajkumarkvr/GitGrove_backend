@@ -29,8 +29,8 @@ public class GetCollaborators extends HttpServlet {
             return;
 		}
 		
-		int repoid = RepositoryDAO.getInstance().getRepositoryId(reponame);
 		int ownerid =UserDAO.getInstance().getUserId(ownername);
+		int repoid = RepositoryDAO.getInstance().getRepositoryId(reponame,ownerid);
 		ArrayList<JSONObject> collaborators = RepositoryDAO.getInstance().getCollaborators(repoid, ownerid);
 		if(collaborators==null) {
 			response.setStatus(203);

@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.eclipse.jgit.util.FS;
 import org.json.JSONObject;
 
 import enums.Collaborator_Request;
@@ -122,12 +121,11 @@ public class RepositoryDAO {
 		return repositories;
 	}
 	
-	// Getting repository details using repository Id.
 	public Repository getRepository(int id) {
 		Repository repository = null;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select * from repositories where id = ?");
+			PreparedStatement stmt = connection.prepareStatement("select * from repositories where id = ? ");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
@@ -139,12 +137,30 @@ public class RepositoryDAO {
 		return repository;
 	}
 	
-	public int getRepositoryId(String repoName) {
+//	public int getRepositoryId(String repoName) {
+//		int id = -1;
+//		try {
+//			Connection connection = DBconnection.getConnection();
+//			PreparedStatement stmt = connection.prepareStatement("select id from repositories where name = ?");
+//			stmt.setString(1, repoName);
+//			ResultSet rs = stmt.executeQuery();
+//			if(rs.next()) {
+//				id = rs.getInt(1);
+//			}
+//		} catch (Exception e) {
+//			System.out.println("Get Repository Id : "+e.getMessage());
+//		}
+//		
+//		return id;
+//	}
+	
+	public int getRepositoryId(String repoName, int owner_id) {
 		int id = -1;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select id from repositories where name = ?");
+			PreparedStatement stmt = connection.prepareStatement("select id from repositories where name = ? and owner_id = ?");
 			stmt.setString(1, repoName);
+			stmt.setInt(2, owner_id);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
 				id = rs.getInt(1);

@@ -30,8 +30,8 @@ public class GetCollabRequests extends HttpServlet {
             return;
 		}
 		
-		int repoid = RepositoryDAO.getInstance().getRepositoryId(reponame);
 		int ownerid =UserDAO.getInstance().getUserId(ownername);
+		int repoid = RepositoryDAO.getInstance().getRepositoryId(reponame,ownerid);
 		ArrayList<JSONObject> collabRequests = RepositoryDAO.getInstance().getCollabRequests(repoid, ownerid);
 		if(collabRequests==null) {
 			response.setStatus(203);

@@ -38,7 +38,7 @@ public class FindPeople extends HttpServlet {
 		}
 		
 		int owner_id = UserDAO.getInstance().getUserId(username);
-		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName);
+		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName,owner_id);
 
 		if(owner_id<0) {
 			response.setStatus(400);
