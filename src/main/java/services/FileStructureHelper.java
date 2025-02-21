@@ -386,23 +386,12 @@ public class FileStructureHelper {
                 .setURI(bareRepoPath.getAbsolutePath())  // Clone from bare repo
                 .setDirectory(tempDir) // Clone into temp directory
                 .setBranch(branch) // Checkout specific branch
-<<<<<<< HEAD
-                .call();
+                .call()){
         
         git.checkout().setName(branch).call();
-
-        // Zip the working directory (not .git folder)
-=======
-                .setCloneAllBranches(false)
-                .setBare(false) // Ensure it is NOT a bare repo
-                .call()) {
-            
-            // Force checkout the branch
-            git.checkout().setName(branch).call();
-        }
         
-        // Zip the working directory (excluding .git folder)
->>>>>>> 867cf2654abebf8204ff2d83b2882220dca30703
+        }
+   
         File zipFile = new File(bareRepoPath.getParent(), zipFileName);
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zipOut = new ZipOutputStream(fos)) {

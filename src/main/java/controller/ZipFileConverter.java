@@ -56,14 +56,11 @@ public class ZipFileConverter extends HttpServlet {
 	        while ((bytesRead = fis.read(buffer)) != -1) {
 	            os.write(buffer, 0, bytesRead);
 	        }
-<<<<<<< HEAD
 	    }
 	    
-=======
-	    }  catch(Exception e) {
+	    catch(Exception e) {
         	System.out.println("Main zip serve"+e.getMessage());
         }
->>>>>>> 867cf2654abebf8204ff2d83b2882220dca30703
 		
 	}
 
