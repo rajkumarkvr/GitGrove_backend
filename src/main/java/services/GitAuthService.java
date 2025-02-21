@@ -26,7 +26,7 @@ public class GitAuthService extends HttpServlet {
         
         boolean isValid = false;
         int userId = UserDAO.getInstance().getUserId(user);
-        int repoId = RepositoryDAO.getInstance().getRepositoryId(repo,ownerId);
+        int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName,ownerId);
         
         System.out.println("repoid : "+repoId+" User id : "+userId);
         if(action.equals("fetch")) {
