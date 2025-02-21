@@ -301,6 +301,13 @@
 		<servlet-name>PullRequest</servlet-name>
 		<servlet-class>controller.pullrequests.PullRequest</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>AddSSHKey</display-name>
+		<servlet-name>AddSSHKey</servlet-name>
+		<servlet-class>controller.AddSSHKey</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -460,6 +467,10 @@
 	<servlet-mapping>
 		<servlet-name>PullRequest</servlet-name>
 		<url-pattern>/PullRequest</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AddSSHKey</servlet-name>
+		<url-pattern>/service/ssh/add-key</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
