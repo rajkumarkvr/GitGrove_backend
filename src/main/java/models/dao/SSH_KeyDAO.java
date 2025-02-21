@@ -39,7 +39,7 @@ public class SSH_KeyDAO {
 			stmt.setInt(1, user_id);
 			stmt.setString(2, sshKey);
 			stmt.setString(3, description);
-			stmt.executeQuery();
+			stmt.executeUpdate();
 		} catch (Exception e) {
 			System.out.println("SSH key insertion error : "+e.getMessage());
 		}
@@ -74,6 +74,7 @@ public class SSH_KeyDAO {
 			    Files.move(tempFile, Paths.get(AUTHORIZED_KEYS_PATH), StandardCopyOption.REPLACE_EXISTING);
 			    Files.setPosixFilePermissions(Paths.get(AUTHORIZED_KEYS_PATH), PosixFilePermissions.fromString("rw-------"));
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Appending to auhtorized keys : "+e.getMessage());
 		}
 	}
