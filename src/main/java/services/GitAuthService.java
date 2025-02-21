@@ -41,7 +41,6 @@ public class GitAuthService extends HttpServlet {
         	}
         }	
         
-        
   
         if(isValid) {
         	response.setStatus(HttpServletResponse.SC_OK);

@@ -1,9 +1,9 @@
 package models.dao;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.Connection;
@@ -63,20 +63,38 @@ public class SSH_KeyDAO {
 		return "command="+SCRIPTFILEPATH+",environment=\"GIT_USER="+username+"\""+SCRIPTACTION+" "+key;
 	}
 	
-	
-	public void appendToAuthorizedKeys(String entry){
-		try {
-			 Path tempFile = Files.createTempFile("authkeys", ".tmp");
-			    if (Files.exists(Paths.get(AUTHORIZED_KEYS_PATH))) {
-			        Files.copy(Paths.get(AUTHORIZED_KEYS_PATH), tempFile, StandardCopyOption.REPLACE_EXISTING);
-			    }
-			    Files.write(tempFile, entry.getBytes(), StandardOpenOption.APPEND);
-			    Files.move(tempFile, Paths.get(AUTHORIZED_KEYS_PATH), StandardCopyOption.REPLACE_EXISTING);
-			    Files.setPosixFilePermissions(Paths.get(AUTHORIZED_KEYS_PATH), PosixFilePermissions.fromString("rw-------"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Appending to auhtorized keys : "+e.getMessage());
-		}
-	}
+
+	public void appendToAuthorizedKeys(String entry) {
+        try {
+            Path authKeysPath = Paths.get(AUTHORIZED_KEYS_PATH);
+            File authKeysFile = authKeysPath.toFile();
+
+            // Ensure authorized_keys file exists
+            if (!authKeysFile.exists()) {
+                authKeysFile.createNewFile();
+                setFilePermissions(authKeysPath, "rw-------"); // 600 for ~/.ssh/authorized_keys
+            }
+
+            // Append key with a newline
+            Files.write(authKeysPath, (entry + "\n").getBytes(), StandardOpenOption.APPEND);
+
+            // Ensure file has correct permissions
+            setFilePermissions(authKeysPath, "rw-------");
+
+            System.out.println("SSH key added successfully.");
+        } catch (Exception e) {
+            System.err.println("Error appending to authorized_keys: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void setFilePermissions(Path path, String perms) {
+        try {
+            Files.setPosixFilePermissions(path, PosixFilePermissions.fromString(perms));
+        } catch (Exception e) {
+            // Windows does not support POSIX permissions
+            System.out.println("Skipping permission setting, as POSIX permissions are not supported on this OS.");
+        } 
+    }
 	
 }
