@@ -23,7 +23,7 @@ public class GitAuthService extends HttpServlet {
         int repoId = RepositoryDAO.getInstance().getRepositoryId(repo);
         int userId = UserDAO.getInstance().getUserId(user);
         
-        if(action.equals("clone")) {
+        if(action.equals("fetch")) {
         	if(!RepositoryDAO.getInstance().isPrivate(repoId)) {
         		isValid = true;
         	}
@@ -35,15 +35,11 @@ public class GitAuthService extends HttpServlet {
         	}
         }	
         
-        if(action.equals("pull")) {
-        	if(RepositoryDAO.getInstance().canCollaborate(repoId, userId)) {
-        		isValid = true;
-        	}
-        }
-        
+  
         if(isValid) {
         	response.setStatus(HttpServletResponse.SC_OK);
         }
+        
         else {
         	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
