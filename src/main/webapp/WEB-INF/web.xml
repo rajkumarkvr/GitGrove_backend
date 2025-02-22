@@ -308,6 +308,20 @@
 		<servlet-name>AddSSHKey</servlet-name>
 		<servlet-class>controller.AddSSHKey</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetSSHKeys</display-name>
+		<servlet-name>GetSSHKeys</servlet-name>
+		<servlet-class>controller.GetSSHKeys</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>DeleteSshKey</display-name>
+		<servlet-name>DeleteSshKey</servlet-name>
+		<servlet-class>controller.DeleteSshKey</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -471,6 +485,14 @@
 	<servlet-mapping>
 		<servlet-name>AddSSHKey</servlet-name>
 		<url-pattern>/service/ssh/add-key</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetSSHKeys</servlet-name>
+		<url-pattern>/service/ssh/keys</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DeleteSshKey</servlet-name>
+		<url-pattern>/service/ssh/delete-key/</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
