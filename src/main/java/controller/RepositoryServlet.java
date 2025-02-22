@@ -33,9 +33,11 @@ public class RepositoryServlet extends HttpServlet {
             response.getWriter().write("{\"error\": \"Missing username or reponame\"}");
             return;
         }
+        System.out.println("username"+username+" repo"+repoName);
 
         File repoPath = new File(BASE_REPO_PATH + username + "/" + repoName + ".git");
         if (!repoPath.exists()) {
+        	System.out.println("Not found repo------------------------");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("{\"error\": \"Repository not found\"}");
             return;

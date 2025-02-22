@@ -318,9 +318,9 @@
 	<servlet>
 		<description>
 		</description>
-		<display-name>UpdatePullRequest</display-name>
-		<servlet-name>UpdatePullRequest</servlet-name>
-		<servlet-class>controller.pullrequests.UpdatePullRequest</servlet-class>
+		<display-name>GetSSHKeys</display-name>
+		<servlet-name>GetSSHKeys</servlet-name>
+		<servlet-class>controller.GetSSHKeys</servlet-class>
 	</servlet>
 	<servlet>
 		<description>
@@ -336,6 +336,15 @@
 		<servlet-name>ClosePullRequest</servlet-name>
 		<servlet-class>controller.pullrequests.ClosePullRequest</servlet-class>
 	</servlet>
+	
+	<servlet>
+		<description>
+		</description>
+		<display-name>DeleteSshKey</display-name>
+		<servlet-name>DeleteSshKey</servlet-name>
+		<servlet-class>controller.DeleteSshKey</servlet-class>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -494,7 +503,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>PullRequest</servlet-name>
-		<url-pattern>/PullRequest</url-pattern>
+		<url-pattern>/service/PullRequest</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AddSSHKey</servlet-name>
@@ -502,19 +511,24 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ViewRequests</servlet-name>
-		<url-pattern>/ViewRequests</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>UpdatePullRequest</servlet-name>
-		<url-pattern>/UpdatePullRequest</url-pattern>
+		<url-pattern>/service/ViewRequests</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MergePullRequest</servlet-name>
-		<url-pattern>/MergePullRequest</url-pattern>
+		<url-pattern>/service/MergePullRequest</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ClosePullRequest</servlet-name>
-		<url-pattern>/ClosePullRequest</url-pattern>
+		<url-pattern>/service/ClosePullRequest</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>GetSSHKeys</servlet-name>
+		<url-pattern>/service/ssh/keys</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DeleteSshKey</servlet-name>
+		<url-pattern>/service/ssh/delete-key/</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
