@@ -2,6 +2,7 @@ package models;
 
 import java.time.LocalDateTime;
 
+
 import enums.PullRequestStatus;
 
 public class PullRequest {
@@ -9,12 +10,17 @@ public class PullRequest {
 	private Branch sourceBranch;
 	private Branch targetBranch;
 	private PullRequestStatus status;
+	private String description;
 	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt; 
+	private User createdBy;
+	
 	public PullRequest(Branch sourceBranch, Branch targetBranch) {
 		this.sourceBranch = sourceBranch;
 		this.targetBranch = targetBranch;
 		this.status = PullRequestStatus.OPEN;
 	}
+	
 	public PullRequest(int id, Branch sourceBranch, Branch targetBranch, PullRequestStatus status,
 			LocalDateTime createdAt) {
 
@@ -24,11 +30,21 @@ public class PullRequest {
 		this.status = status;
 		this.createdAt = createdAt;
 	}
+	
 	public PullRequest(Branch sourceBranch, Branch targetBranch, PullRequestStatus status) {
 		this.sourceBranch = sourceBranch;
 		this.targetBranch = targetBranch;
 		this.status = status;
 	}
+	
+	public PullRequest(String description, Branch sourceBranch, Branch targetBranch, PullRequestStatus status, LocalDateTime createdAt, User createdBy, LocalDateTime updatedAt) {
+		this(sourceBranch, targetBranch, status);
+		this.description = description;
+		this.createdAt = createdAt;
+		this.createdBy = createdBy;
+		this.updatedAt = updatedAt;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -59,8 +75,23 @@ public class PullRequest {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-
-
-
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String descripiton) {
+		this.description = descripiton;
+	}
+	public User getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
 
 }

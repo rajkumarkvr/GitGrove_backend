@@ -308,6 +308,34 @@
 		<servlet-name>AddSSHKey</servlet-name>
 		<servlet-class>controller.AddSSHKey</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ViewRequests</display-name>
+		<servlet-name>ViewRequests</servlet-name>
+		<servlet-class>controller.pullrequests.ViewRequests</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UpdatePullRequest</display-name>
+		<servlet-name>UpdatePullRequest</servlet-name>
+		<servlet-class>controller.pullrequests.UpdatePullRequest</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>MergePullRequest</display-name>
+		<servlet-name>MergePullRequest</servlet-name>
+		<servlet-class>controller.pullrequests.MergePullRequest</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ClosePullRequest</display-name>
+		<servlet-name>ClosePullRequest</servlet-name>
+		<servlet-class>controller.pullrequests.ClosePullRequest</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
 		<url-pattern>/httpmainserve/*</url-pattern>
@@ -471,6 +499,22 @@
 	<servlet-mapping>
 		<servlet-name>AddSSHKey</servlet-name>
 		<url-pattern>/service/ssh/add-key</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ViewRequests</servlet-name>
+		<url-pattern>/ViewRequests</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UpdatePullRequest</servlet-name>
+		<url-pattern>/UpdatePullRequest</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MergePullRequest</servlet-name>
+		<url-pattern>/MergePullRequest</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ClosePullRequest</servlet-name>
+		<url-pattern>/ClosePullRequest</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
