@@ -79,4 +79,25 @@ public class PullRequestDAO {
 		return pullRequests;
 	}
 	
+	public int getPullRequestId(int repoId, int sourceBranchId, int targetBranchId, int createdBy) {
+		int id = -1;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt  = connection.prepareStatement("select id from pull_requests where repo_id = ? and source_branch_id = ? and target_branch_id = ? and created_by = ? and status = ?");
+			stmt.setInt(1, repoId);
+			stmt.setInt(2, sourceBranchId);
+			stmt.setInt(3, targetBranchId);
+			stmt.setInt(4, createdBy);
+			stmt.setString(5, PullRequestStatus.OPEN.name());
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				id = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("Getting pull request ID error : "+e.getMessage());
+		}
+		
+		return id;
+	}
+	
 }
