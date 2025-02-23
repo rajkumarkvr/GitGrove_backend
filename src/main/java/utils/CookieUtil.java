@@ -22,8 +22,9 @@ public class CookieUtil {
 		Cookie cookie = new Cookie(COOKIE_KEY+username, token);
 		cookie.setMaxAge(86400);;
 		cookie.setPath("/");
-		   cookie.setSecure(false);    // False means it works on both HTTP & HTTPS
-	        cookie.setHttpOnly(false);  // False means JavaScript can access it
+		   cookie.setSecure(false); 
+	        cookie.setHttpOnly(false); 
+	 
 		return cookie;
 	}
 	

@@ -108,12 +108,14 @@ public class RepositoryDAO {
 		ArrayList<Repository> repositories = new ArrayList<Repository>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select r.id,r.name,r.description,r.visibility,r.createdAt,r.stars_count from repositories r join repository_access ra on r.id=ra.repo_id join users u on u.id = ra.user_id where ra.user_id=?");
+			PreparedStatement stmt = connection.prepareStatement("select r.id,r.name,r.description,r.visibility,r.createdAt,r.stars_count,ra.role,(select username from users where id=(r.owner_id) limit 1) as ownername from repositories r join repository_access ra on r.id=ra.repo_id join users u on u.id = ra.user_id  where ra.user_id=?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
-		
-				repositories.add(new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6)));
+				Repository repo =new Repository(rs.getInt(1), rs.getString(2), Visibility.valueOf(rs.getString(4)), rs.getString(3), rs.getTimestamp(5).toLocalDateTime(), rs.getInt(6));
+				repo.setOwnerName(rs.getString(8));
+				repo.setRole(Role.valueOf(rs.getString(7)));
+				repositories.add(repo);
 			}
 		} catch (Exception e) {
 			System.out.println("Getting all repositories : "+e.getMessage());

@@ -344,6 +344,13 @@
 		<servlet-name>DeleteSshKey</servlet-name>
 		<servlet-class>controller.DeleteSshKey</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CookieTesting</display-name>
+		<servlet-name>CookieTesting</servlet-name>
+		<servlet-class>controller.CookieTesting</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -529,6 +536,10 @@
 	<servlet-mapping>
 		<servlet-name>DeleteSshKey</servlet-name>
 		<url-pattern>/service/ssh/delete-key/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CookieTesting</servlet-name>
+		<url-pattern>/CookieTesting</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

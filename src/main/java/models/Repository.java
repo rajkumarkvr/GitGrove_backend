@@ -3,6 +3,7 @@ package models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import enums.Role;
 import enums.Visibility;
 
 public class Repository {
@@ -16,7 +17,7 @@ public class Repository {
 	private ArrayList<Branch> branches;
 	private ArrayList<PullRequest> pullrequets;
 	private String ownerName;
-
+	private Role role;
 	public Repository(int id, String name, Visibility visibility) {
 		this.id = id;
 		this.name = name;
@@ -107,6 +108,12 @@ public class Repository {
 	}
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+	public Role getRole() {
+		return role;
+	}
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 

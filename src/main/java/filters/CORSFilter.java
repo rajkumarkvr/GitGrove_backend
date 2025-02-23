@@ -19,8 +19,10 @@ public class CORSFilter implements Filter {
 
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList(
             "http://localhost:5173",
-            "https://myfrontend.com",
-            "https://anotherdomain.com"
+            "http://172.17.23.190:3000",
+            "http://172.17.23.190:8080",
+            "http://192.168.43.216:8080",
+            "http://192.168.43.216:3000"
         );
 
     @Override
@@ -31,9 +33,14 @@ public class CORSFilter implements Filter {
         System.out.println("request");
         String origin = req.getHeader("Origin");
         System.out.println(origin);
+        if(ALLOWED_ORIGINS.contains(origin)) {
+        	   res.setHeader("Access-Control-Allow-Origin", origin);
+        }else {
+        	System.out.println("not allowed");
+        }
 
         res.setContentType("application/json");
-            res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+         
 
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");

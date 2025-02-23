@@ -71,11 +71,13 @@ public class RepositoryDetails extends HttpServlet {
 			}
 		
 			jsonObject.put("updated",lastCommitDate.toString());
-
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at",repository.getCreatedAt().toString() );
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+username+"/"+repository.getName()+".git");
 			jsonObject.put("isStarred", RepositoryDAO.getInstance().isRepositoryLikedByUser(repository.getId(), userId));
+			jsonObject.put("visibility", repository.getVisibility().name());
+			jsonObject.put("role", repository.getRole().name());
+			jsonObject.put("ownername", repository.getOwnerName());
 			jsonList.add(jsonObject);
 		}
 		

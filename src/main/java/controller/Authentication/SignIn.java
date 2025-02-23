@@ -62,8 +62,8 @@ public class SignIn extends HttpServlet {
 			String token = JwtUtil.getInstance().generateToken(user.getUsername());
 
 			Cookie cookie = CookieUtil.getInstance().getCookie(user.getUsername(), token);
-
-			response.addCookie(cookie);
+			System.out.println("cookie"+cookie);
+		
 
 			System.out.println(token);
 				String ipaddress =IPLocationInfo.getIPAddress(request);
@@ -72,18 +72,19 @@ public class SignIn extends HttpServlet {
 			SessionDAO.getInstance().storeSession(user.getId(), token, userAgent,ipaddress,location);
 //			response.addCookie(cookie);
 			response.setHeader("authorization", "Bearer " + token);
-			
+			response.addCookie(cookie);
 			JSONObject wrappedJsonObject = new JSONObject();
 			wrappedJsonObject.put("user", jsonObject);
-
+			System.out.println("Set-Cookie header: " + response.getHeader("Set-Cookie"));
 			System.out.println("login");
+			
 			response.getWriter().write(wrappedJsonObject.toString());
-
+			return;
 		}
 
 		else {
 			response.setStatus(400);
-			response.getWriter().write("{\"error\" : \"Invalid input\"}");
+			response.getWriter().write("{\"error\" : \"Invalid password\",\"password\" :true}");
 		}
 
 		
