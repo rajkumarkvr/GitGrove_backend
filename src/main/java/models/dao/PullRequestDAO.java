@@ -27,14 +27,15 @@ public class PullRequestDAO {
 		return pullRequestDAO;
 	}
 	
-	public void createPullRequest(int sourceBranchId, int targetBranchId, int requestCreaterId, String descripiton) {
+	public void createPullRequest(int sourceBranchId, int targetBranchId, int requestCreaterId, String descripiton, String title) {
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into pull_requests(source_branch_id,target_branch_id,created_by,description) values(?,?,?,?)");
+			PreparedStatement stmt = connection.prepareStatement("insert into pull_requests(source_branch_id,target_branch_id,created_by,description,title) values(?,?,?,?,?)");
 			stmt.setInt(1, sourceBranchId);
 			stmt.setInt(2, targetBranchId);
 			stmt.setInt(3, requestCreaterId);
 			stmt.setString(4, descripiton);
+			stmt.setString(5, title);
 			stmt.executeUpdate();
 		} catch (Exception e) {
 			System.out.println("Pull request creating error : "+e.getMessage());
@@ -57,14 +58,14 @@ public class PullRequestDAO {
 		ArrayList<PullRequest> pullRequests = new ArrayList<PullRequest>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select pr.id,pr.description,b.name,b1.name,pr.status,pr.createdAt,u.username,u.email,u.profile_url,pr.updatedAt from pull_requests pr join branches b on b.id = pr.source_branch_id join branches b1 on b1.id = pr.target_branch_id join users u on u.id = pr.created_by where b.repo_id = ?");
+			PreparedStatement stmt = connection.prepareStatement("select pr.id,pr.description,b.name,b1.name,pr.status,pr.createdAt,u.username,u.email,u.profile_url,pr.updatedAt,pr.title from pull_requests pr join branches b on b.id = pr.source_branch_id join branches b1 on b1.id = pr.target_branch_id join users u on u.id = pr.created_by where b.repo_id = ?");
 			stmt.setInt(1, repoId);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				Branch sourceBranch = new Branch(rs.getString(3));
 				Branch targetBranch = new Branch(rs.getString(4));
 				User user = new User(rs.getString(7),rs.getString(8),rs.getString(9));
-				pullRequests.add(new PullRequest(rs.getInt(1),rs.getString(2),sourceBranch,targetBranch,PullRequestStatus.valueOf(rs.getString(5)),rs.getTimestamp(6).toLocalDateTime(),user,rs.getTimestamp(10).toLocalDateTime()));
+				pullRequests.add(new PullRequest(rs.getInt(1),rs.getString(2),sourceBranch,targetBranch,PullRequestStatus.valueOf(rs.getString(5)),rs.getTimestamp(6).toLocalDateTime(),user,rs.getTimestamp(10).toLocalDateTime(),rs.getString(11)));
 			}
  		} catch (Exception e) {
 			System.out.println("Getting pull requests : "+e.getMessage());
