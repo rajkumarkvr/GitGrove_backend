@@ -37,10 +37,9 @@ public class PullRequest {
 		this.status = status;
 	}
 	
-	public PullRequest(String description, Branch sourceBranch, Branch targetBranch, PullRequestStatus status, LocalDateTime createdAt, User createdBy, LocalDateTime updatedAt) {
-		this(sourceBranch, targetBranch, status);
+	public PullRequest(int id,String description, Branch sourceBranch, Branch targetBranch, PullRequestStatus status, LocalDateTime createdAt, User createdBy, LocalDateTime updatedAt) {
+		this(id,sourceBranch, targetBranch, status, createdAt);
 		this.description = description;
-		this.createdAt = createdAt;
 		this.createdBy = createdBy;
 		this.updatedAt = updatedAt;
 	}

@@ -6,14 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import enums.PullRequestStatus;
-import models.dao.BranchDAO;
 import models.dao.PullRequestDAO;
-import models.dao.RepositoryDAO;
-import models.dao.UserDAO;
-import utils.JSONHandler;
 
 
 public class ClosePullRequest extends HttpServlet {
@@ -26,27 +20,24 @@ public class ClosePullRequest extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		JSONObject jsonObject = JSONHandler.parse(request.getReader());
+		String idStr = request.getParameter("id");
 		
-		String ownerName = jsonObject.optString("ownername");
-		String repoName = jsonObject.optString("reponame");
-		String requestCreaterName = jsonObject.optString("requesterName");
-		String sourceBranch = jsonObject.optString("sourceBranch");
-		String targetBranch = jsonObject.optString("targetBranch");
 		
-		if(repoName == null || requestCreaterName == null || sourceBranch == null || targetBranch == null) {
+		if(idStr == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid input\"}");
 			return;
 		}
 		
-		int ownerId = UserDAO.getInstance().getUserId(ownerName);
-		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName, ownerId);
-		int requesterId = UserDAO.getInstance().getUserId(requestCreaterName);
-		int sourceBranchId = BranchDAO.getInstance().getBranchId(repoId, sourceBranch);
-		int targetBranchId = BranchDAO.getInstance().getBranchId(repoId, targetBranch);
+		int id = Integer.parseInt(idStr);
 		
-		PullRequestDAO.getInstance().changeStatus(repoId, sourceBranchId, targetBranchId, requesterId, PullRequestStatus.CLOSED);
+		if(id < 0 || PullRequestDAO.getInstance().isIdExists(id)) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
+			return;
+		}
+		
+		PullRequestDAO.getInstance().changeStatus(id, PullRequestStatus.CLOSED);
 		
 	}
 

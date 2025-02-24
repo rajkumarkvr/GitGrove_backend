@@ -369,6 +369,13 @@
 		<servlet-class>controller.Message.GetMessages</servlet-class>
 
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetBranchesForCreatingPullRequest</display-name>
+		<servlet-name>GetBranchesForCreatingPullRequest</servlet-name>
+		<servlet-class>controller.pullrequests.GetBranchesForCreatingPullRequest</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -570,6 +577,10 @@
 		<servlet-name>GetMessages</servlet-name>
 		<url-pattern>/GetMessages</url-pattern>
 
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetBranchesForCreatingPullRequest</servlet-name>
+		<url-pattern>/GetBranchesForCreatingPullRequest</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

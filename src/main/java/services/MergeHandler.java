@@ -38,8 +38,8 @@ public class MergeHandler {
 			
 			MergeResult mergeResult = git.merge()
 		            .include(repository.resolve(sourceBranch))
-		            .setStrategy(MergeStrategy.RECURSIVE) // or OURS, THEIRS, etc.
-		            .setCommit(true) // Auto-commit if no conflicts
+		            .setStrategy(MergeStrategy.RECURSIVE) 
+		            .setCommit(true) 
 		            .call();
 			
 			if(!mergeResult.getMergeStatus().isSuccessful()) {
@@ -67,10 +67,11 @@ public class MergeHandler {
 			if(mergeStrategy.equals(enums.MergeStrategy.OURS)) {
 						git.merge()
 			            .include(repository.resolve(sourceBranch))
-			            .setStrategy(MergeStrategy.OURS) // or OURS, THEIRS, etc.
-			            .setCommit(true) // Auto-commit if no conflicts
+			            .setStrategy(MergeStrategy.OURS) 
+			            .setCommit(true) 
 			            .call();
 			}
+			
 			else if(mergeStrategy.equals(enums.MergeStrategy.THEIRS)){
 				git.merge()
 	            .include(repository.resolve(sourceBranch))

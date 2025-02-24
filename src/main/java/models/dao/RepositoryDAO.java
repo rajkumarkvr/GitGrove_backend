@@ -489,5 +489,22 @@ public class RepositoryDAO {
 	       System.out.println("Error from updateRepositoryName"+e.getMessage());
 	    }
 	}
+	
+	public String getRepoPath(int id) {
+		String path = "/opt/repo/";
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select u.username,r.name from repositories r join users u on r.owner_id = u.id where r.id = ?");
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				path += rs.getString(1)+"/"+rs.getString(2)+".git";
+			}
+		} catch (Exception e) {
+			System.out.println("Getting repo path error : "+e.getMessage());
+		}
+		
+		return path;
+	}
 
 }

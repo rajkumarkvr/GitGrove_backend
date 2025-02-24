@@ -22,8 +22,8 @@ public class PullRequest extends HttpServlet {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
 		
-		String ownerName = jsonObject.optString("ownerName");
-		String repoName = jsonObject.optString("reponame");
+		String ownerName = jsonObject.optString("ownerName");		
+		String repoName = jsonObject.optString("reponame");	
 		String requestCreaterName = jsonObject.optString("requesterName");
 		String sourceBranch = jsonObject.optString("sourceBranch");
 		String targetBranch = jsonObject.optString("targetBranch");
@@ -34,8 +34,6 @@ public class PullRequest extends HttpServlet {
 			response.getWriter().write("{\"message\" :\"Invalid input\"}");
 			return;
 		}
-		
-		BranchDAO.getInstance().addBranch(ownerName, repoName);
 		
 		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName, ownerId);
@@ -61,7 +59,7 @@ public class PullRequest extends HttpServlet {
 			return;
 		}
 		
-		PullRequestDAO.getInstance().createPullRequest(repoId, sourceBranchId, targetBranchId, requestCreaterId, description);
+		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description);
 	}
 
 

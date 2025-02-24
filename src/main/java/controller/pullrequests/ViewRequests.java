@@ -26,6 +26,7 @@ public class ViewRequests extends HttpServlet {
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String ownerName = request.getParameter("ownername");
 		String repoName = request.getParameter("reponame");
 		
@@ -38,6 +39,7 @@ public class ViewRequests extends HttpServlet {
 		
 		for(PullRequest pullRequest : pullRequests) {
 			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("id", pullRequest.getId());
 			jsonObject.put("description", pullRequest.getDescription());
 			jsonObject.put("sourceBranch", pullRequest.getSourceBranch().getName());
 			jsonObject.put("targetBranch", pullRequest.getTargetBranch().getName());
