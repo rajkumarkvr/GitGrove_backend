@@ -41,6 +41,7 @@ public class ViewRequests extends HttpServlet {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("id", pullRequest.getId());
 			jsonObject.put("description", pullRequest.getDescription());
+			jsonObject.put("title", pullRequest.getTitle());
 			jsonObject.put("sourceBranch", pullRequest.getSourceBranch().getName());
 			jsonObject.put("targetBranch", pullRequest.getTargetBranch().getName());
 			jsonObject.put("status", pullRequest.getStatus().toString());

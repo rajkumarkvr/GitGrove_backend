@@ -14,6 +14,7 @@ public class PullRequest {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt; 
 	private User createdBy;
+	private String title;
 	
 	public PullRequest(Branch sourceBranch, Branch targetBranch) {
 		this.sourceBranch = sourceBranch;
@@ -37,10 +38,11 @@ public class PullRequest {
 		this.status = status;
 	}
 	
-	public PullRequest(int id,String description, Branch sourceBranch, Branch targetBranch, PullRequestStatus status, LocalDateTime createdAt, User createdBy, LocalDateTime updatedAt) {
+	public PullRequest(int id,String description, Branch sourceBranch, Branch targetBranch, PullRequestStatus status, LocalDateTime createdAt, User createdBy, LocalDateTime updatedAt, String title) {
 		this(id,sourceBranch, targetBranch, status, createdAt);
 		this.description = description;
 		this.createdBy = createdBy;
+		this.title = title;
 		this.updatedAt = updatedAt;
 	}
 	
@@ -91,6 +93,12 @@ public class PullRequest {
 	}
 	public void setCreatedBy(User createdBy) {
 		this.createdBy = createdBy;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

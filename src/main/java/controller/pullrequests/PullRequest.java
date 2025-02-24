@@ -28,10 +28,17 @@ public class PullRequest extends HttpServlet {
 		String sourceBranch = jsonObject.optString("sourceBranch");
 		String targetBranch = jsonObject.optString("targetBranch");
 		String description = jsonObject.optString("description");
+		String title = jsonObject.optString("title");
 		
 		if(ownerName == null || repoName == null || requestCreaterName == null || sourceBranch == null || targetBranch ==null || description == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid input\"}");
+			return;
+		}
+		
+		if(title == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"No Title\"}");
 			return;
 		}
 		
@@ -59,7 +66,7 @@ public class PullRequest extends HttpServlet {
 			return;
 		}
 		
-		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description);
+		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description, title);
 	}
 
 
