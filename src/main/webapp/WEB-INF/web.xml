@@ -578,11 +578,11 @@
 	</servlet-mapping>
 	<servlet-mapping>
 	<servlet-name>PostMessage</servlet-name>
-		<url-pattern>/PostMessage</url-pattern>
+		<url-pattern>/service/pull-request/add-comment</url-pattern>
 			</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetMessages</servlet-name>
-		<url-pattern>/GetMessages</url-pattern>
+		<url-pattern>/service/pull-request/comments</url-pattern>
 
 	</servlet-mapping>
 	<servlet-mapping>
