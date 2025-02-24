@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.merge.MergeStrategy;
@@ -86,6 +87,34 @@ public class MergeHandler {
 			System.out.println("Merge branches error : "+e.getMessage());
 		}
 		
+	}
+	
+	public Map<String, int[][]> hasMergeConflict(String repopath, String targetBranch, String sourceBranch){
+		Map<String, int[][]> map = new HashMap<String, int[][]>();
+		
+		try (Git git= Git.open(new File(repopath))){
+			
+			Repository repository = git.getRepository();
+			if(repository.getBranch() != targetBranch) {
+				git.checkout().setName(targetBranch).call();
+			}
+			
+			MergeResult mergeResult = git.merge()
+		            .include(repository.resolve(sourceBranch))
+		            .setStrategy(MergeStrategy.RECURSIVE) 
+		            .setFastForward(MergeCommand.FastForwardMode.NO_FF)
+		            .setCommit(true) 
+		            .call();
+			
+			if(!mergeResult.getMergeStatus().isSuccessful()) {
+				map = mergeResult.getConflicts();
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Merge branches error : "+e.getMessage());
+		}
+		
+		return map;	
 	}
 	
 	

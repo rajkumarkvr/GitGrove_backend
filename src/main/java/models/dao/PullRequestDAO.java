@@ -3,6 +3,7 @@ package models.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import enums.PullRequestStatus;
@@ -27,19 +28,28 @@ public class PullRequestDAO {
 		return pullRequestDAO;
 	}
 	
-	public void createPullRequest(int sourceBranchId, int targetBranchId, int requestCreaterId, String descripiton, String title) {
+	public int createPullRequest(int sourceBranchId, int targetBranchId, int requestCreaterId, String descripiton, String title) {
+		int requestId = -1;
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("insert into pull_requests(source_branch_id,target_branch_id,created_by,description,title) values(?,?,?,?,?)");
+			PreparedStatement stmt = connection.prepareStatement("insert into pull_requests(source_branch_id,target_branch_id,created_by,description,title) values(?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			stmt.setInt(1, sourceBranchId);
 			stmt.setInt(2, targetBranchId);
 			stmt.setInt(3, requestCreaterId);
 			stmt.setString(4, descripiton);
 			stmt.setString(5, title);
-			stmt.executeUpdate();
+			int affected = stmt.executeUpdate();
+			if(affected > 0) {
+				ResultSet keys = stmt.getGeneratedKeys();
+				if(keys.next()) {
+					requestId = keys.getInt(1);
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Pull request creating error : "+e.getMessage());
 		}
+		
+		return requestId;
 	}
 	
 	public void changeStatus(int id, PullRequestStatus pullRequestStatus) {

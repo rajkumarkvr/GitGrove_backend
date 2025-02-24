@@ -66,10 +66,19 @@ public class PullRequest extends HttpServlet {
 			return;
 		}
 		
-		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description, title);
+		int requestId = PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description, title);
+		
+		if(requestId < 0) {
+			response.setStatus(200);
+			response.getWriter().write("{\"message\" :\"Sorry ,error in pull request creation\"}");
+			return;
+		}
+		
 		response.setStatus(200);
-		response.getWriter().write("{\"message\" :\"Successfully created\"}");
-		return;
+		JSONObject resultJson = new JSONObject();
+		resultJson.put("id", requestId);
+		response.getWriter().write(resultJson.toString());
+		
 	}
 }
 
