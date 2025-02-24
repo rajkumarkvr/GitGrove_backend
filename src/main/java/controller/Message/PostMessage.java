@@ -48,7 +48,7 @@ public class PostMessage extends HttpServlet {
 		int targetBranchId = BranchDAO.getInstance().getBranchId(repoId, targetBranch);
 		int currentUserId = UserDAO.getInstance().getUserId(currentUserName);
 		
-		int pullRequestId = PullRequestDAO.getInstance().getPullRequestId(repoId, sourceBranchId, targetBranchId, requestCreaterId);
+		int pullRequestId = PullRequestDAO.getInstance().getPullRequestId(sourceBranchId, targetBranchId, requestCreaterId);
 		
 		
 		if(pullRequestId < 0 ) {

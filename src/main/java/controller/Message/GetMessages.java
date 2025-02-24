@@ -50,7 +50,7 @@ public class GetMessages extends HttpServlet {
 		int sourceBranchId = BranchDAO.getInstance().getBranchId(repoId, sourceBranch);
 		int targetBranchId = BranchDAO.getInstance().getBranchId(repoId, targetBranch);
 		
-		int pullRequestId = PullRequestDAO.getInstance().getPullRequestId(repoId, sourceBranchId, targetBranchId, requestCreaterId);
+		int pullRequestId = PullRequestDAO.getInstance().getPullRequestId(sourceBranchId, targetBranchId, requestCreaterId);
 		
 		
 		if(pullRequestId < 0 ) {
