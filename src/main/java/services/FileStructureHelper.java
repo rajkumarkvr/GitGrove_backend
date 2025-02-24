@@ -142,6 +142,7 @@ public class FileStructureHelper {
         try (Repository repository = Git.open(repoPath).getRepository()) {
 
             ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
+            System.out.println("branch name"+ branchName);
             if (branchHead == null) {
                 return "No commits found in the branch: " + branchName;
             }
@@ -158,8 +159,9 @@ public class FileStructureHelper {
                     if (!treeWalk.next()) {
                         return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
                     }
-
+                    
                     ObjectId objectId = treeWalk.getObjectId(0);  
+
                     ObjectLoader loader = repository.open(objectId);
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

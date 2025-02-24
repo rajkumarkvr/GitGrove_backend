@@ -67,9 +67,9 @@ public class PullRequest extends HttpServlet {
 		}
 		
 		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description, title);
+		response.setStatus(200);
+		response.getWriter().write("{\"message\" :\"Successfully created\"}");
+		return;
 	}
-
-
-
 }
 
