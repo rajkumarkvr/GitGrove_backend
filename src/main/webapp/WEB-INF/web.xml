@@ -376,6 +376,13 @@
 		<servlet-name>GetBranchesForCreatingPullRequest</servlet-name>
 		<servlet-class>controller.pullrequests.GetBranchesForCreatingPullRequest</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>HasMergeConflict</display-name>
+		<servlet-name>HasMergeConflict</servlet-name>
+		<servlet-class>controller.pullrequests.HasMergeConflict</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -581,6 +588,10 @@
 	<servlet-mapping>
 		<servlet-name>GetBranchesForCreatingPullRequest</servlet-name>
 		<url-pattern>/GetBranchesForCreatingPullRequest</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>HasMergeConflict</servlet-name>
+		<url-pattern>/HasMergeConflict</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

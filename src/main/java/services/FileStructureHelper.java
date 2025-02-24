@@ -25,7 +25,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
@@ -140,9 +139,7 @@ public class FileStructureHelper {
 
     // Reads file content from a specific branch
     private String readFileContent(File repoPath, String branchName, String filePath) {
-        try (Repository repository = new FileRepositoryBuilder()
-                .setGitDir(repoPath)
-                .build()) {
+        try (Repository repository = Git.open(repoPath).getRepository()) {
 
             ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
             if (branchHead == null) {
@@ -162,7 +159,7 @@ public class FileStructureHelper {
                         return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
                     }
 
-                    ObjectId objectId = treeWalk.getObjectId(0);
+                    ObjectId objectId = treeWalk.getObjectId(0);  
                     ObjectLoader loader = repository.open(objectId);
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

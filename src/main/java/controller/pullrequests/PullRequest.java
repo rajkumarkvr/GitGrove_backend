@@ -18,7 +18,7 @@ import utils.JSONHandler;
 public class PullRequest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
 		
@@ -70,9 +70,6 @@ public class PullRequest extends HttpServlet {
 	}
 
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-	}
 
 }
 
