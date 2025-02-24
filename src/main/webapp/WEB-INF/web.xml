@@ -535,7 +535,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>PullRequest</servlet-name>
-		<url-pattern>/service/PullRequest</url-pattern>
+		<url-pattern>/service/pull-request</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AddSSHKey</servlet-name>
@@ -580,7 +580,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetBranchesForCreatingPullRequest</servlet-name>
-		<url-pattern>/GetBranchesForCreatingPullRequest</url-pattern>
+		<url-pattern>/service/branches</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

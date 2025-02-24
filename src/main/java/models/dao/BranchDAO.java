@@ -49,7 +49,7 @@ public class BranchDAO {
 			 stmt.setInt(1, repoId);
 			 
 			 for(Ref branch : branches) {
-				 String branchName = branch.getName().replaceAll("refs/head/", "");
+				 String branchName = branch.getName().replace("refs/heads/", "");
 				 if(!existingBranches.contains(branchName)) {
 					 stmt.setString(2, branchName);
 					 stmt.executeUpdate();
