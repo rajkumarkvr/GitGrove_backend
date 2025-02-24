@@ -50,7 +50,7 @@ public class HasMergeConflict extends HttpServlet {
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		Map<String, int[][]> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
+		Map<String, int[][]> conflicts =  MergeHandler.getInstance().hasMergeConflict(repoPath,branches.get(1),branches.get(0));
 		
 		if(conflicts.isEmpty()) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);

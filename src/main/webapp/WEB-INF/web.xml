@@ -383,6 +383,20 @@
 		<servlet-name>HasMergeConflict</servlet-name>
 		<servlet-class>controller.pullrequests.HasMergeConflict</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>MergeConflictUsingOurs</display-name>
+		<servlet-name>MergeConflictUsingOurs</servlet-name>
+		<servlet-class>controller.pullrequests.MergeConflictUsingOurs</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>MergeConflictWithTheirs</display-name>
+		<servlet-name>MergeConflictWithTheirs</servlet-name>
+		<servlet-class>controller.pullrequests.MergeConflictWithTheirs</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -592,6 +606,14 @@
 	<servlet-mapping>
 		<servlet-name>HasMergeConflict</servlet-name>
 		<url-pattern>/HasMergeConflict</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MergeConflictUsingOurs</servlet-name>
+		<url-pattern>/MergeConflictUsingOurs</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MergeConflictWithTheirs</servlet-name>
+		<url-pattern>/MergeConflictWithTheirs</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
