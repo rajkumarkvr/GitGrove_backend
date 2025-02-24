@@ -54,7 +54,7 @@ public class ViewRequests extends HttpServlet {
 		}
 		
 		JSONObject resultJson = new JSONObject();
-		resultJson.put("data", resultJson);
+		resultJson.put("pullRequests", resultJson);
 		
 		response.getWriter().write(resultJson.toString());
 	}

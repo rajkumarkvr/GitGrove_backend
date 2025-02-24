@@ -550,7 +550,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ViewRequests</servlet-name>
-		<url-pattern>/service/ViewRequests</url-pattern>
+		<url-pattern>/service/getpullrequests</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MergePullRequest</servlet-name>
