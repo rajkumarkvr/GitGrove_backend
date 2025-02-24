@@ -54,7 +54,7 @@ public class RepositoryServlet extends HttpServlet {
                 branches.add(ref.getName().replace("refs/heads/", ""));
             }
             repoJson.put("branches", new JSONArray(branches));
-            repoJson.put("defaultBranch", branches.isEmpty() ? "master" : branches.get(0));
+            repoJson.put("defaultBranch","master");
 
             // Check if the repository has commits
             JSONArray commitsArray;
