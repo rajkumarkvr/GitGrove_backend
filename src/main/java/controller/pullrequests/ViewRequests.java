@@ -30,8 +30,20 @@ public class ViewRequests extends HttpServlet {
 		String ownerName = request.getParameter("ownername");
 		String repoName = request.getParameter("reponame");
 		
+		if(ownerName == null || repoName == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid input\"}");
+			return;
+		}
+	
 		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName, ownerId);
+		
+		if(repoId < 0) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid repository\"}");
+			return;
+		}
 		
 		ArrayList<PullRequest> pullRequests =  PullRequestDAO.getInstance().getPullRequest(repoId);
 		
@@ -54,7 +66,7 @@ public class ViewRequests extends HttpServlet {
 		}
 		
 		JSONObject resultJson = new JSONObject();
-		resultJson.put("pullRequests", resultJson);
+		resultJson.put("pullRequests", pullRequestsJsonArray);
 		
 		response.getWriter().write(resultJson.toString());
 	}

@@ -22,13 +22,15 @@ public class PullRequest extends HttpServlet {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
 		
-		String ownerName = jsonObject.optString("ownerName");		
-		String repoName = jsonObject.optString("reponame");	
-		String requestCreaterName = jsonObject.optString("requesterName");
-		String sourceBranch = jsonObject.optString("sourceBranch");
-		String targetBranch = jsonObject.optString("targetBranch");
-		String description = jsonObject.optString("description");
-		String title = jsonObject.optString("title");
+		String ownerName = jsonObject.getString("ownerName").trim();		
+		String repoName = jsonObject.getString("reponame").trim();	
+		String requestCreaterName = jsonObject.getString("requesterName").trim();
+		String sourceBranch = jsonObject.getString("sourceBranch").trim();
+		String targetBranch = jsonObject.getString("targetBranch").trim();
+		String description = jsonObject.getString("description").trim();
+		String title = jsonObject.getString("title").trim();
+		
+		
 		
 		if(ownerName == null || repoName == null || requestCreaterName == null || sourceBranch == null || targetBranch ==null || description == null) {
 			response.setStatus(400);

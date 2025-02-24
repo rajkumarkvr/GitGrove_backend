@@ -24,11 +24,11 @@ public class PostMessage extends HttpServlet {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
 		
-		String PRIdStr = jsonObject.optString("PRId");
-		String content = jsonObject.optString("content");
-		String currentUserName = jsonObject.optString("currentUsername");
+		String PRIdStr = jsonObject.optString("PRId").trim();
+		String content = jsonObject.optString("content").trim();
+		String currentUserName = jsonObject.optString("currentUsername").trim();
 		
-		if(content == null || currentUserName == null || PRIdStr == null) {
+		if(content.isEmpty() || currentUserName.isEmpty() || PRIdStr.isEmpty()) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid input\"}");
 			return;
