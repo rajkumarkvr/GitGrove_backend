@@ -18,7 +18,7 @@ import utils.JSONHandler;
 public class PullRequest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		JSONObject jsonObject = JSONHandler.parse(request.getReader());
 		
@@ -67,12 +67,11 @@ public class PullRequest extends HttpServlet {
 		}
 		
 		PullRequestDAO.getInstance().createPullRequest(sourceBranchId, targetBranchId, requestCreaterId, description, title);
+		response.setStatus(200);
+		response.getWriter().write("{\"message\" :\"Successfully created\"}");
+		return;
 	}
 
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-	}
 
 }
 

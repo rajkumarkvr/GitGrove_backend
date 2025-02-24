@@ -145,6 +145,7 @@ public class FileStructureHelper {
                 .build()) {
 
             ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
+            System.out.println("branch name"+ branchName);
             if (branchHead == null) {
                 return "No commits found in the branch: " + branchName;
             }
@@ -163,6 +164,7 @@ public class FileStructureHelper {
                     }
 
                     ObjectId objectId = treeWalk.getObjectId(0);
+               
                     ObjectLoader loader = repository.open(objectId);
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
