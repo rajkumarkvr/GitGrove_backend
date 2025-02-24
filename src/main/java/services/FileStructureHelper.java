@@ -162,11 +162,14 @@ public class FileStructureHelper {
                     
                     ObjectId objectId = treeWalk.getObjectId(0);  
 
-                    ObjectLoader loader = repository.open(objectId);
-
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    loader.copyTo(outputStream);
-                    return outputStream.toString();
+                    try {
+                    	ObjectLoader loader = repository.open(objectId);
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        loader.copyTo(outputStream);
+                        return outputStream.toString();
+					} catch (Exception e) {
+						System.out.println("Read file content error : "+e.getMessage());
+					}
                 }
             }
             
@@ -174,6 +177,7 @@ public class FileStructureHelper {
             e.printStackTrace();
             return "Error reading file: " + e.getMessage();
         }
+        return "";
     }
 
     // Utility method to get the parent path
