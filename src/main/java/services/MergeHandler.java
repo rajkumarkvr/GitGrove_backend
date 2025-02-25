@@ -138,7 +138,7 @@ public class MergeHandler {
                isMerged = true;
             }
         } catch (Exception e) {
-            System.err.println("Merge error: " + e.getMessage());
+            System.out.println("Merge error: " + e.getMessage());
         }
 
         return isMerged;
@@ -235,7 +235,5 @@ public class MergeHandler {
 		
 		return map;	
 	}
-	
-	
 	
 }
