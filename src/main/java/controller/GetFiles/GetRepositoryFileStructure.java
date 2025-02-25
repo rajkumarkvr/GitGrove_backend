@@ -49,7 +49,10 @@ public class GetRepositoryFileStructure extends HttpServlet {
 	        JSONObject resultJson = new JSONObject();
 	        
 	        try (Git git = Git.open(repoPath)) {
+	        	
 	        	 resultJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath,branchName));
+	        	 response.setStatus(200);
+	        	 response.getWriter().write(resultJson.toString());
 
 	        } catch (Exception e) {
 	        	System.out.println(e.getMessage());

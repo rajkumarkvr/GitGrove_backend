@@ -231,7 +231,9 @@ public class FileStructureHelper {
                             treeWalk.enterSubtree();
                         } else {
                             fileJson.put("type", "file");
-                            fileJson.put("content", readFileContent(repoPath, branchName, path));
+//                            fileJson.put("content", readFileContent(repoPath, branchName, path));
+                            fileJson.put("content", "");
+                            fileJson.put("filepath", path);
                         }
 
                         String parentPath = getParentPath(path);
