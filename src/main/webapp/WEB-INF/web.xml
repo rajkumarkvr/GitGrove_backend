@@ -397,6 +397,13 @@
 		<servlet-name>MergeConflictWithTheirs</servlet-name>
 		<servlet-class>controller.pullrequests.MergeConflictWithTheirs</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CanPullRequest</display-name>
+		<servlet-name>CanPullRequest</servlet-name>
+		<servlet-class>controller.Authentication.CanPullRequest</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -614,6 +621,10 @@
 	<servlet-mapping>
 		<servlet-name>MergeConflictWithTheirs</servlet-name>
 		<url-pattern>/MergeConflictWithTheirs</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CanPullRequest</servlet-name>
+		<url-pattern>/CanPullRequest</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

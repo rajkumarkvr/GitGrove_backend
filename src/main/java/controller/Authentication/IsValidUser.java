@@ -35,9 +35,6 @@ public class IsValidUser extends HttpServlet {
 		}
 		
 		User user = UserDAO.getInstance().signIn(usernameOrEmail, password);
-			
-		JSONObject jsonObject = new JSONObject();
-
 
 		if(user!=null) {
 
