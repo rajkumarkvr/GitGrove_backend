@@ -144,6 +144,7 @@ public class MergeHandler {
         return isMerged;
     }
 	
+    
 	public Map<String, int[][]> mergeBranchesForNonBare(String repopath, String targetBranch, String sourceBranch) {
 		
 		Map<String, int[][]> map = new HashMap<String, int[][]>();

@@ -2,8 +2,6 @@ package controller.pullrequests;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,11 +42,7 @@ public class MergePullRequest extends HttpServlet {
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
-		
-//
-//		Map<String,String> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
-//
-//		
+			
 		boolean isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
 		
 		if(isMerged) {

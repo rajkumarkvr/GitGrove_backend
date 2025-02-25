@@ -47,7 +47,7 @@ public class MergeConflictWithTheirs extends HttpServlet {
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRId);
 		
-//		MergeHandler.getInstance().mergeBranches(repoPath, branches.get(1), branches.get(0),);
+		MergeHandler.getInstance().mergeBranches(repoPath, branches.get(1), branches.get(0), MergeStrategy.THEIRS.toString());
 		
 		response.setStatus(200);
 		response.getWriter().write("{\"message\" : \"Branches merged\"}");
