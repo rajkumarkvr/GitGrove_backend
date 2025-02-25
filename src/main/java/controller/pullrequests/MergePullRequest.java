@@ -2,6 +2,7 @@ package controller.pullrequests;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,19 +33,22 @@ public class MergePullRequest extends HttpServlet {
 		
 		int PRid = Integer.parseInt(idStr);
 		
-		if(PRid < 0 || PullRequestDAO.getInstance().isIdExists(PRid)) {
+		if(PRid < 0 || !PullRequestDAO.getInstance().isIdExists(PRid)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
 			return;
 		}
 		
 		int repoId = PullRequestDAO.getInstance().getRepoId(PRid);
-		
+	
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		
+//
+//		Map<String,String> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
+//
+//		
 		boolean isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
 		
 		if(isMerged) {

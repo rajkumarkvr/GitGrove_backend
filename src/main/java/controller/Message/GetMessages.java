@@ -55,7 +55,7 @@ public class GetMessages extends HttpServlet {
 		
 		JSONObject resultJson = new JSONObject();
 		
-		resultJson.put("data", commentsJSONList);
+		resultJson.put("comments", commentsJSONList);
 		
 		response.setStatus(200);
 		response.getWriter().write(resultJson.toString());
