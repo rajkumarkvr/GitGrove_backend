@@ -28,6 +28,10 @@ public class RenameUsernameFolderServlet extends HttpServlet {
         String oldUsername = jsonData.getString("oldUsername").toLowerCase();
         String newUsername = jsonData.getString("newUsername").toLowerCase();
 
+        if(oldUsername.equals(newUsername)) {
+        	resp.setStatus(200);
+        	return;
+        }
         // Validate input
         if (oldUsername.isEmpty() || newUsername.isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Both old and new usernames are required.");
