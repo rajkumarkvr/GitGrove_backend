@@ -404,6 +404,13 @@
 		<servlet-name>CanPullRequest</servlet-name>
 		<servlet-class>controller.Authentication.CanPullRequest</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetRepositoryFileStructure</display-name>
+		<servlet-name>GetRepositoryFileStructure</servlet-name>
+		<servlet-class>controller.GetFiles.GetRepositoryFileStructure</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -625,6 +632,10 @@
 	<servlet-mapping>
 		<servlet-name>CanPullRequest</servlet-name>
 		<url-pattern>/service/user/collaborator</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetRepositoryFileStructure</servlet-name>
+		<url-pattern>/GetRepositoryFileStructure</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
