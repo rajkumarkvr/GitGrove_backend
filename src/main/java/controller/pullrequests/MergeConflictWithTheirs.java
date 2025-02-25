@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import enums.MergeStrategy;
+import models.User;
 import models.dao.PullRequestDAO;
 import models.dao.RepositoryDAO;
+import models.dao.UserDAO;
 import services.MergeHandler;
 
 
@@ -25,29 +27,46 @@ public class MergeConflictWithTheirs extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		String PRIdStr = request.getParameter("PRId");
+		String idStr = request.getParameter("id");
+		String userName = request.getParameter("username");
 		
-		if(PRIdStr == null) {
+		if(idStr == null || userName == null) {
 			response.setStatus(400);
-			response.getWriter().write("{\"message\" : \"Invalid input\"}");
+			response.getWriter().write("{\"message\" :\"Invalid input\"}");
 			return;
 		}
 		
-		int PRId = Integer.parseInt(PRIdStr);
+		int PRid = Integer.parseInt(idStr);
 		
-		if(PRId < 0) {
+		if(PRid < 0 || !PullRequestDAO.getInstance().isIdExists(PRid)) {
 			response.setStatus(400);
-			response.getWriter().write("{\"message\" : \"Invalid pull request\"}");
+			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
 			return;
 		}
 		
-		int repoId = PullRequestDAO.getInstance().getRepoId(PRId);
+		User author = PullRequestDAO.getInstance().getCreater(PRid);
 		
+		if(author == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
+			return;
+		}
+		
+		User commiter = UserDAO.getInstance().getUserByUserName(userName);
+		
+		if(commiter == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid current user\"}");
+			return;
+		}
+		
+		int repoId = PullRequestDAO.getInstance().getRepoId(PRid);
+	
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
-		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRId);
+		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		MergeHandler.getInstance().mergeBranches(repoPath, branches.get(1), branches.get(0), MergeStrategy.THEIRS.toString());
+		MergeHandler.getInstance().mergeBranches(repoPath, branches.get(1), branches.get(0), MergeStrategy.THEIRS.toString(),author,commiter);
 		
 		response.setStatus(200);
 		response.getWriter().write("{\"message\" : \"Branches merged\"}");

@@ -22,7 +22,7 @@ public class IsValidUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			JSONObject userObj = JSONHandler.parse(request.getReader());
+		JSONObject userObj = JSONHandler.parse(request.getReader());
 		
 		String usernameOrEmail =  userObj.getString("identifier").trim().toLowerCase();
 		String password = userObj.getString("password").trim();

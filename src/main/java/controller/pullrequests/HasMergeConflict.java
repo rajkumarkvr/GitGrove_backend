@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import enums.PullRequestStatus;
 import models.dao.PullRequestDAO;
 import models.dao.RepositoryDAO;
 import services.MergeHandler;
@@ -49,7 +48,6 @@ public class HasMergeConflict extends HttpServlet {
 		boolean hasConflict = MergeHandler.getInstance().detectConflicts(repoPath, branches.get(1), branches.get(0));
 		
 		if(!hasConflict) {
-			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);
 			response.getWriter().write("{\"canAutoMerge\" :true}");
 			return;

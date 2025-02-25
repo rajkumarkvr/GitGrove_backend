@@ -24,10 +24,34 @@ public class CanPullRequest extends HttpServlet {
 		String ownerName = request.getParameter("ownername");
 		String repoName = request.getParameter("reponame");
 		
+		if(currentUserName == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" : \"Invalid user data\"}");
+			return;
+		}
+		
+		if(ownerName == null || repoName == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" : \"Invalid Repository data\"}");
+			return;
+		}
+		
 		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 		int repoId = RepositoryDAO.getInstance().getRepositoryId(repoName, ownerId);
 		
 		int currentUserId = UserDAO.getInstance().getUserId(currentUserName);
+		
+		if(currentUserId < 0) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" : \"Invalid user\"}");
+			return;
+		}
+		
+		if(repoId < 0 || ownerId < 0) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" : \"Invalid repository\"}");
+			return;
+		}
 		
 		boolean isCollaborator = RepositoryDAO.getInstance().canCollaborate(repoId, currentUserId);
 		

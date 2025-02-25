@@ -16,6 +16,9 @@ import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
+import models.User;
+
 import org.eclipse.jgit.merge.ThreeWayMerger;
 
 public class MergeHandler {
@@ -49,32 +52,24 @@ public class MergeHandler {
             try (RevWalk revWalk = new RevWalk(repository)) {
                 RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
                 RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
-                
-                revWalk.reset();  
-                revWalk.markStart(targetCommit);
-                revWalk.markStart(sourceCommit);
-                RevCommit baseCommit = revWalk.next();
-
-                if (baseCommit == null) {
-                    throw new RuntimeException("No common ancestor found");
-                }
-
-                ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
-                merger.setBase(baseCommit);
-                return !merger.merge(targetCommit, sourceCommit); // true = conflicts, false = clean
+	            
+	            ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
+	            
+                return !merger.merge(targetCommit, sourceCommit);
             }
         } catch (Exception e) {
             System.err.println("Conflict detection error: " + e.getMessage());
-            return true; // Assume conflict on error
+            return true; 
         }
     }
 
-	public boolean mergeBranches(String repoPath, String targetBranch, String sourceBranch, String strategy) {
+	public boolean mergeBranches(String repoPath, String targetBranch, String sourceBranch, String strategy, User author, User commiter) {
 	    boolean isMerged = false;
 	    
 	    try (Repository repository = new FileRepositoryBuilder()
 	            .setGitDir(new File(repoPath))
 	            .build()) {
+	    	
 	        ObjectId targetBranchId = repository.resolve("refs/heads/" + targetBranch);
 	        ObjectId sourceBranchId = repository.resolve("refs/heads/" + sourceBranch);
 
@@ -86,7 +81,6 @@ public class MergeHandler {
 	            RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
 	            RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
 	            
-	            // Removed incorrect base commit logic
 	            ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
 	            boolean mergeSuccess = merger.merge(targetCommit, sourceCommit);
 
@@ -108,9 +102,9 @@ public class MergeHandler {
 	            CommitBuilder commitBuilder = new CommitBuilder();
 	            commitBuilder.setTreeId(resultTreeId);
 	            commitBuilder.setParentIds(targetBranchId, sourceBranchId);
-	            commitBuilder.setAuthor(new PersonIdent("System", "system@example.com"));
-	            commitBuilder.setCommitter(new PersonIdent("System", "system@example.com"));
-	            commitBuilder.setMessage("Merged " + sourceBranch + " into " + targetBranch + " with " + strategy);
+	            commitBuilder.setAuthor(new PersonIdent(author.getUsername(), author.getEmailaddress()));
+	            commitBuilder.setCommitter(new PersonIdent(commiter.getUsername(), commiter.getEmailaddress()));
+	            commitBuilder.setMessage("Merged " + sourceBranch + " into " + targetBranch);
 
 	            ObjectId mergeCommitId = inserter.insert(commitBuilder);
 	            inserter.flush();
@@ -130,8 +124,10 @@ public class MergeHandler {
 	        System.err.println("Merge error: " + e.getMessage());
 	    }
 
-	    return isMerged;
-	}    
+        return isMerged;
+    }
+	
+
 	public Map<String, int[][]> mergeBranchesForNonBare(String repopath, String targetBranch, String sourceBranch) {
 		
 		Map<String, int[][]> map = new HashMap<String, int[][]>();
@@ -186,8 +182,7 @@ public class MergeHandler {
 	            .setCommit(true) // Auto-commit if no conflicts
 	            .call();
 	}
-					
-			
+							
 		
 		} catch (Exception e) {
 			System.out.println("Merge branches error : "+e.getMessage());
@@ -222,7 +217,5 @@ public class MergeHandler {
 		
 		return map;	
 	}
-	
-	
 	
 }

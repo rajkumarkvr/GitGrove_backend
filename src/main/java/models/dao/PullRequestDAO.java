@@ -140,7 +140,7 @@ public class PullRequestDAO {
 		ArrayList<String> branchesName = new ArrayList<String>();
 		try {
 			Connection connection = DBconnection.getConnection();
-			PreparedStatement stmt = connection.prepareStatement("select b.name,b1.name from pull_requests pr join branches b on pr.source_branch_id = b.id join branches b1 on pr.target_branch_id = b1.id where pr.id  = ?");
+			PreparedStatement stmt = connection.prepareStatement("select b.name,b1.name from pull_requests pr join branches b on pr.source_branch_id = b.id join branches b1 on pr.target_branch_id = b1.id where pr.id = ?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
@@ -151,6 +151,24 @@ public class PullRequestDAO {
 			System.out.println("getting target and source branch error : "+e.getMessage());
 		}
 		return branchesName;
+	}
+	
+	public User getCreater(int PRId) {
+		
+		User user = null;
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select u.username, u.email from pull_requests pr join users u on u.id = pr.created_by where pr.id = ?");
+			stmt.setInt(1, PRId);
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				user = new User(rs.getString(1), rs.getString(2));
+			}
+		} catch (Exception e) {
+			System.out.println("Error in getting creator of pull request : "+e.getMessage());
+		}
+		
+		return user;
 	}
 	
 }

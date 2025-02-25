@@ -25,33 +25,30 @@ public class User {
 		this.repositories = new ArrayList<>();
 	}
 	
-	public User(int id, String username, String email, String profileUrl){
-		this.id = id;
+	public User(String username, String emailaddress) {
 		this.username = username;
-		this.emailaddress = email;
+		this.emailaddress = emailaddress;
+	}
+	
+	public User(int id, String username, String email, String profileUrl){
+		this(username, email);
+		this.id = id;
 		this.profile_url = profileUrl;
+	}
+	
+	public User(String username, String emailaddress, String profile_url) {
+		this(username, emailaddress);
+		this.profile_url = profile_url;
 	}
 
 	public User(String username, String emailaddress, String password, String profile_url) {
 
-		this.username = username;
-		this.emailaddress = emailaddress;
+		this(username, emailaddress, profile_url);
 		this.password = password;
-		this.profile_url = profile_url;
-		this.repositories = new ArrayList<>();
-	}
-
-	public User(String username, String emailaddress, String profile_url) {
-		super();
-		this.username = username;
-		this.emailaddress = emailaddress;
-		this.profile_url = profile_url;
 	}
 
 	public User(String username, String emailaddress, String profile_url, LocalDateTime createdAt) {
-		this.username = username;
-		this.emailaddress = emailaddress;
-		this.profile_url = profile_url;
+		this(username, emailaddress, profile_url);
 		this.createdAt = createdAt;
 	}
 	
