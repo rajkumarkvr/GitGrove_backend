@@ -22,7 +22,9 @@ public class CORSFilter implements Filter {
             "http://172.17.23.190:3000",
             "http://172.17.23.190:8080",
             "http://192.168.43.216:8080",
-            "http://192.168.43.216:3000"
+            "http://192.168.43.216:3000",
+            "http://gitgrove.com:3000",
+            "http://gitgrove.com:8080"
         );
 
     @Override
