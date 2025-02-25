@@ -568,7 +568,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MergePullRequest</servlet-name>
-		<url-pattern>/service/MergePullRequest</url-pattern>
+		<url-pattern>/service/pull-request/merge</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ClosePullRequest</servlet-name>

@@ -37,19 +37,19 @@ public class MergePullRequest extends HttpServlet {
 		
 		int PRid = Integer.parseInt(idStr);
 		
-		if(PRid < 0 || PullRequestDAO.getInstance().isIdExists(PRid)) {
+		if(PRid < 0 || !PullRequestDAO.getInstance().isIdExists(PRid)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
 			return;
 		}
 		
 		int repoId = PullRequestDAO.getInstance().getRepoId(PRid);
-		
+	
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		Map<String, int[][]> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
+		Map<String,String> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
 		
 		if(conflicts.isEmpty()) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
