@@ -35,7 +35,7 @@ public class HasMergeConflict extends HttpServlet {
 		
 		int PRid = Integer.parseInt(PRIdStr);
 		
-		if(PRid < 0 || PullRequestDAO.getInstance().isIdExists(PRid)) {
+		if(PRid < 0 || !PullRequestDAO.getInstance().isIdExists(PRid)) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
 			return;
@@ -52,13 +52,13 @@ public class HasMergeConflict extends HttpServlet {
 		if(!hasConflict) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);
-			response.getWriter().write("{\"message\" :\"We can auto merge\"}");
+			response.getWriter().write("{\"canAutoMerge\" :true}");
 			return;
 		}
 		
 		else {
 	        response.setStatus(200);	
-	        response.getWriter().write("{\"message\" :\"We can auto merge\"}");																		
+	        response.getWriter().write("{\"canAutoMerge\" :false}");																		
 		}																														
 		
 	}

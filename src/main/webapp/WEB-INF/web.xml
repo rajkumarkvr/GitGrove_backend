@@ -605,7 +605,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>HasMergeConflict</servlet-name>
-		<url-pattern>/HasMergeConflict</url-pattern>
+		<url-pattern>/service/pull-request/check-auto-merge</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MergeConflictUsingOurs</servlet-name>
