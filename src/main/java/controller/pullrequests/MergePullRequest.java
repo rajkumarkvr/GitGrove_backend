@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import enums.PullRequestStatus;
+import models.User;
 import models.dao.PullRequestDAO;
 import models.dao.RepositoryDAO;
+import models.dao.UserDAO;
 import services.MergeHandler;
 
 public class MergePullRequest extends HttpServlet {
@@ -22,8 +24,9 @@ public class MergePullRequest extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String idStr = request.getParameter("id");
+		String userName = request.getParameter("username");
 		
-		if(idStr == null) {
+		if(idStr == null || userName == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"Invalid input\"}");
 			return;
@@ -37,6 +40,22 @@ public class MergePullRequest extends HttpServlet {
 			return;
 		}
 		
+		User author = PullRequestDAO.getInstance().getCreater(PRid);
+		
+		if(author == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid pull request\"}");
+			return;
+		}
+		
+		User commiter = UserDAO.getInstance().getUserByUserName(userName);
+		
+		if(commiter == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Invalid current user\"}");
+			return;
+		}
+		
 		int repoId = PullRequestDAO.getInstance().getRepoId(PRid);
 	
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
@@ -45,7 +64,7 @@ public class MergePullRequest extends HttpServlet {
 		boolean isMerged=false;
 			try {
 				System.out.println("Checking");
-		 isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
+				isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"",author,commiter);
 			}catch(Exception e) {
 					System.out.println("Merge pull request: "+e.getMessage());
 			}
