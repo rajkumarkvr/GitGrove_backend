@@ -9,7 +9,8 @@ public class Comment {
 	private LocalDateTime postedAt;
 	private String content;
 	
-	public Comment( String username,String content, LocalDateTime postedAt, String postedByAvatar) {
+
+	public Comment(String username, String content, LocalDateTime postedAt, String postedByAvatar) {
 		super();
 		this.content = content;
 		this.username = username;
