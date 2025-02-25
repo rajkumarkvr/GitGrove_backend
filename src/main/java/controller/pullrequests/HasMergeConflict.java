@@ -2,14 +2,11 @@ package controller.pullrequests;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.PullRequestStatus;
 import models.dao.PullRequestDAO;
@@ -50,9 +47,9 @@ public class HasMergeConflict extends HttpServlet {
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		Map<String, int[][]> conflicts =  MergeHandler.getInstance().hasMergeConflict(repoPath,branches.get(1),branches.get(0));
+		boolean hasConflict = MergeHandler.getInstance().detectConflicts(repoPath, branches.get(1), branches.get(0));
 		
-		if(conflicts.isEmpty()) {
+		if(!hasConflict) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);
 			response.getWriter().write("{\"message\" :\"We can auto merge\"}");
@@ -60,13 +57,8 @@ public class HasMergeConflict extends HttpServlet {
 		}
 		
 		else {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        String jsonResponse = objectMapper.writeValueAsString(conflicts);
-
-	        response.setContentType("application/json");
-	        response.setCharacterEncoding("UTF-8");
 	        response.setStatus(200);	
-	        response.getWriter().write(jsonResponse);																		
+	        response.getWriter().write("{\"message\" :\"We can auto merge\"}");																		
 		}																														
 		
 	}
