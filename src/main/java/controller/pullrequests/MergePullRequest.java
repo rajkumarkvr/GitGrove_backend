@@ -42,9 +42,13 @@ public class MergePullRequest extends HttpServlet {
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
-			
-		boolean isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
-		
+		boolean isMerged=false;
+			try {
+				System.out.println("Checking");
+		 isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
+			}catch(Exception e) {
+					System.out.println("Merge pull request: "+e.getMessage());
+			}
 		if(isMerged) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);

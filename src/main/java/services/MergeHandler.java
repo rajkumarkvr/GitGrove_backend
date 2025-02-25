@@ -69,82 +69,69 @@ public class MergeHandler {
         }
     }
 
-    
-    public boolean mergeBranches(String repoPath, String targetBranch, String sourceBranch, String strategy) {
-    	
-    	boolean isMerged = false;
-    	
-        try (Repository repository = new FileRepositoryBuilder()
-                .setGitDir(new File(repoPath))
-                .build()) {
-            ObjectId targetBranchId = repository.resolve("refs/heads/" + targetBranch);
-            ObjectId sourceBranchId = repository.resolve("refs/heads/" + sourceBranch);
+	public boolean mergeBranches(String repoPath, String targetBranch, String sourceBranch, String strategy) {
+	    boolean isMerged = false;
+	    
+	    try (Repository repository = new FileRepositoryBuilder()
+	            .setGitDir(new File(repoPath))
+	            .build()) {
+	        ObjectId targetBranchId = repository.resolve("refs/heads/" + targetBranch);
+	        ObjectId sourceBranchId = repository.resolve("refs/heads/" + sourceBranch);
 
-            if (targetBranchId == null || sourceBranchId == null) {
-                throw new IllegalArgumentException("Branch not found");
-            }
+	        if (targetBranchId == null || sourceBranchId == null) {
+	            throw new IllegalArgumentException("Branch not found");
+	        }
 
-            try (RevWalk revWalk = new RevWalk(repository)) {
-                RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
-                RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
-                
-                revWalk.reset();  
-                revWalk.markStart(targetCommit);
-                revWalk.markStart(sourceCommit);
-                
-                RevCommit baseCommit = revWalk.next();
-                if (baseCommit == null) {
-                    throw new RuntimeException("No common ancestor found");
-                }
+	        try (RevWalk revWalk = new RevWalk(repository)) {
+	            RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
+	            RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
+	            
+	            // Removed incorrect base commit logic
+	            ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
+	            boolean mergeSuccess = merger.merge(targetCommit, sourceCommit);
 
-                ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
-                merger.setBase(baseCommit);
-                boolean mergeSuccess = merger.merge(targetCommit, sourceCommit);
+	            ObjectId resultTreeId;
+	            if (mergeSuccess) {
+	                resultTreeId = merger.getResultTreeId();
+	            } else if ("OURS".equalsIgnoreCase(strategy)) {
+	                resultTreeId = targetCommit.getTree();
+	                mergeSuccess = true;
+	            } else if ("THEIRS".equalsIgnoreCase(strategy)) {
+	                resultTreeId = sourceCommit.getTree();
+	                mergeSuccess = true;
+	            } else {
+	                return false;
+	            }
 
-                ObjectId resultTreeId;
-                if (mergeSuccess) {
-                    resultTreeId = merger.getResultTreeId();
-                } else if ("OURS".equalsIgnoreCase(strategy)) {
-                    resultTreeId = targetCommit.getTree(); // Use target's tree
-                    mergeSuccess = true; // Force success with OURS
-                } else if ("THEIRS".equalsIgnoreCase(strategy)) {
-                    resultTreeId = sourceCommit.getTree(); // Use source's tree
-                    mergeSuccess = true; // Force success with THEIRS
-                } else {
-                   return false;
-                }
+	            // Create merge commit
+	            ObjectInserter inserter = repository.newObjectInserter();
+	            CommitBuilder commitBuilder = new CommitBuilder();
+	            commitBuilder.setTreeId(resultTreeId);
+	            commitBuilder.setParentIds(targetBranchId, sourceBranchId);
+	            commitBuilder.setAuthor(new PersonIdent("System", "system@example.com"));
+	            commitBuilder.setCommitter(new PersonIdent("System", "system@example.com"));
+	            commitBuilder.setMessage("Merged " + sourceBranch + " into " + targetBranch + " with " + strategy);
 
-                // Create merge commit
-                ObjectInserter inserter = repository.newObjectInserter();
-                CommitBuilder commitBuilder = new CommitBuilder();
-                commitBuilder.setTreeId(resultTreeId);
-                commitBuilder.setParentIds(targetBranchId, sourceBranchId);
-                commitBuilder.setAuthor(new PersonIdent("System", "system@example.com"));
-                commitBuilder.setCommitter(new PersonIdent("System", "system@example.com"));
-                commitBuilder.setMessage("Merged " + sourceBranch + " into " + targetBranch + " with " + strategy);
+	            ObjectId mergeCommitId = inserter.insert(commitBuilder);
+	            inserter.flush();
 
-                ObjectId mergeCommitId = inserter.insert(commitBuilder);
-                inserter.flush();
+	            // Update target branch
+	            RefUpdate refUpdate = repository.updateRef("refs/heads/" + targetBranch);
+	            refUpdate.setNewObjectId(mergeCommitId);
+	            RefUpdate.Result updateResult = refUpdate.update();
 
-                // Update target branch
-                RefUpdate refUpdate = repository.updateRef("refs/heads/" + targetBranch);
-                refUpdate.setNewObjectId(mergeCommitId);
-                RefUpdate.Result updateResult = refUpdate.update();
+	            if (updateResult == RefUpdate.Result.REJECTED) {
+	                throw new RuntimeException("Failed to update " + targetBranch);
+	            }
 
-                if (updateResult == RefUpdate.Result.REJECTED) {
-                    throw new RuntimeException("Failed to update " + targetBranch);
-                }
+	            isMerged = true;
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Merge error: " + e.getMessage());
+	    }
 
-               isMerged = true;
-            }
-        } catch (Exception e) {
-            System.err.println("Merge error: " + e.getMessage());
-        }
-
-        return isMerged;
-    }
-	
-    
+	    return isMerged;
+	}    
 	public Map<String, int[][]> mergeBranchesForNonBare(String repopath, String targetBranch, String sourceBranch) {
 		
 		Map<String, int[][]> map = new HashMap<String, int[][]>();
