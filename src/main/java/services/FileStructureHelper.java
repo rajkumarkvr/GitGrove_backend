@@ -139,7 +139,7 @@ public class FileStructureHelper {
     }
 
     // Reads file content from a specific branch
-    private String readFileContent(File repoPath, String branchName, String filePath) {
+    public String readFileContent(File repoPath, String branchName, String filePath) {
         try (Repository repository = new FileRepositoryBuilder()
                 .setGitDir(repoPath)
                 .build();) {

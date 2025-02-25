@@ -24,7 +24,7 @@ public class GetRepositoryFileStructure extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		   String username = request.getParameter("username");
+		    String username = request.getParameter("username");
 	        String repoName = request.getParameter("reponame");
 	        String branchName = request.getParameter("branchname");
 	    	

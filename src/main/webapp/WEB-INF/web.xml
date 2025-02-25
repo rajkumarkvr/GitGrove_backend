@@ -411,6 +411,13 @@
 		<servlet-name>GetRepositoryFileStructure</servlet-name>
 		<servlet-class>controller.GetFiles.GetRepositoryFileStructure</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetContent</display-name>
+		<servlet-name>GetContent</servlet-name>
+		<servlet-class>controller.GetFiles.GetContent</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -635,7 +642,11 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetRepositoryFileStructure</servlet-name>
-		<url-pattern>/service/repo-info/files</url-pattern>
+		<url-pattern>/GetRepositoryFileStructure</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetContent</servlet-name>
+		<url-pattern>/GetContent</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
