@@ -79,7 +79,6 @@ public class RepositoryServlet extends HttpServlet {
             } else {
                 repoJson.put("commits", commitsArray);
                 repoJson.put("mainFiles",FileStructureHelper.getInstance().getMainFiles(repoPath,branchName));
-                repoJson.put("files",FileStructureHelper.getInstance().getFileStructure(repoPath,branchName));
             }
 
 
