@@ -2,16 +2,11 @@ package controller.pullrequests;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import enums.PullRequestStatus;
 import models.dao.PullRequestDAO;
 import models.dao.RepositoryDAO;
@@ -49,9 +44,10 @@ public class MergePullRequest extends HttpServlet {
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
 		
-		Map<String, int[][]> conflicts =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0));
 		
-		if(conflicts.isEmpty()) {
+		boolean isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"");
+		
+		if(isMerged) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);
 			response.getWriter().write("{\"message\" :\"Merge successful\"}");
@@ -59,13 +55,9 @@ public class MergePullRequest extends HttpServlet {
 		}
 		
 		else {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        String jsonResponse = objectMapper.writeValueAsString(conflicts);
-
-	        response.setContentType("application/json");
-	        response.setCharacterEncoding("UTF-8");
-	        response.setStatus(200);	
-	        response.getWriter().write(jsonResponse);																		
+	  
+	        response.setStatus(400);	
+	        response.getWriter().write("{\"message\" :\"Can't auto merge due to conflicts\"}");																		
 		}																														
 		
 	}

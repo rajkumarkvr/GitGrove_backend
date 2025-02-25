@@ -6,8 +6,17 @@ import java.util.Map;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.MergeResult;
+import org.eclipse.jgit.lib.CommitBuilder;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectInserter;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.merge.MergeStrategy;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.merge.ThreeWayMerger;
 
 public class MergeHandler {
 	
@@ -26,7 +35,116 @@ public class MergeHandler {
 		return mergeHandler;
 	}
 	
-	public Map<String, int[][]> mergeBranches(String repopath, String targetBranch, String sourceBranch) {
+	public boolean detectConflicts(String repoPath, String targetBranch, String sourceBranch) {
+        try (Repository repository = new FileRepositoryBuilder()
+                .setGitDir(new File(repoPath))
+                .build()) {
+            ObjectId targetBranchId = repository.resolve("refs/heads/" + targetBranch);
+            ObjectId sourceBranchId = repository.resolve("refs/heads/" + sourceBranch);
+
+            if (targetBranchId == null || sourceBranchId == null) {
+                throw new IllegalArgumentException("Branch not found");
+            }
+
+            try (RevWalk revWalk = new RevWalk(repository)) {
+                RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
+                RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
+                
+                revWalk.reset();  
+                revWalk.markStart(targetCommit);
+                revWalk.markStart(sourceCommit);
+                RevCommit baseCommit = revWalk.next();
+
+                if (baseCommit == null) {
+                    throw new RuntimeException("No common ancestor found");
+                }
+
+                ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
+                merger.setBase(baseCommit);
+                return !merger.merge(targetCommit, sourceCommit); // true = conflicts, false = clean
+            }
+        } catch (Exception e) {
+            System.err.println("Conflict detection error: " + e.getMessage());
+            return true; // Assume conflict on error
+        }
+    }
+
+    
+    public boolean mergeBranches(String repoPath, String targetBranch, String sourceBranch, String strategy) {
+    	
+    	boolean isMerged = false;
+    	
+        try (Repository repository = new FileRepositoryBuilder()
+                .setGitDir(new File(repoPath))
+                .build()) {
+            ObjectId targetBranchId = repository.resolve("refs/heads/" + targetBranch);
+            ObjectId sourceBranchId = repository.resolve("refs/heads/" + sourceBranch);
+
+            if (targetBranchId == null || sourceBranchId == null) {
+                throw new IllegalArgumentException("Branch not found");
+            }
+
+            try (RevWalk revWalk = new RevWalk(repository)) {
+                RevCommit targetCommit = revWalk.parseCommit(targetBranchId);
+                RevCommit sourceCommit = revWalk.parseCommit(sourceBranchId);
+                
+                revWalk.reset();  
+                revWalk.markStart(targetCommit);
+                revWalk.markStart(sourceCommit);
+                
+                RevCommit baseCommit = revWalk.next();
+                if (baseCommit == null) {
+                    throw new RuntimeException("No common ancestor found");
+                }
+
+                ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(repository, true);
+                merger.setBase(baseCommit);
+                boolean mergeSuccess = merger.merge(targetCommit, sourceCommit);
+
+                ObjectId resultTreeId;
+                if (mergeSuccess) {
+                    resultTreeId = merger.getResultTreeId();
+                } else if ("OURS".equalsIgnoreCase(strategy)) {
+                    resultTreeId = targetCommit.getTree(); // Use target's tree
+                    mergeSuccess = true; // Force success with OURS
+                } else if ("THEIRS".equalsIgnoreCase(strategy)) {
+                    resultTreeId = sourceCommit.getTree(); // Use source's tree
+                    mergeSuccess = true; // Force success with THEIRS
+                } else {
+                   return false;
+                }
+
+                // Create merge commit
+                ObjectInserter inserter = repository.newObjectInserter();
+                CommitBuilder commitBuilder = new CommitBuilder();
+                commitBuilder.setTreeId(resultTreeId);
+                commitBuilder.setParentIds(targetBranchId, sourceBranchId);
+                commitBuilder.setAuthor(new PersonIdent("System", "system@example.com"));
+                commitBuilder.setCommitter(new PersonIdent("System", "system@example.com"));
+                commitBuilder.setMessage("Merged " + sourceBranch + " into " + targetBranch + " with " + strategy);
+
+                ObjectId mergeCommitId = inserter.insert(commitBuilder);
+                inserter.flush();
+
+                // Update target branch
+                RefUpdate refUpdate = repository.updateRef("refs/heads/" + targetBranch);
+                refUpdate.setNewObjectId(mergeCommitId);
+                RefUpdate.Result updateResult = refUpdate.update();
+
+                if (updateResult == RefUpdate.Result.REJECTED) {
+                    throw new RuntimeException("Failed to update " + targetBranch);
+                }
+
+               isMerged = true;
+            }
+        } catch (Exception e) {
+            System.err.println("Merge error: " + e.getMessage());
+        }
+
+        return isMerged;
+    }
+	
+	public Map<String, int[][]> mergeBranchesForNonBare(String repopath, String targetBranch, String sourceBranch) {
 		
 		Map<String, int[][]> map = new HashMap<String, int[][]>();
 		
