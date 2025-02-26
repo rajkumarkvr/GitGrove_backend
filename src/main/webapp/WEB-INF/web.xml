@@ -649,11 +649,11 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetRepositoryFileStructure</servlet-name>
-		<url-pattern>/GetRepositoryFileStructure</url-pattern>
+		<url-pattern>/service/repo-info/files</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>GetContent</servlet-name>
-		<url-pattern>/GetContent</url-pattern>
+		<url-pattern>/service/repo-info/file-content</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>UploadFile</servlet-name>
