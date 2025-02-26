@@ -17,7 +17,7 @@ import models.dao.UserDAO;
 
 @MultipartConfig(
 	    fileSizeThreshold = 1024 * 1024, // 1 MB (threshold for memory vs. disk storage)
-	    maxFileSize = 1024 * 1024 * 0, // 10 MB (max size per file)
+	    maxFileSize = 1024 * 1024 * 100, // 10 MB (max size per file)
 	    maxRequestSize = 1024 * 1024 * 300 // 50 MB (max total request size)
 	)
 
