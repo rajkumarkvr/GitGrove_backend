@@ -18,8 +18,7 @@ import services.FileStructureHelper;
 
 public class GetContent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static ArrayList<String> isImage = new ArrayList<String>(
-			List.of("png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"));
+	private static ArrayList<String> isImage = new ArrayList<String>(List.of("png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"));
     
     public GetContent() {
         super();
@@ -52,21 +51,22 @@ public class GetContent extends HttpServlet {
         
         String ext = Arrays.asList(filePath.split(".")).getLast().toLowerCase();
         
-        String output = null;
+        JSONObject jsonResult = new JSONObject();
         
         if(isImage.contains(ext)) {
-        	 output = FileStructureHelper.getInstance().readFileContentOfImage(new File(repoPath), branchName, filePath);
+        	 ArrayList<String> contentAndDimensions = FileStructureHelper.getInstance().readFileContentOfImage(new File(repoPath), branchName, filePath);
+        	 jsonResult.put("content", contentAndDimensions.get(0));
+        	 jsonResult.put("content", contentAndDimensions.get(1));
+        	 jsonResult.put("content", contentAndDimensions.get(2));
         }
+ 
         else {
-        	 output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
-             
+        	 String output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
+        	  jsonResult.put("content", output);
 		}
-      
-       
+        
         response.setStatus(200);
-        JSONObject jsonResult = new JSONObject();
-        jsonResult.put("content", output);
-        response.getWriter().write(output.toString());
+        response.getWriter().write(jsonResult.toString());
 	}
 
 	
