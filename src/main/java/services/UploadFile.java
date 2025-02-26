@@ -74,7 +74,7 @@ public class UploadFile {
 
 		try {
 			// Clone the bare repository into a working directory
-			Git git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).setBranch(branch).call();
+			Git git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).call();
 			System.out.println("upper part");
 			System.out.println(parts);
 			for (Part part : parts) {
