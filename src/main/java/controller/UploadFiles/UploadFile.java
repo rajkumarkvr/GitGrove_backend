@@ -16,8 +16,8 @@ import models.dao.RepositoryDAO;
 import models.dao.UserDAO;
 @MultipartConfig(
 	    fileSizeThreshold = 1024 * 1024, // 1 MB (threshold for memory vs. disk storage)
-	    maxFileSize = 1024 * 1024 * 10, // 10 MB (max size per file)
-	    maxRequestSize = 1024 * 1024 * 50 // 50 MB (max total request size)
+	    maxFileSize = 1024 * 1024 * 60, // 10 MB (max size per file)
+	    maxRequestSize = 1024 * 1024 * 60 // 50 MB (max total request size)
 	)
 
 public class UploadFile extends HttpServlet {
