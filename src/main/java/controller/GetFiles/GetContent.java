@@ -2,6 +2,8 @@ package controller.GetFiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +45,18 @@ public class GetContent extends HttpServlet {
 	         return;
         }
         
-        String output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
+        ArrayList<String> output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
         
         response.setStatus(200);
         JSONObject jsonResult = new JSONObject();
         jsonResult.put("content", output);
-        response.getWriter().write(output.toString());
+        
+        if(output.size()>2) {
+        	jsonResult.put("width", output.get(1));
+        	jsonResult.put("height", output.get(2));
+        }
+        
+        response.getWriter().write(jsonResult.toString());
 	}
 
 	
