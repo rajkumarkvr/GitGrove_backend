@@ -44,12 +44,13 @@ public class GetContent extends HttpServlet {
 	         response.getWriter().write("{\"error\": \"Invalid repository\"}");
 	         return;
         }
+        System.out.println("path"+filePath);
         
-        ArrayList<String> output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
+        ArrayList<String> output = FileStructureHelper.getInstance().readFileContent(repository, branchName, filePath);
         
         response.setStatus(200);
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put("content", output);
+        jsonResult.put("content", output.get(0));
         
         if(output.size()>2) {
         	jsonResult.put("width", output.get(1));
