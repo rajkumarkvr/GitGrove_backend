@@ -44,7 +44,6 @@ public class UploadFile extends HttpServlet {
 		String currentUser = request.getParameter("currentUser");
 
 		
-
 		if(commitMsg == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"There is no commit message\"}");
