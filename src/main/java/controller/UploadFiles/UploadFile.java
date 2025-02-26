@@ -25,11 +25,12 @@ public class UploadFile extends HttpServlet {
 		
 		String repoName = request.getParameter("reponame");
 		String ownerName = request.getParameter("ownerName");
-		String commitMsg = request.getParameter("commit");
+		String commitMsg = request.getParameter("commitMessage");
 		String branchName = request.getParameter("branch");
-		Part filePart = request.getPart("file");
-		String currentUser = request.getParameter("username");
+		Part filePart = request.getPart("files");
+		String currentUser = request.getParameter("currentuser");
 		
+
 		if(commitMsg == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"There is no commit message\"}");
@@ -53,7 +54,7 @@ public class UploadFile extends HttpServlet {
 			response.getWriter().write("{\"message\" :\"No file\"}");
 			return;
 		}
-		
+		System.out.println(filePart.toString());
 		int userId =  UserDAO.getInstance().getUserId(currentUser);
 		
 		if(userId < 0) {
@@ -84,7 +85,7 @@ public class UploadFile extends HttpServlet {
 		
 		String repoPath = "/opt/repo/"+ownerName+"/"+repoName+".git";
 		
-		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
+//		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
 		
 		response.setStatus(200);
 		response.getWriter().write("{\"message\" :\"File added\"}");
