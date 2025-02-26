@@ -64,6 +64,7 @@ public class MergePullRequest extends HttpServlet {
 		String repoPath = RepositoryDAO.getInstance().getRepoPath(repoId);
 		
 		ArrayList<String> branches = PullRequestDAO.getInstance().getTargetAndSourceBranch(PRid);
+		
 		boolean isMerged=false;
 			try {
 				System.out.println("Checking");
@@ -73,6 +74,7 @@ public class MergePullRequest extends HttpServlet {
 				else if(strategy.equals("THEIRS")) {
 					isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),MergeStrategy.THEIRS.name(),author,commiter);
 				}
+				
 				else {
 					isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"",author,commiter);
 				}
@@ -80,6 +82,7 @@ public class MergePullRequest extends HttpServlet {
 			}catch(Exception e) {
 					System.out.println("Merge pull request: "+e.getMessage());
 			}
+			
 		if(isMerged) {
 			PullRequestDAO.getInstance().changeStatus(PRid, PullRequestStatus.MERGED);
 			response.setStatus(200);
