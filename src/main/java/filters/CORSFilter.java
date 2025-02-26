@@ -26,6 +26,7 @@ public class CORSFilter implements Filter {
             "http://gitgrove.com:3000",
             "http://gitgrove.com:8080",
             "http://gitgrove.com:3000"
+            
         );
 
     @Override
