@@ -149,18 +149,15 @@ public class FileStructureHelper {
 	}
 
 	// Reads file content from a specific branch
-	public ArrayList<String> readFileContent(File repoPath, String branchName, String filePath) {
+	public String readFileContent(File repoPath, String branchName, String filePath) {
 
-		ArrayList<String> contentAndDimension = new ArrayList<String>();
-		
 		try (Repository repository = new FileRepositoryBuilder().setGitDir(repoPath).build();) {
 
 			ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
 			System.out.println("branch name" + branchName);
 			
 			if (branchHead == null) {
-				contentAndDimension.add("No commits found in the branch: " + branchName);
-				return contentAndDimension;
+				return "No commits found in the branch: " + branchName;
 			}
 
 			try (RevWalk revWalk = new RevWalk(repository)) {
@@ -174,8 +171,7 @@ public class FileStructureHelper {
 
 					if (!treeWalk.next()) {
 						
-						contentAndDimension.add("File not found in repository: " + filePath + " (Branch: " + branchName + ")");
-						return contentAndDimension;
+						return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
 	
 					}
 
@@ -185,25 +181,10 @@ public class FileStructureHelper {
 						ObjectLoader loader = repository.open(objectId);
 						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 						loader.copyTo(outputStream);
-						String ext = Arrays.asList(filePath.split(".")).getLast().toLowerCase();
-						
-						if (isImage.contains(ext)) {
-							String base64Content = Base64.getEncoder().encodeToString(outputStream.toByteArray()); 
-							contentAndDimension.add(base64Content);
-							ArrayList<String> widthAndHeight = getDimensionWidthandHeight(base64Content);
-							contentAndDimension.add(widthAndHeight.get(0));
-							contentAndDimension.add(widthAndHeight.get(1));
-						}
-						
-						else if(isVideo.contains(ext) || isAudio.contains(ext)) {
-							contentAndDimension.add(Base64.getEncoder().encodeToString(outputStream.toByteArray()));
-						}
-						
-						else {
-							contentAndDimension.add(outputStream.toString());
-						}
+						return outputStream.toString();
 					} catch (Exception e) {
 						System.out.println("Read file content error : " + e.getMessage());
+						
 					}
 				}
 			}
@@ -212,7 +193,7 @@ public class FileStructureHelper {
 			e.printStackTrace();
 		}
 		
-		return contentAndDimension;
+		return "";
 	}
 
 	// Utility method to get the parent path
