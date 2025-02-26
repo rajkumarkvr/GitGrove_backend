@@ -196,15 +196,18 @@ public class FileStructureHelper {
 		return "";
 	}
 	
-	public String readFileContentOfImage(File repoPath, String branchName, String filePath) {
+	public ArrayList<String> readFileContentOfImage(File repoPath, String branchName, String filePath) {
 
+		ArrayList<String> contentAndDimensions = new ArrayList<String>();
+		
 		try (Repository repository = new FileRepositoryBuilder().setGitDir(repoPath).build();) {
 
 			ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
 			System.out.println("branch name" + branchName);
 			
 			if (branchHead == null) {
-				return "No commits found in the branch: " + branchName;
+				contentAndDimensions.add("No commits found in the branch: " + branchName);
+				return contentAndDimensions;
 			}
 
 			try (RevWalk revWalk = new RevWalk(repository)) {
@@ -217,21 +220,27 @@ public class FileStructureHelper {
 					treeWalk.setFilter(PathFilter.create(filePath));
 
 					if (!treeWalk.next()) {
-						
-						return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
-	
+						contentAndDimensions.add("File not found in repository: " + filePath + " (Branch: " + branchName + ")");
+						return contentAndDimensions;
 					}
 
 					ObjectId objectId = treeWalk.getObjectId(0);
 
 					try {
+						
 						ObjectLoader loader = repository.open(objectId);
 						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 						loader.copyTo(outputStream);
-						return Base64.getEncoder().encodeToString(outputStream.toByteArray());
-					} catch (Exception e) {
-						System.out.println("Read file content error : " + e.getMessage());
+						String base64Str = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+						contentAndDimensions.add(base64Str);
+						ArrayList<String> widthandHeight = getDimensionWidthandHeight(base64Str);
+						contentAndDimensions.add(widthandHeight.get(0));
+						contentAndDimensions.add(widthandHeight.get(1));
 						
+					} catch (Exception e) {
+						contentAndDimensions.add("Unable to get file. Please, try again later");
+						System.out.println("Read file content error : " + e.getMessage());
+						return contentAndDimensions;
 					}
 				}
 			}
@@ -240,7 +249,7 @@ public class FileStructureHelper {
 			e.printStackTrace();
 		}
 		
-		return "";
+		return contentAndDimensions;
 	}
 	
 	public ArrayList<String> readFileContentWithDimension(File repoPath, String branchName, String filePath) {
