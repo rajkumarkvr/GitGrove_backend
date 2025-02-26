@@ -1,6 +1,7 @@
 package controller.UploadFiles;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,7 +28,9 @@ public class UploadFile extends HttpServlet {
 		String ownerName = request.getParameter("ownerName");
 		String commitMsg = request.getParameter("commit");
 		String branchName = request.getParameter("branch");
-		Part filePart = request.getPart("file");
+		
+		Collection<Part> fileParts = request.getParts();
+
 		String currentUser = request.getParameter("username");
 		
 		if(commitMsg == null) {
@@ -48,7 +51,7 @@ public class UploadFile extends HttpServlet {
 			return;
 		}
 		
-		if(filePart == null) {
+		if(fileParts == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"No file\"}");
 			return;
@@ -84,7 +87,9 @@ public class UploadFile extends HttpServlet {
 		
 		String repoPath = "/opt/repo/"+ownerName+"/"+repoName+".git";
 		
-		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
+//		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
+		
+		services.UploadFile.getInstance().uploadFilesToGit(fileParts, repoPath, branchName, commitMsg);
 		
 		response.setStatus(200);
 		response.getWriter().write("{\"message\" :\"File added\"}");
