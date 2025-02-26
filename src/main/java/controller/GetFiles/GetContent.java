@@ -46,18 +46,14 @@ public class GetContent extends HttpServlet {
         }
         System.out.println("path"+filePath);
         
-        ArrayList<String> output = FileStructureHelper.getInstance().readFileContent(repository, branchName, filePath);
+
+        String output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
         
         response.setStatus(200);
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put("content", output.get(0));
-        
-        if(output.size()>2) {
-        	jsonResult.put("width", output.get(1));
-        	jsonResult.put("height", output.get(2));
-        }
-        
-        response.getWriter().write(jsonResult.toString());
+        jsonResult.put("content", output);
+        response.getWriter().write(output.toString());
+
 	}
 
 	
