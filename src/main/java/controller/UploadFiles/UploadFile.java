@@ -1,8 +1,11 @@
 package controller.UploadFiles;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +14,11 @@ import javax.servlet.http.Part;
 import models.User;
 import models.dao.RepositoryDAO;
 import models.dao.UserDAO;
-
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024, // 1 MB (threshold for memory vs. disk storage)
+	    maxFileSize = 1024 * 1024 * 10, // 10 MB (max size per file)
+	    maxRequestSize = 1024 * 1024 * 50 // 50 MB (max total request size)
+	)
 
 public class UploadFile extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -27,8 +34,14 @@ public class UploadFile extends HttpServlet {
 		String ownerName = request.getParameter("ownerName");
 		String commitMsg = request.getParameter("commitMessage");
 		String branchName = request.getParameter("branch");
-		Part filePart = request.getPart("files");
-		String currentUser = request.getParameter("currentuser");
+
+		
+		Collection<Part> fileParts = request.getParts().stream()
+                .filter(part -> "files".equals(part.getName()))
+                .collect(Collectors.toList());
+
+		String currentUser = request.getParameter("currentUser");
+
 		
 
 		if(commitMsg == null) {
@@ -49,12 +62,12 @@ public class UploadFile extends HttpServlet {
 			return;
 		}
 		
-		if(filePart == null) {
+		if(fileParts == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" :\"No file\"}");
 			return;
 		}
-		System.out.println(filePart.toString());
+
 		int userId =  UserDAO.getInstance().getUserId(currentUser);
 		
 		if(userId < 0) {
@@ -85,10 +98,16 @@ public class UploadFile extends HttpServlet {
 		
 		String repoPath = "/opt/repo/"+ownerName+"/"+repoName+".git";
 		
-//		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
-		
+
+		boolean res = services.UploadFile.getInstance().uploadFilesToGit(fileParts, repoPath, branchName, commitMsg);
+
+		if(res) {
 		response.setStatus(200);
-		response.getWriter().write("{\"message\" :\"File added\"}");
+		response.getWriter().write("{\"message\" :\"File(s) added\"}");
+		}else {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" :\"Failed to add File(s)\"}");
+		}
 		
 	}
 
