@@ -86,6 +86,8 @@ public class UploadFile extends HttpServlet {
 		
 		services.UploadFile.getInstance().addFile(repoPath, filePart, commitMsg, branchName, author);
 		
+		response.setStatus(200);
+		response.getWriter().write("{\"message\" :\"File added\"}");
 		
 	}
 
