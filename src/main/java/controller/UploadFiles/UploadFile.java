@@ -36,15 +36,12 @@ public class UploadFile extends HttpServlet {
 		String ownerName = request.getParameter("ownerName");
 		String commitMsg = request.getParameter("commitMessage");
 		String branchName = request.getParameter("branch");
-
 		
 		Collection<Part> fileParts = request.getParts().stream()
                 .filter(part -> "files".equals(part.getName()))
                 .collect(Collectors.toList());
 
-
 		String currentUser = request.getParameter("currentUser");
-
 		
 		if(commitMsg == null) {
 			response.setStatus(400);

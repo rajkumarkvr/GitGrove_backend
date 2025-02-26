@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import enums.MergeStrategy;
 import enums.PullRequestStatus;
 import models.User;
 import models.dao.PullRequestDAO;
@@ -25,6 +27,7 @@ public class MergePullRequest extends HttpServlet {
 		
 		String idStr = request.getParameter("id");
 		String userName = request.getParameter("username");
+		String strategy = request.getParameter("strategy");
 		
 		if(idStr == null || userName == null) {
 			response.setStatus(400);
@@ -64,7 +67,16 @@ public class MergePullRequest extends HttpServlet {
 		boolean isMerged=false;
 			try {
 				System.out.println("Checking");
-				isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"",author,commiter);
+				if(strategy.equals("OURS")) {
+					isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),MergeStrategy.OURS.name(),author,commiter);
+				}
+				else if(strategy.equals("THEIRS")) {
+					isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),MergeStrategy.THEIRS.name(),author,commiter);
+				}
+				else {
+					isMerged =  MergeHandler.getInstance().mergeBranches(repoPath,branches.get(1),branches.get(0),"",author,commiter);
+				}
+				
 			}catch(Exception e) {
 					System.out.println("Merge pull request: "+e.getMessage());
 			}
