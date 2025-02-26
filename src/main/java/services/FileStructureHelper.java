@@ -195,6 +195,121 @@ public class FileStructureHelper {
 		
 		return "";
 	}
+	
+	public String readFileContentOfImage(File repoPath, String branchName, String filePath) {
+
+		try (Repository repository = new FileRepositoryBuilder().setGitDir(repoPath).build();) {
+
+			ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
+			System.out.println("branch name" + branchName);
+			
+			if (branchHead == null) {
+				return "No commits found in the branch: " + branchName;
+			}
+
+			try (RevWalk revWalk = new RevWalk(repository)) {
+				RevCommit commit = revWalk.parseCommit(branchHead);
+				RevTree tree = commit.getTree();
+
+				try (TreeWalk treeWalk = new TreeWalk(repository)) {
+					treeWalk.addTree(tree);
+					treeWalk.setRecursive(true);
+					treeWalk.setFilter(PathFilter.create(filePath));
+
+					if (!treeWalk.next()) {
+						
+						return "File not found in repository: " + filePath + " (Branch: " + branchName + ")";
+	
+					}
+
+					ObjectId objectId = treeWalk.getObjectId(0);
+
+					try {
+						ObjectLoader loader = repository.open(objectId);
+						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						loader.copyTo(outputStream);
+						return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+					} catch (Exception e) {
+						System.out.println("Read file content error : " + e.getMessage());
+						
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "";
+	}
+	
+	public ArrayList<String> readFileContentWithDimension(File repoPath, String branchName, String filePath) {
+
+		ArrayList<String> contentAndDimension = new ArrayList<String>();
+		
+		try (Repository repository = new FileRepositoryBuilder().setGitDir(repoPath).build();) {
+
+			ObjectId branchHead = repository.resolve("refs/heads/" + branchName);
+			System.out.println("branch name" + branchName);
+			
+			if (branchHead == null) {
+				contentAndDimension.add("No commits found in the branch: " + branchName);
+				return contentAndDimension;
+			}
+
+			try (RevWalk revWalk = new RevWalk(repository)) {
+				RevCommit commit = revWalk.parseCommit(branchHead);
+				RevTree tree = commit.getTree();
+
+				try (TreeWalk treeWalk = new TreeWalk(repository)) {
+					treeWalk.addTree(tree);
+					treeWalk.setRecursive(true);
+					treeWalk.setFilter(PathFilter.create(filePath));
+
+					if (!treeWalk.next()) {
+						
+						contentAndDimension.add("File not found in repository: " + filePath + " (Branch: " + branchName + ")");
+						return contentAndDimension;
+	
+					}
+
+					ObjectId objectId = treeWalk.getObjectId(0);
+
+					try {
+						ObjectLoader loader = repository.open(objectId);
+						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						loader.copyTo(outputStream);
+						String ext = Arrays.asList(filePath.split(".")).getLast().toLowerCase();
+						
+						if (isImage.contains(ext)) {
+							String base64Content = Base64.getEncoder().encodeToString(outputStream.toByteArray()); 
+							contentAndDimension.add(base64Content);
+							ArrayList<String> widthAndHeight = getDimensionWidthandHeight(base64Content);
+							contentAndDimension.add(widthAndHeight.get(0));
+							contentAndDimension.add(widthAndHeight.get(1));
+						}
+						
+						else if(isVideo.contains(ext) || isAudio.contains(ext)) {
+							contentAndDimension.add(Base64.getEncoder().encodeToString(outputStream.toByteArray()));
+						}
+						
+						else {
+							contentAndDimension.add(outputStream.toString());
+						}
+					} catch (Exception e) {
+						System.out.println("Read file content error : " + e.getMessage());
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return contentAndDimension;
+	}
+	
+	
 
 	// Utility method to get the parent path
 	private String getParentPath(String path) {
