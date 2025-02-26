@@ -3,6 +3,8 @@ package controller.GetFiles;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +18,8 @@ import services.FileStructureHelper;
 
 public class GetContent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static ArrayList<String> isImage = new ArrayList<String>(
+			List.of("png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"));
     
     public GetContent() {
         super();
@@ -23,6 +27,7 @@ public class GetContent extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
 		
 		String username = request.getParameter("username");
         String repoName = request.getParameter("reponame");
@@ -45,14 +50,26 @@ public class GetContent extends HttpServlet {
 	         return;
         }
         
-        String output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
+        String ext = Arrays.asList(filePath.split(".")).getLast().toLowerCase();
         
+        String output = null;
+        
+        if(isImage.contains(ext)) {
+        	 output = FileStructureHelper.getInstance().readFileContentOfImage(new File(repoPath), branchName, filePath);
+        }
+        else {
+        	 output = FileStructureHelper.getInstance().readFileContent(new File(repoPath), branchName, filePath);
+             
+		}
+      
+       
         response.setStatus(200);
         JSONObject jsonResult = new JSONObject();
         jsonResult.put("content", output);
         response.getWriter().write(output.toString());
 	}
 
+	
 	
 
 }
