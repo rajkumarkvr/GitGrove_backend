@@ -80,6 +80,23 @@ public class BranchDAO {
 		return branches;
 	}
 	
+	public boolean isBranchExists(int repoId) {
+		
+		boolean isExist = false;
+		
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("select id from branches where repo_id = ?");
+			stmt.setInt(1, repoId);
+			ResultSet rSet = stmt.executeQuery();
+			isExist = rSet.next();
+		} catch (Exception e) {
+			System.err.println("Brnach exist check error : "+e.getMessage());
+		}
+		
+		return isExist;
+	}
+	
 	public int getBranchId(int repoId, String branchName) {
 		
 		int branchId = -1;

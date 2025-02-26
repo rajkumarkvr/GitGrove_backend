@@ -6,10 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.http.Part;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Ref;
 
 import models.User;
 
@@ -74,7 +76,19 @@ public class UploadFile {
 
 		try {
 			// Clone the bare repository into a working directory
-			Git git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).call();
+			
+			 Git bareGit = Git.open(new File(repoPath));
+			 List<Ref> branches = bareGit.branchList().call();
+			
+			 Git git = null;
+			 
+			 if(branches.isEmpty()) {
+				 git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).call();
+			 }
+			 else {
+				 git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).setBranch(branch).call();
+			 }
+			
 			System.out.println("upper part");
 			System.out.println(parts);
 			for (Part part : parts) {
