@@ -95,8 +95,9 @@ public class DBconnectionInit implements ServletContextListener, HttpSessionList
     	String conString = sce.getServletContext().getInitParameter("DB_URL");
     	String username = sce.getServletContext().getInitParameter("DB_USERNAME");
     	String password = sce.getServletContext().getInitParameter("DB_PASSWORD");
-    	DBconnection.config(conString, username, password);
+  
     	try {
+    	  	DBconnection.config(conString, username, password);
 		Connection con=	DBconnection.getConnection();
 
 		} catch (SQLException e) {

@@ -57,11 +57,11 @@ public class CanPullRequest extends HttpServlet {
 		
 		response.setStatus(200);
 		if(isCollaborator) {
-			response.getWriter().write("{\"isCollaborator\" : \"true\"}");
+			response.getWriter().write("{\"isCollaborator\" :true}");
 			return;
 		}
 		else {
-			response.getWriter().write("{\"isCollaborator\" : \"false\"}");
+			response.getWriter().write("{\"isCollaborator\" :false}");
 			return;
 		}
 		
