@@ -62,8 +62,9 @@ public class UploadFile {
 		}
 
 	}
-
-	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,String commitMessage) {
+	
+	
+	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,String commitMessage, User author) {
 		File tempDir = new File("/tmp/git-working-dir"); 
 		
 		deleteDirectory(tempDir);
@@ -74,7 +75,8 @@ public class UploadFile {
 		try {
 			// Clone the bare repository into a working directory
 			Git git = Git.cloneRepository().setURI("file://" + repoPath).setDirectory(tempDir).setBranch(branch).call();
-
+			System.out.println("upper part");
+			System.out.println(parts);
 			for (Part part : parts) {
 				if (part.getName().equals("files")) { // Process only file parts
 					String fileName = part.getSubmittedFileName();
@@ -87,23 +89,22 @@ public class UploadFile {
 						relativePath = fileName;
 					}
 
+						System.out.println("relative path "+relativePath);
 					// Create full path inside working directory
 					File targetFile = new File(tempDir, relativePath);
+					System.out.println("Abs path "+targetFile.getAbsolutePath());
 					targetFile.getParentFile().mkdirs(); // Create necessary folders
 
 					try (InputStream input = part.getInputStream()) {
 						Files.copy(input, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 					}
 
-					// Add file to Git
 					git.add().addFilepattern(relativePath).call();
 				}
 			}
 
-			// Commit changes
-			git.commit().setMessage(commitMessage).setAuthor("User", "user@example.com").call();
+			git.commit().setMessage(commitMessage).setAuthor(author.getUsername(), author.getEmailaddress()).call();
 
-			// Push changes
 			git.push().call();
 
 			git.close();
@@ -115,7 +116,7 @@ public class UploadFile {
 		}
 	}
 
-	// Extract relative path from Content-Disposition header
+	
 	private static String extractRelativePath(String contentDisposition) {
 		if (contentDisposition != null) {
 			for (String part : contentDisposition.split(";")) {
@@ -127,7 +128,7 @@ public class UploadFile {
 				}
 			}
 		}
-		return null; // No relative path found
+		return null; 
 	}
 
 	private void deleteDirectory(File directory) {

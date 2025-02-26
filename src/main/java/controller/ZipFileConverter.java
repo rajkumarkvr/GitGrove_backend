@@ -40,7 +40,6 @@ public class ZipFileConverter extends HttpServlet {
 			zipFile = FileStructureHelper.getInstance().zipRepository(file,branchName,repoName);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-//			System.out.println();
 			e.printStackTrace();
 			response.setStatus(400);
 			response.getWriter().write("{\"error\" : \"Unable to read content\"}");
