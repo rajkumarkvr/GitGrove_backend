@@ -17,12 +17,13 @@ import models.dao.UserDAO;
 
 @MultipartConfig(
 	    fileSizeThreshold = 1024 * 1024, // 1 MB (threshold for memory vs. disk storage)
-	    maxFileSize = 1024 * 1024 * 60, // 10 MB (max size per file)
-	    maxRequestSize = 1024 * 1024 * 60 // 50 MB (max total request size)
+	    maxFileSize = 1024 * 1024 * 0, // 10 MB (max size per file)
+	    maxRequestSize = 1024 * 1024 * 300 // 50 MB (max total request size)
 	)
 
 public class UploadFile extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final String BASE_REPO_PATH = "/opt/repo/";
    
     public UploadFile() {
         super();
@@ -40,6 +41,7 @@ public class UploadFile extends HttpServlet {
 		Collection<Part> fileParts = request.getParts().stream()
                 .filter(part -> "files".equals(part.getName()))
                 .collect(Collectors.toList());
+
 
 		String currentUser = request.getParameter("currentUser");
 
@@ -96,7 +98,7 @@ public class UploadFile extends HttpServlet {
 			return;
 		}
 		
-		String repoPath = "/opt/repo/"+ownerName+"/"+repoName+".git";
+		String repoPath = BASE_REPO_PATH+ownerName+"/"+repoName+".git";
 		
 
 		boolean res = services.UploadFile.getInstance().uploadFilesToGit(fileParts, repoPath, branchName, commitMsg, author);

@@ -425,6 +425,13 @@
 		<servlet-name>UploadFile</servlet-name>
 		<servlet-class>controller.UploadFiles.UploadFile</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UpdateFile</display-name>
+		<servlet-name>UpdateFile</servlet-name>
+		<servlet-class>controller.UploadFiles.UpdateFile</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -658,6 +665,10 @@
 	<servlet-mapping>
 		<servlet-name>UploadFile</servlet-name>
 		<url-pattern>/service/repository/upload</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UpdateFile</servlet-name>
+		<url-pattern>/UpdateFile</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

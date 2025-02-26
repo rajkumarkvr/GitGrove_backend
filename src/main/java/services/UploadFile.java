@@ -88,11 +88,9 @@ public class UploadFile {
 					if (relativePath == null || relativePath.isEmpty()) {
 						relativePath = fileName;
 					}
-
-						System.out.println("relative path "+relativePath);
+					
 					// Create full path inside working directory
 					File targetFile = new File(tempDir, relativePath);
-					System.out.println("Abs path "+targetFile.getAbsolutePath());
 					targetFile.getParentFile().mkdirs(); // Create necessary folders
 
 					try (InputStream input = part.getInputStream()) {
