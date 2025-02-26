@@ -418,6 +418,13 @@
 		<servlet-name>GetContent</servlet-name>
 		<servlet-class>controller.GetFiles.GetContent</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UploadFile</display-name>
+		<servlet-name>UploadFile</servlet-name>
+		<servlet-class>controller.UploadFiles.UploadFile</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -647,6 +654,10 @@
 	<servlet-mapping>
 		<servlet-name>GetContent</servlet-name>
 		<url-pattern>/GetContent</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UploadFile</servlet-name>
+		<url-pattern>/UploadFile</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

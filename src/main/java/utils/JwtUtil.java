@@ -15,7 +15,6 @@ public class JwtUtil {
 	
 	static JwtUtil jwtUtil = null;
 	
-	
 	private JwtUtil() {
 		
 	}
@@ -80,6 +79,5 @@ public class JwtUtil {
             throw new RuntimeException("Invalid token.");
         }
     }
-
 
 }
