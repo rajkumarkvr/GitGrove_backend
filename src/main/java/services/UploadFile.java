@@ -63,10 +63,11 @@ public class UploadFile {
 
 	}
 
-	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,
-			String commitMessage) {
-		File tempDir = new File("/tmp/git-working-dir"); // Temporary working directory
-
+	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,String commitMessage) {
+		File tempDir = new File("/tmp/git-working-dir"); 
+		
+		deleteDirectory(tempDir);
+		
 		if (!tempDir.exists())
 			tempDir.mkdirs();
 
@@ -81,6 +82,7 @@ public class UploadFile {
 
 					// Extract relative path
 					String relativePath = extractRelativePath(contentDisposition);
+					
 					if (relativePath == null || relativePath.isEmpty()) {
 						relativePath = fileName;
 					}
