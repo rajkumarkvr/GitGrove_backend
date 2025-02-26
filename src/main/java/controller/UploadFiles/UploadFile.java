@@ -14,6 +14,7 @@ import javax.servlet.http.Part;
 import models.User;
 import models.dao.RepositoryDAO;
 import models.dao.UserDAO;
+
 @MultipartConfig(
 	    fileSizeThreshold = 1024 * 1024, // 1 MB (threshold for memory vs. disk storage)
 	    maxFileSize = 1024 * 1024 * 60, // 10 MB (max size per file)
@@ -99,7 +100,7 @@ public class UploadFile extends HttpServlet {
 		String repoPath = "/opt/repo/"+ownerName+"/"+repoName+".git";
 		
 
-		boolean res = services.UploadFile.getInstance().uploadFilesToGit(fileParts, repoPath, branchName, commitMsg);
+		boolean res = services.UploadFile.getInstance().uploadFilesToGit(fileParts, repoPath, branchName, commitMsg, author);
 
 		if(res) {
 		response.setStatus(200);

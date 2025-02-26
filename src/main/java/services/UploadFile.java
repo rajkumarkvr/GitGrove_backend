@@ -62,11 +62,13 @@ public class UploadFile {
 		}
 
 	}
-
-	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,
-			String commitMessage) {
-		File tempDir = new File("/tmp/git-working-dir"); // Temporary working directory
+	
+	
+	public boolean uploadFilesToGit(Collection<Part> parts, String repoPath, String branch,String commitMessage, User author) {
+		File tempDir = new File("/tmp/git-working-dir"); 
+		
 		deleteDirectory(tempDir);
+		
 		if (!tempDir.exists())
 			tempDir.mkdirs();
 
@@ -82,6 +84,7 @@ public class UploadFile {
 
 					// Extract relative path
 					String relativePath = extractRelativePath(contentDisposition);
+					
 					if (relativePath == null || relativePath.isEmpty()) {
 						relativePath = fileName;
 					}
@@ -96,15 +99,12 @@ public class UploadFile {
 						Files.copy(input, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 					}
 
-					// Add file to Git
 					git.add().addFilepattern(relativePath).call();
 				}
 			}
 
-			// Commit changes
-			git.commit().setMessage(commitMessage).setAuthor("User", "user@example.com").call();
+			git.commit().setMessage(commitMessage).setAuthor(author.getUsername(), author.getEmailaddress()).call();
 
-			// Push changes
 			git.push().call();
 
 			git.close();
@@ -116,7 +116,7 @@ public class UploadFile {
 		}
 	}
 
-	// Extract relative path from Content-Disposition header
+	
 	private static String extractRelativePath(String contentDisposition) {
 		if (contentDisposition != null) {
 			for (String part : contentDisposition.split(";")) {
@@ -128,7 +128,7 @@ public class UploadFile {
 				}
 			}
 		}
-		return null; // No relative path found
+		return null; 
 	}
 
 	private void deleteDirectory(File directory) {
