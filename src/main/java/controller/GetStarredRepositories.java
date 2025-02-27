@@ -57,7 +57,7 @@ public class GetStarredRepositories extends HttpServlet {
 			
 		
 			jsonObject.put("updated",lastCommitDate.toString());
-
+			jsonObject.put("ownername", repoOwnerName);
 			jsonObject.put("stars", repository.getStars_count());
 			jsonObject.put("created_at",repository.getCreatedAt().toString() );
 			jsonObject.put("url", "git@172.17.23.190:/opt/repo/"+repoOwnerName+"/"+repository.getName()+".git");
