@@ -26,8 +26,7 @@ public class RepositoryServlet extends HttpServlet {
         String username = request.getParameter("username");
         String repoName = request.getParameter("reponame");
         String branchName = request.getParameter("branchname");
-    	
-        
+
         
         if (username == null || repoName == null || branchName == null) {
         
@@ -35,6 +34,7 @@ public class RepositoryServlet extends HttpServlet {
             response.getWriter().write("{\"error\": \"Missing username or reponame\"}");
             return;
         }
+        
         System.out.println("username"+username+" repo"+repoName);
 
         File repoPath = new File(BASE_REPO_PATH + username + "/" + repoName + ".git");
@@ -57,7 +57,14 @@ public class RepositoryServlet extends HttpServlet {
             }
             repoJson.put("branches", new JSONArray(branches));
             
-            repoJson.put("defaultBranch", "master");
+            if(branches.contains("main") && !branches.contains("master")) {
+            	 repoJson.put("defaultBranch", "main");
+            	 branchName = "main";
+            }
+            
+            else {
+            	repoJson.put("defaultBranch", "master");
+            }
 
             // Check if the repository has commits
             JSONArray commitsArray;
