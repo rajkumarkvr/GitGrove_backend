@@ -1,6 +1,7 @@
 package controller.Message;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -14,6 +15,8 @@ import org.json.JSONObject;
 import models.Comment;
 import models.dao.CommentsDAO;
 
+//@WebServlet("/service/pull-request/comments")
+
 public class GetMessages extends HttpServlet {
 	private static final long serialVersionUID = 1L;
   
@@ -21,8 +24,11 @@ public class GetMessages extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+//    @ApiParam(name="PR-Id",type="number")
+//    @ResponseParam(responseCode ="200",description="get a message")
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String PRIdStr = request.getParameter("PR-Id");		
 		

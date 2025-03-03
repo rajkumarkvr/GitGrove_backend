@@ -126,6 +126,7 @@ public class SSH_KeyDAO {
 	public String generateEntry(String username, String key) {
 		return "command=" + SCRIPTFILEPATH + ",environment=\"GIT_USER=" + username + "\"" + SCRIPTACTION + " " + key;
 	}
+	
 //    public void appendToAuthorizedKeys(String entry) {
 //        try {
 //            Path tempFile = Files.createTempFile("authkeys", ".tmp");
@@ -166,6 +167,7 @@ public class SSH_KeyDAO {
 			System.out.println("Error from change owner to git: " + e.getMessage());
 		}
 	}
+	
 	private void changeOwnerToRaj() {
 		try {
 

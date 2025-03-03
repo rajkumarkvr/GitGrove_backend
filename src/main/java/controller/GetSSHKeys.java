@@ -34,7 +34,7 @@ public class GetSSHKeys extends HttpServlet {
 	 }
 	
 	 JSONObject output = new JSONObject();
-	JSONArray outArr = new JSONArray(keys);
+	 JSONArray outArr = new JSONArray(keys);
 	 output.put("keys", outArr);
 	 response.setStatus(HttpServletResponse.SC_OK);
 	 response.getWriter().write(output.toString());

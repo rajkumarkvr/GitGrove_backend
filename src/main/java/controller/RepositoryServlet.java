@@ -27,6 +27,8 @@ public class RepositoryServlet extends HttpServlet {
         String repoName = request.getParameter("reponame");
         String branchName = request.getParameter("branchname");
     	
+        
+        
         if (username == null || repoName == null || branchName == null) {
         
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

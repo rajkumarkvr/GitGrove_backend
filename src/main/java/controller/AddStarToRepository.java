@@ -21,9 +21,20 @@ public class AddStarToRepository extends HttpServlet {
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String username = request.getParameter("username");
+		String repoIdStr = request.getParameter("repoid");
+		
+		if(username == null  || repoIdStr == null) {
+			response.setStatus(400);
+			response.getWriter().write("{\"message\" : \"Missing input\"}");
+			return;
+		}
+		
 		User user = UserDAO.getInstance().getUserByUserName(username);
-		int repoId = Integer.parseInt(request.getParameter("repoid"));
+		int repoId = Integer.parseInt(repoIdStr);		
+		
 		RepositoryDAO.getInstance().addStar(user.getId(), repoId);
+		
+		response.setStatus(200);
 		
 	}
 
