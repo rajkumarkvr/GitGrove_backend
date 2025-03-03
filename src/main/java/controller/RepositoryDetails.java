@@ -35,7 +35,7 @@ public class RepositoryDetails extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String username = request.getParameter("username");
-		
+	
 		if(username == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"error\"}");
