@@ -59,7 +59,11 @@ public class RepositoryServlet extends HttpServlet {
             
             if(branches.contains("main") && !branches.contains("master")) {
             	 repoJson.put("defaultBranch", "main");
-            	 branchName = "main";
+            	 
+            	 if(branchName == "master") {
+            		 branchName = "main";
+            	 }
+            	 
             }
             
             else {
