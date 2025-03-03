@@ -680,7 +680,7 @@
 	</welcome-file-list>
 	<context-param>
 		<param-name>USER_PASSWORD</param-name>
-		<param-value>Rajkumardev@371</param-value>
+		<param-value>Rajkumardev@753</param-value>
 	</context-param>
 	<context-param>
 		<param-name>DB_URL</param-name>

@@ -25,7 +25,7 @@ public class SSH_KeyDAO {
 	static private final String SCRIPTFILEPATH = "\"/home/git/my-git-script.sh\"";
 	static private final String SCRIPTACTION = ",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty";
 	private static final String AUTHORIZED_KEYS_PATH = "/home/git/.ssh/authorized_keys";
-	private static final String SUDO_PASSWORD = "Rajkumardev@371";
+	private static final String SUDO_PASSWORD = "Rajkumardev@753";
 	private static final String SSH_DIR_PATH = "/home/git/.ssh";
 	private static final String GIT_HOME_PATH = "/home/git";
 	static SSH_KeyDAO ssh_KeyDAO = null;
