@@ -8,12 +8,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -112,7 +115,10 @@ public class FileStructureHelper {
 
 						if (fileCommit != null) {
 							fileJson.put("commitMessage", fileCommit.getShortMessage());
-							fileJson.put("commitTime", fileCommit.getAuthorIdent().getWhen().toInstant().toString());
+							Date commitDate = fileCommit.getAuthorIdent().getWhen();
+							TimeZone authorTimeZone = fileCommit.getAuthorIdent().getTimeZone();
+							ZonedDateTime localTime = commitDate.toInstant().atZone(authorTimeZone.toZoneId());
+							fileJson.put("commitTime", localTime);
 						}
 
 						mainFilesArray.put(fileJson);
