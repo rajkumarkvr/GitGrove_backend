@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -119,7 +120,10 @@ public class FileStructureHelper {
 							Date commitDate = fileCommit.getAuthorIdent().getWhen();
 							TimeZone authorTimeZone = fileCommit.getAuthorIdent().getTimeZone();
 							ZonedDateTime localTime = commitDate.toInstant().atZone(authorTimeZone.toZoneId());
-							fileJson.put("commitTime", localTime);
+							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+							String formattedTime = localTime.format(formatter);
+							
+							fileJson.put("commitTime", formattedTime);
 						}
 
 						mainFilesArray.put(fileJson);
