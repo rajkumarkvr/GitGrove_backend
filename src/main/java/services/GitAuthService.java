@@ -17,6 +17,7 @@ public class GitAuthService extends HttpServlet {
   		String user = request.getParameter("user");
         String repo = request.getParameter("repo");
         String action = request.getParameter("action");
+        
         System.out.println("Username"+user+" reponame"+repo+" action"+action);
         
         String repoName = repo.replaceAll("/opt/repo/", "").split("/")[1].replaceAll(".git", "");

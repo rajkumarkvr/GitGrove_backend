@@ -432,6 +432,20 @@
 		<servlet-name>UpdateFile</servlet-name>
 		<servlet-class>controller.UploadFiles.UpdateFile</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>RenameRepository</display-name>
+		<servlet-name>RenameRepository</servlet-name>
+		<servlet-class>controller.RenameRepository</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>DeleteRepository</display-name>
+		<servlet-name>DeleteRepository</servlet-name>
+		<servlet-class>controller.DeleteRepository</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>GitHttpServlet</servlet-name>
@@ -668,6 +682,14 @@
 	<servlet-mapping>
 		<servlet-name>UpdateFile</servlet-name>
 		<url-pattern>/UpdateFile</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RenameRepository</servlet-name>
+		<url-pattern>/RenameRepository</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DeleteRepository</servlet-name>
+		<url-pattern>/DeleteRepository</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

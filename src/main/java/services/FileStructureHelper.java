@@ -574,7 +574,7 @@ public class FileStructureHelper {
 		});
 	}
 
-	private void deleteDirectory(File dir) throws IOException {
+	public void deleteDirectory(File dir) throws IOException {
 		if (!dir.exists()) {
 			return; // Avoid errors if directory does not exist
 		}
