@@ -27,7 +27,7 @@ public class RepositoryServlet extends HttpServlet {
         String repoName = request.getParameter("reponame");
         String branchName = request.getParameter("branchname");
 
-        
+        System.out.println("Branch name printing -------------------------------------"+branchName);
         if (username == null || repoName == null || branchName == null) {
         
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -60,7 +60,7 @@ public class RepositoryServlet extends HttpServlet {
             if(branches.contains("main") && !branches.contains("master")) {
             	 repoJson.put("defaultBranch", "main");
             	 
-            	 if(branchName == "master") {
+            	 if(branchName.equals( "master")) {
             		 branchName = "main";
             	 }
             	 
@@ -73,16 +73,20 @@ public class RepositoryServlet extends HttpServlet {
             // Check if the repository has commits
             JSONArray commitsArray;
             try {
+            	System.out.println("Commit getting branch =--------------------"+branchName);
                 commitsArray = FileStructureHelper.getInstance().getCommitHistory(git,branchName) ;
                 } 
             
             
             catch (GitAPIException|NullPointerException e) {
+            	e.printStackTrace();
+            	System.out.println("Gett messsyugdysuigdj --------------------------"+e.getMessage());
                 // If an error occurs, assume no commits exist
                 commitsArray = new JSONArray();
             }
 
             if (commitsArray.isEmpty()) {
+            
                 // Special response for repositories without commits
                 repoJson.put("status", "fresh");
                 repoJson.put("message", "This repository has no commits yet.");

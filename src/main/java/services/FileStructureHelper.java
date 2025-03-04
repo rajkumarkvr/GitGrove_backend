@@ -78,6 +78,7 @@ public class FileStructureHelper {
 			commitJson.put("date", commit.getAuthorIdent().getWhen().toInstant().toString());
 			commitsArray.put(commitJson);
 		}
+		System.out.println("Commit arrayLen"+commitsArray.length());
 		return commitsArray;
 	}
 
