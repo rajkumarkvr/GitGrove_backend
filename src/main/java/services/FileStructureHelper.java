@@ -69,6 +69,8 @@ public class FileStructureHelper {
 	// Fetches commit history of a specific branch
 	public JSONArray getCommitHistory(Git git, String branchName) throws GitAPIException, IOException {
 		JSONArray commitsArray = new JSONArray();
+		
+		ArrayList<RevCommit> commits1 = (ArrayList<RevCommit>) git.log().add(git.getRepository().resolve("refs/heads/" + branchName)).call();
 
 		Iterable<RevCommit> commits = git.log().add(git.getRepository().resolve("refs/heads/" + branchName)).call();
 
@@ -76,6 +78,8 @@ public class FileStructureHelper {
 			JSONObject commitJson = new JSONObject();
 			commitJson.put("id", commit.getName());
 			commitJson.put("message", commit.getShortMessage());
+			commitJson.put("authorName", commit.getAuthorIdent().getName());
+			commitJson.put("authorEmail", commit.getAuthorIdent().getEmailAddress());
 			commitJson.put("date", commit.getAuthorIdent().getWhen().toInstant().toString());
 			commitsArray.put(commitJson);
 		}
