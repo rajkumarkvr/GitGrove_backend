@@ -10,9 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
-import utils.JSONHandler;
+import models.dao.RepositoryDAO;
+import models.dao.UserDAO;
 import utils.PermissionManager;
 
 public class RenameRepository extends HttpServlet {
@@ -25,26 +24,21 @@ public class RenameRepository extends HttpServlet {
 	}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-//		JSONObject jsonData = JSONHandler.parse(request.getReader());
-		
-//		String ownerName = jsonData.getString("ownername").toLowerCase();
-//		String oldRepoName = jsonData.getString("oldreponame").toLowerCase();
-//		String newRepoName = jsonData.getString("newreponame").toLowerCase();
+			throws ServletException, IOException {;
 
 		String ownerName = request.getParameter("ownername");
 		String oldRepoName =  request.getParameter("oldreponame");
 		String newRepoName =  request.getParameter("newreponame");
-		
-		System.out.println("ownername"+ownerName+" reponame old "+oldRepoName+" newrepo"+newRepoName);
 
 		if(ownerName == null || oldRepoName == null || newRepoName == null) {
 			response.setStatus(400);
 			response.getWriter().write("{\"message\" : \"Missing input\"}");
 			return;
 		}
+		
+		int ownerId = UserDAO.getInstance().getUserId(ownerName);
 	
+		int repoId = RepositoryDAO.getInstance().getRepositoryId(oldRepoName, ownerId);
 		
 		if (oldRepoName.equals(newRepoName)) {
 			response.setStatus(200);
@@ -69,7 +63,7 @@ public class RenameRepository extends HttpServlet {
 			
 			Files.move(oldRepo.toPath(), newRepo.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			PermissionManager.setOwner(newRepo, "git:git");
-			
+			RepositoryDAO.getInstance().renameRepository(repoId, newRepoName);
 			response.setStatus(200);
 			response.getWriter().write("Repository name successfully changed");
 		} catch (Exception e) {
