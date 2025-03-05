@@ -685,7 +685,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>RenameRepository</servlet-name>
-		<url-pattern>/RenameRepository</url-pattern>
+		<url-pattern>/service/RenameRepository</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DeleteRepository</servlet-name>
