@@ -506,5 +506,28 @@ public class RepositoryDAO {
 		
 		return path;
 	}
+	
+	public void renameRepository(int id, String newName) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("update repositories set name = ? where id = ?");
+			stmt.setString(1, newName);
+			stmt.setInt(2, id);
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("Renaming repository error : "+e.getMessage());
+		}
+	}
+	
+	public void deleteRepository(int id) {
+		try {
+			Connection connection = DBconnection.getConnection();
+			PreparedStatement stmt = connection.prepareStatement("delete from repositories where id = ?");
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("Renaming repository error : "+e.getMessage());
+		}
+	}
 
 }
